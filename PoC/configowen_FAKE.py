@@ -4,14 +4,15 @@
     and constants must be redefined for particular case.
 '''
 
-TMP_FILE = '/home/ded/TMP/owen/PoC/samba.txt'
+TMP_FILE = '/home/ded/TMP/PoC/samba.txt'
 LOGIN = 'WidlfieldED'
 PASSWD = 'password123'
-WS_NAME = 'testvm'
+WS_NAME = 'TESTWS'
 SRV_NAME = 'CHECKSRV'
+DOMAIN = 'COMPANY'
 SRV_IP = '10.10.33.196'
-SRV_PORT = 139
-SHARE_NAME = 'disk$'
+SRV_PORT = 445
+SHARE_NAME = 'c$'
 FILE_PATH = '/Owen/owen.txt'
 
 ###########################################################################

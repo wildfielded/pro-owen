@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
-import config as cfg
+import configowen as c_
 from smb.SMBConnection import SMBConnection
 
-file_object = open(cfg.TMP_FILE, 'wb')
-conn = SMBConnection(cfg.LOGIN, cfg.PASSWD, cfg.WS_NAME, cfg.SRV_NAME, use_ntlm_v2=True)
-conn.connect(cfg.SRV_IP, cfg.SRV_PORT)
-result = conn.retrieveFile(cfg.SHARE_NAME, cfg.FILE_PATH, file_object)
+tmpfile_object = open(c_.TMP_FILE, 'wb')
+smb_connect = SMBConnection(c_.LOGIN, c_.PASSWD, c_.WS_NAME, c_.SRV_NAME, c_.DOMAIN, use_ntlm_v2=True, is_direct_tcp=True)
+smb_connect.connect(c_.SRV_IP, c_.SRV_PORT)
+result = smb_connect.retrieveFile(c_.SHARE_NAME, c_.FILE_PATH, tmpfile_object)
 print(result)
-conn.close()
-file_object.close()
+smb_connect.close()
+tmpfile_object.close()
 
 ###########################################################################
