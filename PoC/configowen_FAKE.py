@@ -1,21 +1,26 @@
 #!/usr/bin/python3
 
-''' This file "configowen_FAKE.py" should be renamed to "configowen.py"
-    and constants must be redefined for specific needs.
+''' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    Этот файл "configowen_FAKE.py" надо переименовать в "configowen.py"
+    и переопределить переменные под конкретный сервер.
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 '''
-
-''' General needed parameters
+''' Набор параметров, нужных для настройки работы программ
 '''
-
-''' Path to local file where current data should be copied '''
-LAST_DATAFILE = '/home/ded/git/wf/pet-owen/PoC/lastdata.txt'
-''' Attributes for AD authentication '''
+##### Корневая директория размещения проекта
+PROJECT_DIR = '/opt/pet/owen/'
+##### Добавки путей к нужным файлам
+LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
+HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
+HTML_FOOTER = PROJECT_DIR + 'PoC/sample_f.html'
+HTML_SAMPLE = PROJECT_DIR + 'PoC/sample.html'
+##### Атрибуты УЗ, под которой идёт обращение на шару сервера OWEN
 LOGIN = 'WildDD'
 PASSWD = 'password123'
 DOMAIN = 'MYDOMAIN'
-''' Local machine NetBIOS name (may be random) '''
+##### Имя машины, на которой всё это крутится (можно назвать от балды)
 CLI_NAME = 'testpc'
-''' Network and share attributes of OWEN server '''
+##### NetBIOS/AD-имя сервака OWEN и прочие его атрибуты
 SRV_NAME = 'CHECKPC'
 SRV_IP = '10.10.33.196'
 SRV_PORT = 445
