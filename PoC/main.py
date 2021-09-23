@@ -32,8 +32,9 @@ def write_html(input_file, output_file, header, footer):
     file_object.close()
 
 if __name__ == '__main__':
-    get_last_data(c_.LAST_DATAFILE, c_.LOGIN, c_.PASSWD, c_.DOMAIN, c_.CLI_NAME,
-                c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME, c_.FILE_PATH)
+    get_last_data(c_.LAST_DATAFILE, c_.LOGIN, c_.PASSWD, c_.DOMAIN,
+                  c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
+                  c_.SHARE_NAME, c_.FILE_PATH)
     write_html(c_.LAST_DATAFILE, c_.HTML_SAMPLE, c_.HTML_HEADER, c_.HTML_FOOTER)
 
 ###########################################################################
