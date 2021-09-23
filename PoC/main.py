@@ -4,7 +4,7 @@ import configowen as c_
 from smb.SMBConnection import SMBConnection
 
 def get_last_data(output_file, login, passwd, domain, client,
-                server, addr, port, share, path):
+                  server, addr, port, share, path):
     ''' Забирает текущий файл с сервера OWEN и записывает себе локально
     '''
     file_object = open(output_file, 'wb')
@@ -15,13 +15,14 @@ def get_last_data(output_file, login, passwd, domain, client,
     smb_connect.close()
     file_object.close()
 
-def write_html(input_file, output_file, header, footer):
-    ''' Записывает демо-файл HTML для отдачи по HTTP
+def write_html(input_file, output_file, header_file, footer_file):
+    ''' Записывает демо-файл HTML для отдачи по HTTP. Пока использует
+        записанные в файлы куски HTML-кода.
     '''
-    file_object = open(header, 'r', encoding='utf-8')
+    file_object = open(header_file, 'r', encoding='utf-8')
     header_str = file_object.read()
     file_object.close()
-    file_object = open(footer, 'r', encoding='utf-8')
+    file_object = open(footer_file, 'r', encoding='utf-8')
     footer_str = file_object.read()
     file_object.close()
     file_object = open(input_file, 'r', encoding='cp1251')
