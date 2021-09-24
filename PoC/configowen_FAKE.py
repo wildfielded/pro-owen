@@ -5,7 +5,7 @@
     и переопределить переменные под конкретный сервер.
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 '''
-''' Набор параметров, нужных для настройки работы программ
+''' Набор конфиговин, нужных для настройки работы программ
 '''
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
@@ -14,7 +14,7 @@ LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
 HTML_FOOTER = PROJECT_DIR + 'PoC/sample_f.html'
 HTML_SAMPLE = PROJECT_DIR + 'PoC/sample.html'
-##### Атрибуты УЗ, под которой идёт обращение на шару сервера OWEN
+##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
 PASSWD = 'password123'
 DOMAIN = 'MYDOMAIN'
