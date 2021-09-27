@@ -10,7 +10,7 @@
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
 ##### Добавки путей к нужным файлам
-LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
+LAST_DATAFILE = PROJECT_DIR + 'PoC/lastfile.txt'
 HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
 HTML_FOOTER = PROJECT_DIR + 'PoC/sample_f.html'
 HTML_SAMPLE = PROJECT_DIR + 'PoC/sample.html'
@@ -24,7 +24,7 @@ CLI_NAME = 'testpc'
 SRV_NAME = 'CHECKPC'
 SRV_IP = '10.10.33.196'
 SRV_PORT = 445
-SHARE_NAME = 'c$'
-FILE_PATH = '/Owen/owen.txt'
+SHARE_NAME = 'Owen$'
+FILE_PATH = '/owen.txt'
 
 ###########################################################################
