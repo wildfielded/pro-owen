@@ -25,7 +25,7 @@ def get_current_data_tmp(last_file, row_template):
     for line in content_lst[1:]:
         line_lst = line.strip().split('\t')
         tab_tr = T_(row_template)
-        result_str += tab_tr.substitute(placement=line_lst[2],
+        result_str += tab_tr.safe_substitute(placement=line_lst[2],
                                         temperature=line_lst[3])
     return result_str
 
