@@ -4,23 +4,19 @@ import configowen as c_
 from string import Template as T_
 from smb.SMBConnection import SMBConnection
 
-def get_current_file(output_datafile, output_cfgfile, login, passwd, domain,
+def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
                      client, server, addr, port, share, data_path, cfg_path):
     ''' Забирает файл с последними измерениями и на всякий случай текущий файл с
         пороговыми значениями с сервера OWEN и записывает себе локально
     '''
-    with open(output_datafile, 'wb') as f_:
-        with SMBConnection(login, passwd, client, server, domain,
-                           use_ntlm_v2=True, is_direct_tcp=True) as s_:
-            s_.connect(addr, port)
+    with SMBConnection(login, passwd, client, server, domain,
+                       use_ntlm_v2=True, is_direct_tcp=True) as s_:
+        s_.connect(addr, port)
+        with open(output_datafile, 'wb') as f_:
             s_.retrieveFile(share, data_path, f_)
-            s_.close()
-    with open(output_cfgfile, 'wb') as f_:
-        with SMBConnection(login, passwd, client, server, domain,
-                           use_ntlm_v2=True, is_direct_tcp=True) as s_:
-            s_.connect(addr, port)
-            s_.retrieveFile(share, cfg_path, f_)
-            s_.close()
+        with open(output_cfgfile, 'wb') as g_:
+            s_.retrieveFile(share, cfg_path, g_)
+        s_.close()
 
 def get_current_data_tmp(last_file, row_template):
     ''' Выдирает данные из текущего локального файла и заполняет по шаблону
@@ -54,7 +50,7 @@ def write_html(input_file, output_file, header_file,
         f_.write(header_str + lastdata_str + middle_str + rows + footer_str)
 
 if __name__ == '__main__':
-    get_current_file(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
+    get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
                      c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
                      c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
     tab_rows = get_current_data_tmp(c_.LAST_DATAFILE, c_.TR_TEMPLATE)
