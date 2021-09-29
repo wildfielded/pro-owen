@@ -6,7 +6,8 @@ from smb.SMBConnection import SMBConnection
 
 def get_current_file(output_datafile, output_cfgfile, login, passwd, domain,
                      client, server, addr, port, share, data_path, cfg_path):
-    ''' Забирает текущий файл с сервера OWEN и записывает себе локально
+    ''' Забирает файл с последними измерениями и на всякий случай текущий файл с
+        пороговыми значениями с сервера OWEN и записывает себе локально
     '''
     with open(output_datafile, 'wb') as f_:
         with SMBConnection(login, passwd, client, server, domain,

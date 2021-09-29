@@ -10,7 +10,7 @@
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
 ##### Добавки путей к нужным файлам
-LAST_DATAFILE = PROJECT_DIR + 'PoC/lastfile.txt'
+LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
 HTML_MIDDLE = PROJECT_DIR + 'PoC/sample_m.html'
