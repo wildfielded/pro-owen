@@ -4,15 +4,21 @@ import configowen as c_
 from string import Template as T_
 from smb.SMBConnection import SMBConnection
 
-def get_current_file(output_file, login, passwd, domain, client,
-                     server, addr, port, share, path):
+def get_current_file(output_datafile, output_cfgfile, login, passwd, domain,
+                     client, server, addr, port, share, data_path, cfg_path):
     ''' Забирает текущий файл с сервера OWEN и записывает себе локально
     '''
-    with open(output_file, 'wb') as f_:
+    with open(output_datafile, 'wb') as f_:
         with SMBConnection(login, passwd, client, server, domain,
                            use_ntlm_v2=True, is_direct_tcp=True) as s_:
             s_.connect(addr, port)
-            s_.retrieveFile(share, path, f_)
+            s_.retrieveFile(share, data_path, f_)
+            s_.close()
+    with open(output_cfgfile, 'wb') as f_:
+        with SMBConnection(login, passwd, client, server, domain,
+                           use_ntlm_v2=True, is_direct_tcp=True) as s_:
+            s_.connect(addr, port)
+            s_.retrieveFile(share, cfg_path, f_)
             s_.close()
 
 def get_current_data_tmp(last_file, row_template):
@@ -26,7 +32,7 @@ def get_current_data_tmp(last_file, row_template):
         line_lst = line.strip().split('\t')
         tab_tr = T_(row_template)
         result_str += tab_tr.safe_substitute(placement=line_lst[2],
-                                        temperature=line_lst[3])
+                                             temperature=line_lst[3])
     return result_str
 
 def write_html(input_file, output_file, header_file,
@@ -47,9 +53,9 @@ def write_html(input_file, output_file, header_file,
         f_.write(header_str + lastdata_str + middle_str + rows + footer_str)
 
 if __name__ == '__main__':
-    get_current_file(c_.LAST_DATAFILE, c_.LOGIN, c_.PASSWD, c_.DOMAIN,
-                     c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
-                     c_.SHARE_NAME, c_.FILE_PATH)
+    get_current_file(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
+                     c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
+                     c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
     tab_rows = get_current_data_tmp(c_.LAST_DATAFILE, c_.TR_TEMPLATE)
     write_html(c_.LAST_DATAFILE, c_.HTML_SAMPLE, c_.HTML_HEADER, c_.HTML_MIDDLE,
                c_.HTML_FOOTER, rows=tab_rows)

@@ -11,6 +11,7 @@
 PROJECT_DIR = '/opt/pet/owen/'
 ##### Добавки путей к нужным файлам
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastfile.txt'
+LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
 HTML_MIDDLE = PROJECT_DIR + 'PoC/sample_m.html'
 HTML_FOOTER = PROJECT_DIR + 'PoC/sample_f.html'
@@ -26,7 +27,8 @@ SRV_NAME = 'CHECKPC'
 SRV_IP = '10.10.33.196'
 SRV_PORT = 445
 SHARE_NAME = 'Owen$'
-FILE_PATH = '/owen.txt'
+DATA_PATH = 'owen.txt'
+CFG_PATH = 'owen.cfg'
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов
 TZ_SHIFT = 3600.0 * 5
 
