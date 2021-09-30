@@ -38,16 +38,16 @@ def write_html(input_file, output_file, header_file,
         записанные в файлы куски HTML-кода и Template для заполнения
         строк таблицы
     '''
-    with open(header_file, 'r', encoding='utf-8') as f_:
-        header_str = f_.read()
-    with open(middle_file, 'r', encoding='utf-8') as f_:
-        middle_str = f_.read()
+    with open(header_file, 'r', encoding='utf-8') as h_:
+        header_str = h_.read()
+    with open(middle_file, 'r', encoding='utf-8') as m_:
+        middle_str = m_.read()
     with open(footer_file, 'r', encoding='utf-8') as f_:
         footer_str = f_.read()
-    with open(input_file, 'r', encoding='cp1251') as f_:
-        lastdata_str = f_.read()
-    with open(output_file, 'w', encoding='utf-8') as f_:
-        f_.write(header_str + lastdata_str + middle_str + rows + footer_str)
+    with open(input_file, 'r', encoding='cp1251') as i_:
+        lastdata_str = i_.read()
+    with open(output_file, 'w', encoding='utf-8') as o_:
+        o_.write(header_str + lastdata_str + middle_str + rows + footer_str)
 
 if __name__ == '__main__':
     get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
