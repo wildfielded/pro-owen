@@ -6,6 +6,9 @@ from string import Template as T_
 from smb.SMBConnection import SMBConnection
 
 class SensorDataBlock:
+    ''' Создаёт объект единичного датчика, задаёт его стуктуру данных и методы
+        обработки
+    '''
     def __init__(self):
         self.sensor_dict = {
             'line_num': 0,
@@ -38,6 +41,7 @@ class SensorDataBlock:
                 result_dict[k_] = self.sensor_dict[k_]
         return result_dict
 
+#####=====----- Functions -----=====#####
 
 def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
                      client, server, addr, port, share, data_path, cfg_path):
@@ -53,33 +57,40 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
             s_.retrieveFile(share, cfg_path, g_)
         s_.close()
 
-def get_current_data_tmp(last_file):
-    ''' Выдирает данные из текущего локального файла и возвращает список словарей
-        с данными по каждому сенсору
+def get_current_obj_list(last_file, tz_shift):
+    ''' Выдирает данные из текущего локального файла измерений и возвращает
+        список объектов класса SensorDataBlock с данными по каждому сенсору
     '''
     with open(last_file, 'r', encoding='cp1251') as f_:
-        content_lst = f_.readlines()
-    result_lst = []
+        data_list = f_.readlines()
+    obj_list = []
     n_ = 0
-    for line in content_lst[1:]:
+    for l_ in data_list[1:]:
         n_ += 1
-        line_lst = line.strip().split('\t')
-        result_dic = { 'line_num': n_, 'place': line_lst[2], 'measures': [ {}, ] }
-        #####result_dic['place'] = line_lst[2]
-        result_dic['measures'][0]['timestamp'] = time.mktime(time.strptime(line_lst[0] + ' ' + line_lst[1], '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
-        result_dic['measures'][0]['value'] = float(line_lst[3].replace(',', '.'))
-        result_lst.append(result_dic)
-    return result_lst
+        line_list = l_.strip().split('\t')
+        dict_ = {
+            'line_num': n_,
+            'place': line_list[2],
+            'measures': [ {}, ]
+            }
+        dict_['measures'][0]['timestamp'] = time.mktime(time.strptime(line_list[0] + ' ' + line_list[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+        dict_['measures'][0]['value'] = float(line_list[3].replace(',', '.'))
+        sensor_obj = SensorDataBlock()
+        sensor_obj.write_data(dict_)
+        obj_list.append(sensor_obj)
+    return obj_list
 
-def generate_rows(input_lst, row_template):
-    ''' Принимает список словарей с данными по каждому сенсору и заполняет
-        по шаблону табличные ячейки соответствующими значениями
+def generate_rows(input_obj_list, row_template):
+    ''' Принимает список объектов класса SensorDataBlock и заполняет по шаблону
+        табличные ячейки соответствующими значениями
     '''
-    result_str = ''
-    for line_dic in input_lst:
+    output_str = ''
+    for obj_ in input_obj_list:
+        p_ = obj_.read_data(['place'])['place']
+        t_ = str(obj_.read_data(['measures'])['measures'][0]['value']).replace('.', ',')
         tab_tr = T_(row_template)
-        result_str += tab_tr.safe_substitute(placement=line_dic['place'], temperature=str(line_dic['measures'][0]['value'])).replace('.', ',')
-    return result_str
+        output_str += tab_tr.safe_substitute(placement=p_, temperature=t_)
+    return output_str
 
 def write_html(input_file, output_file, header_file,
                middle_file, footer_file, rows=''):
@@ -102,8 +113,8 @@ if __name__ == '__main__':
     get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
                      c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
                      c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
-    #####tab_rows = get_current_data_tmp(c_.LAST_DATAFILE, c_.TR_TEMPLATE)
-    tab_rows = generate_rows(get_current_data_tmp(c_.LAST_DATAFILE), c_.TR_TEMPLATE)
+    current_obj_list = get_current_obj_list(c_.LAST_DATAFILE, c_.TZ_SHIFT)
+    tab_rows = generate_rows(current_obj_list, c_.TR_TEMPLATE)
     write_html(c_.LAST_DATAFILE, c_.HTML_SAMPLE, c_.HTML_HEADER, c_.HTML_MIDDLE,
                c_.HTML_FOOTER, rows=tab_rows)
 
