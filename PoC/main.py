@@ -6,8 +6,8 @@ from string import Template as T_
 from smb.SMBConnection import SMBConnection
 
 class SensorDataBlock:
-    ''' Создаёт объект единичного датчика, задаёт его стуктуру данных и методы
-        обработки
+    ''' Создаёт объект данных одного датчика, задаёт стуктуру данных в виде
+        словаря и методы их обработки
     '''
     def __init__(self):
         self.sensor_dict = {
@@ -44,7 +44,7 @@ class SensorDataBlock:
     def read_all(self):
         return self.sensor_dict
 
-#####=====----- Functions -----=====#####
+#####=====----- Функции -----=====#####
 
 def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
                      client, server, addr, port, share, data_path, cfg_path):
@@ -96,8 +96,8 @@ def generate_rows(input_obj_list, row_template):
         y_ = dict_['warn_t']
         r_ = dict_['crit_t']
         m_ = time.ctime(dict_['measures'][0]['timestamp'])
-        tab_tr = T_(row_template)
-        output_str += tab_tr.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, mtime=m_)
+        row_ = T_(row_template)
+        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, mtime=m_)
     return output_str
 
 def write_html(output_file, header_file, footer_file, rows=''):
@@ -110,6 +110,8 @@ def write_html(output_file, header_file, footer_file, rows=''):
         footer_str = f_.read()
     with open(output_file, 'w', encoding='utf-8') as o_:
         o_.write(header_str + rows + footer_str)
+
+#####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
     get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,

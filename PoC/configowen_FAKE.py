@@ -28,7 +28,7 @@ SRV_PORT = 445
 SHARE_NAME = 'Owen$'
 DATA_PATH = 'owen.txt'
 CFG_PATH = 'owen.cfg'
-##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов
+##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
 TZ_SHIFT = 3600.0 * 5
 
 ROW_TEMPLATE = '''            <TR>
