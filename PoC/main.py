@@ -88,8 +88,11 @@ def generate_rows(input_obj_list, row_template):
     for obj_ in input_obj_list:
         p_ = obj_.read_data(['place'])['place']
         t_ = str(obj_.read_data(['measures'])['measures'][0]['value']).replace('.', ',')
+        y_ = obj_.read_data(['warn_t'])['warn_t']
+        r_ = obj_.read_data(['crit_t'])['crit_t']
+        m_ = time.ctime(obj_.read_data(['measures'])['measures'][0]['timestamp'])
         tab_tr = T_(row_template)
-        output_str += tab_tr.safe_substitute(placement=p_, temperature=t_)
+        output_str += tab_tr.safe_substitute(placement=p_, temperature=t_, max1yellow=y_, max2red=r_, measuretime=m_)
     return output_str
 
 def write_html(input_file, output_file, header_file,

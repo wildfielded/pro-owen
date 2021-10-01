@@ -32,20 +32,12 @@ CFG_PATH = 'owen.cfg'
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов
 TZ_SHIFT = 3600.0 * 5
 
-DICT_TEMPLATE = {
-    'ID': 0,
-    'place': 'место',
-    'yellow_threshold': '25',
-    'red_threshold': '35',
-    'status': 'normal/yellow/red/old/empty',
-    'measures': { 'timestamp': 'float(temp)'}
-}
-
 TR_TEMPLATE = '''            <TR>
                 <TD>$placement</TD>
                 <TD>$temperature</TD>
-                <TD></TD>
-                <TD></TD>
+                <TD>$max1yellow</TD>
+                <TD>$max2red</TD>
+                <TD>$measuretime</TD
                 <TD></TD>
             </TR>
 '''
