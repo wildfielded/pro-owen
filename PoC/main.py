@@ -35,11 +35,14 @@ class SensorDataBlock:
             #####self.sensor_dict.insert(0, data_dict['measures'])
 
     def read_data(self, keys_list: list = []):
-        result_dict = {}
+        output_dict = {}
         for k_ in keys_list:
             if k_ in self.sensor_dict.keys():
-                result_dict[k_] = self.sensor_dict[k_]
-        return result_dict
+                output_dict[k_] = self.sensor_dict[k_]
+        return output_dict
+
+    def read_all(self):
+        return self.sensor_dict
 
 #####=====----- Functions -----=====#####
 
@@ -86,39 +89,34 @@ def generate_rows(input_obj_list, row_template):
     '''
     output_str = ''
     for obj_ in input_obj_list:
-        p_ = obj_.read_data(['place'])['place']
-        t_ = str(obj_.read_data(['measures'])['measures'][0]['value']).replace('.', ',')
-        y_ = obj_.read_data(['warn_t'])['warn_t']
-        r_ = obj_.read_data(['crit_t'])['crit_t']
-        m_ = time.ctime(obj_.read_data(['measures'])['measures'][0]['timestamp'])
+        #####dict_ = obj_.read_all()
+        dict_ = obj_.read_data(['place', 'warn_t', 'crit_t', 'measures'])
+        p_ = dict_['place']
+        t_ = str(dict_['measures'][0]['value']).replace('.', ',')
+        y_ = dict_['warn_t']
+        r_ = dict_['crit_t']
+        m_ = time.ctime(dict_['measures'][0]['timestamp'])
         tab_tr = T_(row_template)
-        output_str += tab_tr.safe_substitute(placement=p_, temperature=t_, max1yellow=y_, max2red=r_, measuretime=m_)
+        output_str += tab_tr.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, mtime=m_)
     return output_str
 
-def write_html(input_file, output_file, header_file,
-               middle_file, footer_file, rows=''):
-    ''' Записывает демо-файл HTML для отдачи по HTTP. Пока использует
-        записанные в файлы куски HTML-кода и Template для заполнения
-        строк таблицы
+def write_html(output_file, header_file, footer_file, rows=''):
+    ''' Записывает файл HTML для отдачи по HTTP. Пока использует записанные в
+        файлы куски HTML-кода и Template для заполнения строк таблицы
     '''
     with open(header_file, 'r', encoding='utf-8') as h_:
         header_str = h_.read()
-    with open(middle_file, 'r', encoding='utf-8') as m_:
-        middle_str = m_.read()
     with open(footer_file, 'r', encoding='utf-8') as f_:
         footer_str = f_.read()
-    with open(input_file, 'r', encoding='cp1251') as i_:
-        lastdata_str = i_.read()
     with open(output_file, 'w', encoding='utf-8') as o_:
-        o_.write(header_str + lastdata_str + middle_str + rows + footer_str)
+        o_.write(header_str + rows + footer_str)
 
 if __name__ == '__main__':
     get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
                      c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
                      c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
     current_obj_list = get_current_obj_list(c_.LAST_DATAFILE, c_.TZ_SHIFT)
-    tab_rows = generate_rows(current_obj_list, c_.TR_TEMPLATE)
-    write_html(c_.LAST_DATAFILE, c_.HTML_SAMPLE, c_.HTML_HEADER, c_.HTML_MIDDLE,
-               c_.HTML_FOOTER, rows=tab_rows)
+    tab_rows = generate_rows(current_obj_list, c_.ROW_TEMPLATE)
+    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=tab_rows)
 
 ###########################################################################
