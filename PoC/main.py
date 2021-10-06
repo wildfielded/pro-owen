@@ -50,7 +50,7 @@ class SensorDataBlock:
 #####=====----- Функции -----=====#####
 
 def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
-                     client, server, addr, port, share, data_path, cfg_path):
+                      client, server, addr, port, share, data_path, cfg_path):
     ''' Забирает файл с последними измерениями и на всякий случай текущий файл с
         пороговыми значениями с сервера OWEN и записывает себе локально
     '''
@@ -135,7 +135,7 @@ def generate_rows(input_obj_list, row_template):
     '''
     output_str = ''
     for obj_ in input_obj_list:
-        dict_ = obj_.read_data([ 'place', 'warn_t', 'crit_t', 'measures' ])
+        dict_ = obj_.read_data(['place', 'warn_t', 'crit_t', 'measures'])
         p_ = dict_['place']
         t_ = str(dict_['measures'][0]['value']).replace('.', ',')
         y_ = int(dict_['warn_t'])
@@ -161,8 +161,8 @@ def write_html(output_file, header_file, footer_file, rows=''):
 
 if __name__ == '__main__':
     get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
-                     c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
-                     c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
+                      c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
+                      c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
     current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT)
     current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
     tab_rows = generate_rows(current_obj_list, c_.ROW_TEMPLATE)
