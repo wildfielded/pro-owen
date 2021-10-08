@@ -33,7 +33,7 @@ TZ_SHIFT = 3600.0 * 5
 
 ROW_TEMPLATE = '''            <TR>
                 <TD>$place</TD>
-                <TD class="red-alert">$temp</TD>
+                <TD class="$status">$temp</TD>
                 <TD>$max1</TD>
                 <TD>$max2</TD>
                 <TD>$mtime</TD

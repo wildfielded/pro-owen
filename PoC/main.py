@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import configowen as c_
-import time
+from time import ctime, mktime, strptime
 from string import Template as T_
 from smb.SMBConnection import SMBConnection
 
@@ -16,7 +16,7 @@ class SensorDataBlock:
             'warn_t': 0.,
             'crit_t': 0.,
             'status': '',
-            'measures': [ { 'timestamp': 0., 'value': 0. }, ]
+            'measures': [{'timestamp': 0., 'value': 0.},]
             }
 
     def write_data(self, data_dict: dict = {}):
@@ -79,9 +79,9 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
             dict_ = {
                 'line_num': n_,
                 'place': list_[2],
-                'measures': [ {}, ]
+                'measures': [{},]
                 }
-            dict_['measures'][0]['timestamp'] = time.mktime(time.strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+            dict_['measures'][0]['timestamp'] = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
             dict_['measures'][0]['value'] = float(list_[3].replace(',', '.'))
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
@@ -140,10 +140,11 @@ def generate_rows(input_obj_list, row_template):
         t_ = str(dict_['measures'][0]['value']).replace('.', ',')
         y_ = int(dict_['warn_t'])
         r_ = int(dict_['crit_t'])
-        list_ = time.ctime(dict_['measures'][0]['timestamp']).split()
+        s_ = 'normal'
+        list_ = ctime(dict_['measures'][0]['timestamp']).split()
         m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
         row_ = T_(row_template)
-        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, mtime=m_)
+        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, status=s_, mtime=m_)
     return output_str
 
 def write_html(output_file, header_file, footer_file, rows=''):
