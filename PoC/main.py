@@ -63,6 +63,7 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
             s_.retrieveFile(share, cfg_path, g_)
         s_.close()
 
+
 def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
     ''' Парсит данные из загруженного файла с измерениями по каждому датчику с
         некоторой валидацией данных и дополняет текущий (или создаёт новый)
@@ -90,6 +91,7 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
         #####!!!!! Заглушка. Нужна обработка переданного списка объектов
         output_obj_list = input_obj_list
     return output_obj_list
+
 
 def parse_lastcfg(last_cfg, input_obj_list: list = []):
     ''' Парсит данные из загруженного файла с пороговыми значениями по каждому
@@ -129,23 +131,42 @@ def parse_lastcfg(last_cfg, input_obj_list: list = []):
                 output_obj_list[n_ - 1].write_data(dict_)
     return output_obj_list
 
+
+def set_status(input_obj_list):
+    ''' Выставляет "status", который потом используется для индикации алертов
+    '''
+    output_obj_list = input_obj_list
+    for obj_ in output_obj_list:
+        dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
+        if dict_['measures'][0]['value'] > dict_['crit_t']:
+            dict_['status'] = 'red-alert'
+        elif dict_['measures'][0]['value'] > dict_['warn_t']:
+            dict_['status'] = 'yellow-alert'
+        else:
+            dict_['status'] = 'normal'
+        obj_.write_data(dict_)
+    return output_obj_list
+
+
 def generate_rows(input_obj_list, row_template):
     ''' Принимает список объектов класса SensorDataBlock и заполняет по шаблону
         табличные ячейки соответствующими значениями
     '''
     output_str = ''
     for obj_ in input_obj_list:
-        dict_ = obj_.read_data(['place', 'warn_t', 'crit_t', 'measures'])
+        #####dict_ = obj_.read_data(['place', 'warn_t', 'crit_t', 'measures'])
+        dict_ = obj_.read_all()
         p_ = dict_['place']
         t_ = str(dict_['measures'][0]['value']).replace('.', ',')
         y_ = int(dict_['warn_t'])
         r_ = int(dict_['crit_t'])
-        s_ = 'normal'
+        s_ = dict_['status']
         list_ = ctime(dict_['measures'][0]['timestamp']).split()
         m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
         row_ = T_(row_template)
         output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, status=s_, mtime=m_)
     return output_str
+
 
 def write_html(output_file, header_file, footer_file, rows=''):
     ''' Записывает файл HTML для отдачи по HTTP. Пока использует записанные в
@@ -166,6 +187,7 @@ if __name__ == '__main__':
                       c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
     current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT)
     current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
+    current_obj_list = set_status(current_obj_list)
     tab_rows = generate_rows(current_obj_list, c_.ROW_TEMPLATE)
     write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=tab_rows)
 
