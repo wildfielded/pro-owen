@@ -51,10 +51,11 @@ class SensorDataBlock:
 
 def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
                       client, server, addr, port, share, data_path, cfg_path):
-    ''' Забирает файл с последними измерениями и на всякий случай текущий файл с
-        пороговыми значениями с сервера OWEN и записывает себе локально
+    ''' Забирает файл с последними измерениями и на всякий случай (если есть)
+        текущий файл с пороговыми значениями с сервера OWEN и записывает себе
+        локально. Проверяет свежесть файла с измерениями (если старше минуты,
+        возвращает соответстующую строку).
     '''
-    result_ = {}
     with SMBConnection(login, passwd, client, server, domain,
                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
         s_.connect(addr, port)
@@ -62,18 +63,20 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
         check_list_ = s_.listPath(share, '/', pattern=data_path)
         if len(check_list_) == 1:
             if check_list_[0].last_write_time > (time() - 60.):
-                result_['status'] = 'fresh_data'
+                result_ = 'fresh_data'
                 with open(output_datafile, 'wb') as f_:
                     s_.retrieveFile(share, data_path, f_)
             else:
-                result_['status'] = 'rancid_data'
+                result_ = 'rancid_data'
+        else:
+            result_ = 'missing_data'
 
         check_list_ = s_.listPath(share, '/', pattern=cfg_path)
         if len(check_list_) == 1:
             with open(output_cfgfile, 'wb') as g_:
                 s_.retrieveFile(share, cfg_path, g_)
-        s_.close()
 
+        s_.close()
     return result_
 
 
@@ -177,7 +180,8 @@ def generate_rows(input_obj_list, row_template):
         list_ = ctime(dict_['measures'][0]['timestamp']).split()
         m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
         row_ = T_(row_template)
-        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_, status=s_, mtime=m_)
+        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
+                                           status=s_, mtime=m_)
     return output_str
 
 
@@ -195,9 +199,10 @@ def write_html(output_file, header_file, footer_file, rows=''):
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN, c_.PASSWD,
-                      c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME, c_.SRV_IP, c_.SRV_PORT,
-                      c_.SHARE_NAME, c_.DATA_PATH, c_.CFG_PATH)
+    smb_result = get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN,
+                                   c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
+                                   c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
+                                   c_.DATA_PATH, c_.CFG_PATH)
     current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT)
     current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
     current_obj_list = set_status(current_obj_list)
