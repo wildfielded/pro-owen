@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import configowen as c_
-from time import ctime, mktime, strptime
+from time import ctime, mktime, strptime, time
 from string import Template as T_
 from smb.SMBConnection import SMBConnection
 
@@ -54,14 +54,27 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
     ''' Забирает файл с последними измерениями и на всякий случай текущий файл с
         пороговыми значениями с сервера OWEN и записывает себе локально
     '''
+    result_ = {}
     with SMBConnection(login, passwd, client, server, domain,
                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
         s_.connect(addr, port)
-        with open(output_datafile, 'wb') as f_:
-            s_.retrieveFile(share, data_path, f_)
-        with open(output_cfgfile, 'wb') as g_:
-            s_.retrieveFile(share, cfg_path, g_)
+
+        check_list_ = s_.listPath(share, '/', pattern=data_path)
+        if len(check_list_) == 1:
+            if check_list_[0].last_write_time > (time() - 60.):
+                result_['status'] = 'fresh_data'
+                with open(output_datafile, 'wb') as f_:
+                    s_.retrieveFile(share, data_path, f_)
+            else:
+                result_['status'] = 'rancid_data'
+
+        check_list_ = s_.listPath(share, '/', pattern=cfg_path)
+        if len(check_list_) == 1:
+            with open(output_cfgfile, 'wb') as g_:
+                s_.retrieveFile(share, cfg_path, g_)
         s_.close()
+
+    return result_
 
 
 def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
