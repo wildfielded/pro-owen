@@ -185,14 +185,12 @@ def generate_rows(input_obj_list, row_template):
     return output_str
 
 
-def write_html(output_file, header_file, footer_file, rows=''):
+def write_html(output_file, header_file, footer_str, rows=''):
     ''' Записывает файл HTML для отдачи по HTTP. Пока использует записанные в
         файлы куски HTML-кода и Template для заполнения строк таблицы
     '''
     with open(header_file, 'r', encoding='utf-8') as h_:
         header_str = h_.read()
-    with open(footer_file, 'r', encoding='utf-8') as f_:
-        footer_str = f_.read()
     with open(output_file, 'w', encoding='utf-8') as o_:
         o_.write(header_str + rows + footer_str)
 

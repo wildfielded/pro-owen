@@ -13,7 +13,6 @@ PROJECT_DIR = '/opt/pet/owen/'
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
-HTML_FOOTER = PROJECT_DIR + 'PoC/sample_f.html'
 HTML_OUTPUT = PROJECT_DIR + 'PoC/WEB/index.html'
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
@@ -40,5 +39,14 @@ ROW_TEMPLATE = '''                <TR>
                     <TD></TD>
                 </TR>
 '''
+
+HTML_FOOTER = '''            </TBODY>
+        </TABLE>
+    </MAIN>
+    <FOOTER>
+    </FOOTER>
+    <SCRIPT SRC="script.js"></SCRIPT>
+</BODY>
+</HTML>'''
 
 ###########################################################################
