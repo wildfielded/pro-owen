@@ -14,7 +14,7 @@ LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 HTML_HEADER = PROJECT_DIR + 'PoC/sample_h.html'
 HTML_FOOTER = PROJECT_DIR + 'PoC/sample_f.html'
-HTML_OUTPUT = PROJECT_DIR + 'PoC/sample.html'
+HTML_OUTPUT = PROJECT_DIR + 'PoC/WEB/index.html'
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
 PASSWD = 'password123'
@@ -31,14 +31,14 @@ CFG_PATH = 'owen.cfg'
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
 TZ_SHIFT = 3600.0 * 5
 
-ROW_TEMPLATE = '''            <TR>
-                <TD>$place</TD>
-                <TD class="$status">$temp</TD>
-                <TD>$max1</TD>
-                <TD>$max2</TD>
-                <TD>$mtime</TD
-                <TD></TD>
-            </TR>
+ROW_TEMPLATE = '''                <TR>
+                    <TD>$place</TD>
+                    <TD class="$status">$temp</TD>
+                    <TD>$max1</TD>
+                    <TD>$max2</TD>
+                    <TD>$mtime</TD
+                    <TD></TD>
+                </TR>
 '''
 
 ###########################################################################
