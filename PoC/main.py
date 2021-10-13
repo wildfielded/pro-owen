@@ -44,8 +44,6 @@ class SensorDataBlock:
         if key_str in self.sensor_dict.keys():
             return self.sensor_dict[key_str]
 
-    def read_all(self):
-        return self.sensor_dict
 
 #####=====----- Функции -----=====#####
 
@@ -87,25 +85,24 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
     '''
     with open(last_file, 'r', encoding='cp1251') as f_:
         data_list = f_.readlines()
-    if len(input_obj_list) == 0:
-        output_obj_list = []
-        n_ = 0
-        for line_ in data_list[1:]:
-            n_ += 1
-            list_ = line_.strip().split('\t')
-            dict_ = {
-                'line_num': n_,
-                'place': list_[2],
-                'measures': [{},]
-                }
-            dict_['measures'][0]['timestamp'] = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
-            dict_['measures'][0]['value'] = float(list_[3].replace(',', '.'))
+    output_obj_list = input_obj_list.copy()
+    n_ = 0
+    for line_ in data_list[1:]:
+        n_ += 1
+        list_ = line_.strip().split('\t')
+        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+        v_ = float(list_[3].replace(',', '.'))
+        dict_ = {
+            'line_num': n_,
+            'place': list_[2],
+            'measures': [{'timestamp': t_, 'value': v_},]
+            }
+        if len(input_obj_list) == 0:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
-    else:
-        #####!!!!! Заглушка. Нужна обработка переданного списка объектов
-        output_obj_list = input_obj_list
+        else:
+            output_obj_list[n_ - 1].write_data(dict_)
     return output_obj_list
 
 
@@ -170,8 +167,7 @@ def generate_rows(input_obj_list, row_template):
     '''
     output_str = ''
     for obj_ in input_obj_list:
-        #####dict_ = obj_.read_data(['place', 'warn_t', 'crit_t', 'measures'])
-        dict_ = obj_.read_all()
+        dict_ = obj_.sensor_dict
         p_ = dict_['place']
         t_ = str(dict_['measures'][0]['value']).replace('.', ',')
         y_ = int(dict_['warn_t'])
