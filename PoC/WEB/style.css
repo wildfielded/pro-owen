@@ -19,14 +19,23 @@ td:nth-of-type(n+2) {
     text-align: center;
 }
 
-.normal {
+.green-state {
     background-color: #bbffbb;
 }
 
-.yellow-alert {
+.yellow-state {
     background-color: #ffff88;
+    font-weight: 700;
 }
 
-.red-alert {
-    background-color: #ff8888;
+.red-state {
+    background-color: #ff0000;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.black-state {
+    background-color: #000000;
+    color: #ffffff;
+    font-weight: 700;
 }

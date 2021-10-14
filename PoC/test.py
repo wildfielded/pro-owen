@@ -15,7 +15,7 @@ class SensorDataBlock:
             'place': '',
             'warn_t': 0.,
             'crit_t': 0.,
-            'status': '',
+            'status': {'cell': 'green-state', 'code': (0, 'Нормальное состояние')},
             'measures': [{'timestamp': 0., 'value': 0.},]
             }
 
@@ -90,13 +90,26 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
     for line_ in data_list[1:]:
         n_ += 1
         list_ = line_.strip().split('\t')
-        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
-        v_ = float(list_[3].replace(',', '.'))
         dict_ = {
             'line_num': n_,
             'place': list_[2],
-            'measures': [{'timestamp': t_, 'value': v_},]
             }
+        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+        try:
+            v_ = float(list_[3].replace(',', '.'))
+        except:
+            v_ = -273.15
+            if list_[3].startswith('?'):
+                dict_['status'] = {
+                    'cell': 'black-state',
+                    'code': (1, 'Нет показаний датчика больше минуты')
+                    }
+            else:
+                dict_['status'] = {
+                    'cell': 'red-state',
+                    'code': (1, 'Неизвестная ошибка')
+                    }
+        dict_['measures'] = [{'timestamp': t_, 'value': v_},]
         if len(input_obj_list) == 0:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
@@ -142,53 +155,61 @@ def set_status(input_obj_list):
     for obj_ in output_obj_list:
         dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
         if dict_['measures'][0]['value'] > dict_['crit_t']:
-            dict_['status'] = 'red-alert'
+            dict_['status']['cell'] = 'red-state'
         elif dict_['measures'][0]['value'] > dict_['warn_t']:
-            dict_['status'] = 'yellow-alert'
+            dict_['status']['cell'] = 'yellow-state'
         else:
-            dict_['status'] = 'normal'
+            #####dict_['status']['cell'] = 'green_state'
+            pass
         obj_.write_data(dict_)
     return output_obj_list
 
 
-def generate_rows(input_obj_list, row_template):
+def generate_html(input_obj_list, row_template, div_template):
     ''' Принимает список объектов класса SensorDataBlock и заполняет по шаблону
         табличные ячейки соответствующими значениями
     '''
-    output_str = ''
+    output_rows = ''
+    output_div = ''
     for obj_ in input_obj_list:
         dict_ = obj_.sensor_dict
         p_ = dict_['place']
         t_ = str(dict_['measures'][0]['value']).replace('.', ',')
         y_ = int(dict_['warn_t'])
         r_ = int(dict_['crit_t'])
-        s_ = dict_['status']
+        s_ = dict_['status']['cell']
         list_ = ctime(dict_['measures'][0]['timestamp']).split()
         m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
         row_ = T_(row_template)
-        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
+        output_rows += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
                                            status=s_, mtime=m_)
-    return output_str
+        if dict_['status']['code'][0] != 0:
+            d_ = dict_['status']['code'][1]
+            div_ = T_(div_template)
+            output_div += div_.safe_substitute(place=p_, problem=d_)
+
+    return output_rows, output_div
 
 
-def write_html(output_file, header_str, footer_str, rows=''):
+def write_html(output_file, header_str, mediate_str, footer_str, rows='', divs=''):
     ''' Записывает файл HTML для отдачи по HTTP. Использует записанные в configowen
         шаблоны HTML-кода и Template для заполнения строк таблицы.
     '''
     with open(output_file, 'w', encoding='utf-8') as o_:
-        o_.write(header_str + rows + footer_str)
+        o_.write(header_str + rows + mediate_str + divs + footer_str)
 
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    smb_result = get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN,
-                                   c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
-                                   c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
-                                   c_.DATA_PATH, c_.CFG_PATH)
+    #####smb_result = get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN,
+                                   #####c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
+                                   #####c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
+                                   #####c_.DATA_PATH, c_.CFG_PATH)
     current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT)
     current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
     current_obj_list = set_status(current_obj_list)
-    tab_rows = generate_rows(current_obj_list, c_.ROW_TEMPLATE)
-    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=tab_rows)
+    rows_, divs_ = generate_html(current_obj_list, c_.ROW_TEMPLATE, c_.DIV_TEMPLATE)
+    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_MEDIATE, c_.HTML_FOOTER,
+               rows=rows_, divs=divs_)
 
 ###########################################################################

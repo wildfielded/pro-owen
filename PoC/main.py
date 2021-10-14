@@ -171,12 +171,12 @@ def generate_rows(input_obj_list, row_template):
     return output_str
 
 
-def write_html(output_file, header_str, footer_str, rows=''):
+def write_html(output_file, header_str, mediate_str, footer_str, rows=''):
     ''' Записывает файл HTML для отдачи по HTTP. Использует записанные в configowen
         шаблоны HTML-кода и Template для заполнения строк таблицы.
     '''
     with open(output_file, 'w', encoding='utf-8') as o_:
-        o_.write(header_str + rows + footer_str)
+        o_.write(header_str + rows + mediate_str + footer_str)
 
 #####=====----- Собственно, сама программа -----=====#####
 
@@ -189,6 +189,6 @@ if __name__ == '__main__':
     current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
     current_obj_list = set_status(current_obj_list)
     tab_rows = generate_rows(current_obj_list, c_.ROW_TEMPLATE)
-    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=tab_rows)
+    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_MEDIATE, c_.HTML_FOOTER, rows=tab_rows)
 
 ###########################################################################

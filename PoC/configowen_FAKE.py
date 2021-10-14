@@ -66,10 +66,17 @@ ROW_TEMPLATE = '''                <TR>
                 </TR>
 '''
 
-HTML_FOOTER = '''            </TBODY>
+HTML_MEDIATE = '''            </TBODY>
         </TABLE>
     </MAIN>
     <FOOTER>
+        <DIV>
+'''
+
+DIV_TEMPLATE = '''            <P>Текущее состояние: $problem</P>
+'''
+
+HTML_FOOTER = '''        </DIV>
     </FOOTER>
     <SCRIPT SRC="script.js"></SCRIPT>
 </BODY>
