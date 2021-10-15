@@ -18,7 +18,7 @@ class SensorDataBlock:
             'status': {
                 'cell': 'green-state',
                 'code': 'no_error',
-                'desc': 'Нормальное состояние'
+                'desc': u'Нормальное состояние'
                 },
             'measures': [{'timestamp': 0., 'value': 0.},]
             }
@@ -107,13 +107,13 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
                 dict_['status'] = {
                     'cell': 'black-state',
                     'code': 'dead_min',
-                    'desc': 'Нет показаний датчика больше минуты'
+                    'desc': u'Нет показаний датчика больше минуты'
                     }
             else:
                 dict_['status'] = {
                     'cell': 'red-state',
                     'code': 'unknown_err',
-                    'desc': 'Неизвестная ошибка'
+                    'desc': u'Неизвестная ошибка'
                     }
         dict_['measures'] = [{'timestamp': t_, 'value': v_}]
         if len(input_obj_list) == 0:
@@ -157,29 +157,30 @@ def parse_lastcfg(last_cfg, input_obj_list: list = []):
 def set_status(input_obj_list):
     ''' Выставляет "status", который потом используется для индикации алертов
     '''
-    output_obj_list = input_obj_list
+    output_obj_list = input_obj_list.copy()
     for obj_ in output_obj_list:
         dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
         if dict_['status']['code'] not in ('dead_min', 'unknown_err'):
             if dict_['measures'][0]['value'] > dict_['crit_t']:
                 dict_['status']['cell'] = 'red-state'
                 dict_['status']['code'] = 'max2_over'
-                dict_['status']['desc'] = 'Критическое повышение температуры'
+                dict_['status']['desc'] = u'Критическое повышение температуры'
             elif dict_['measures'][0]['value'] > dict_['warn_t']:
                 dict_['status']['cell'] = 'yellow-state'
                 dict_['status']['code'] = 'max1_over'
-                dict_['status']['desc'] = 'Подозрительное повышение температуры'
+                dict_['status']['desc'] = u'Подозрительное повышение температуры'
             else:
                 #####dict_['status']['cell'] = 'green_state'
                 pass
-        obj_.write_data(dict_)
+        obj_.write_data({'status': dict_['status']})
     return output_obj_list
 
 
 def generate_html(input_obj_list, rows_template, diag_template):
     ''' Принимает список объектов класса SensorDataBlock и заполняет
-        соответствующими значениями по шаблонам табличные ячейки и строки
-        состояния помещений.
+        соответствующими значениями по шаблонам табличные ячейки и итоговое
+        состояние помещений, выводимое в одной или нескольких строках в конце
+        таблицы.
     '''
     output_rows = ''
     output_diag = ''
@@ -201,17 +202,17 @@ def generate_html(input_obj_list, rows_template, diag_template):
             output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
     if len(output_diag) == 0:
         output_diag = diag_.safe_substitute(status='green-state',
-                                          place='Все датчики',
-                                          state='Температура в норме')
-    return output_rows, output_diag
+                                          place=u'Все датчики',
+                                          state=u'Температура в норме')
+    return output_rows + output_diag
 
 
-def write_html(output_file, header_str, footer_str, rows='', diag=''):
+def write_html(output_file, header_str, footer_str, rows=''):
     ''' Записывает файл HTML для отдачи по HTTP. Использует записанные в configowen
         шаблоны HTML-кода и Template для заполнения строк таблицы.
     '''
     with open(output_file, 'w', encoding='utf-8') as o_:
-        o_.write(header_str + rows + diag + footer_str)
+        o_.write(header_str + rows + footer_str)
 
 #####=====----- Собственно, сама программа -----=====#####
 
@@ -220,10 +221,10 @@ if __name__ == '__main__':
                                    c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
                                    c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
                                    c_.DATA_PATH, c_.CFG_PATH)
-    current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT)
-    current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
+    current_obj_list = parse_lastcfg(c_.LAST_CFGFILE)
+    current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT, current_obj_list)
     current_obj_list = set_status(current_obj_list)
-    rows_, diag_ = generate_html(current_obj_list, c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE)
-    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=rows_, diag=diag_)
+    rows_ = generate_html(current_obj_list, c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE)
+    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=rows_)
 
 ###########################################################################
