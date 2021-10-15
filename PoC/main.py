@@ -15,7 +15,11 @@ class SensorDataBlock:
             'place': '',
             'warn_t': 0.,
             'crit_t': 0.,
-            'status': '',
+            'status': {
+                'cell': 'green-state',
+                'code': 'no_error',
+                'desc': 'Нормальное состояние'
+                },
             'measures': [{'timestamp': 0., 'value': 0.},]
             }
 
@@ -29,7 +33,7 @@ class SensorDataBlock:
         if 'crit_t' in data_dict.keys():
             self.sensor_dict['crit_t'] = data_dict['crit_t']
         if 'status' in data_dict.keys():
-            self.sensor_dict['status'] = data_dict['status']
+            self.sensor_dict['status'].update(data_dict['status'])
         if 'measures' in data_dict.keys():
             self.sensor_dict['measures'].insert(0, data_dict['measures'][0])
 
@@ -90,13 +94,28 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
     for line_ in data_list[1:]:
         n_ += 1
         list_ = line_.strip().split('\t')
-        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
-        v_ = float(list_[3].replace(',', '.'))
         dict_ = {
             'line_num': n_,
             'place': list_[2],
-            'measures': [{'timestamp': t_, 'value': v_},]
             }
+        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+        try:
+            v_ = float(list_[3].replace(',', '.'))
+        except:
+            v_ = -273.15
+            if list_[3].startswith('?'):
+                dict_['status'] = {
+                    'cell': 'black-state',
+                    'code': 'dead_min',
+                    'desc': 'Нет показаний датчика больше минуты'
+                    }
+            else:
+                dict_['status'] = {
+                    'cell': 'red-state',
+                    'code': 'unknown_err',
+                    'desc': 'Неизвестная ошибка'
+                    }
+        dict_['measures'] = [{'timestamp': t_, 'value': v_}]
         if len(input_obj_list) == 0:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
@@ -141,42 +160,58 @@ def set_status(input_obj_list):
     output_obj_list = input_obj_list
     for obj_ in output_obj_list:
         dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
-        if dict_['measures'][0]['value'] > dict_['crit_t']:
-            dict_['status'] = 'red-alert'
-        elif dict_['measures'][0]['value'] > dict_['warn_t']:
-            dict_['status'] = 'yellow-alert'
-        else:
-            dict_['status'] = 'normal'
+        if dict_['status']['code'] not in ('dead_min', 'unknown_err'):
+            if dict_['measures'][0]['value'] > dict_['crit_t']:
+                dict_['status']['cell'] = 'red-state'
+                dict_['status']['code'] = 'max2_over'
+                dict_['status']['desc'] = 'Критическое повышение температуры'
+            elif dict_['measures'][0]['value'] > dict_['warn_t']:
+                dict_['status']['cell'] = 'yellow-state'
+                dict_['status']['code'] = 'max1_over'
+                dict_['status']['desc'] = 'Подозрительное повышение температуры'
+            else:
+                #####dict_['status']['cell'] = 'green_state'
+                pass
         obj_.write_data(dict_)
     return output_obj_list
 
 
-def generate_rows(input_obj_list, row_template):
-    ''' Принимает список объектов класса SensorDataBlock и заполняет по шаблону
-        табличные ячейки соответствующими значениями
+def generate_html(input_obj_list, rows_template, diag_template):
+    ''' Принимает список объектов класса SensorDataBlock и заполняет
+        соответствующими значениями по шаблонам табличные ячейки и строки
+        состояния помещений.
     '''
-    output_str = ''
+    output_rows = ''
+    output_diag = ''
+    rows_ = T_(rows_template)
+    diag_ = T_(diag_template)
     for obj_ in input_obj_list:
         dict_ = obj_.sensor_dict
         p_ = dict_['place']
         t_ = str(dict_['measures'][0]['value']).replace('.', ',')
         y_ = int(dict_['warn_t'])
         r_ = int(dict_['crit_t'])
-        s_ = dict_['status']
+        s_ = dict_['status']['cell']
         list_ = ctime(dict_['measures'][0]['timestamp']).split()
         m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
-        row_ = T_(row_template)
-        output_str += row_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
+        output_rows += rows_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
                                            status=s_, mtime=m_)
-    return output_str
+        if dict_['status']['code'] != 'no_error':
+            d_ = dict_['status']['desc']
+            output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+    if len(output_diag) == 0:
+        output_diag = diag_.safe_substitute(status='green-state',
+                                          place='Все датчики',
+                                          state='Температура в норме')
+    return output_rows, output_diag
 
 
-def write_html(output_file, header_str, mediate_str, footer_str, rows=''):
+def write_html(output_file, header_str, footer_str, rows='', diag=''):
     ''' Записывает файл HTML для отдачи по HTTP. Использует записанные в configowen
         шаблоны HTML-кода и Template для заполнения строк таблицы.
     '''
     with open(output_file, 'w', encoding='utf-8') as o_:
-        o_.write(header_str + rows + mediate_str + footer_str)
+        o_.write(header_str + rows + diag + footer_str)
 
 #####=====----- Собственно, сама программа -----=====#####
 
@@ -188,7 +223,7 @@ if __name__ == '__main__':
     current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT)
     current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
     current_obj_list = set_status(current_obj_list)
-    tab_rows = generate_rows(current_obj_list, c_.ROW_TEMPLATE)
-    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_MEDIATE, c_.HTML_FOOTER, rows=tab_rows)
+    rows_, diag_ = generate_html(current_obj_list, c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE)
+    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=rows_, diag=diag_)
 
 ###########################################################################

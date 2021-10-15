@@ -66,18 +66,17 @@ ROW_TEMPLATE = '''                <TR>
                 </TR>
 '''
 
-HTML_MEDIATE = '''            </TBODY>
+DIAG_TEMPLATE = '''                <TR>
+                    <TD COLSPAN="6" class="$status">
+                        <SPAN>$place: $state</SPAN>
+                    </TD>
+                </TR>
+'''
+
+HTML_FOOTER = '''            </TBODY>
         </TABLE>
     </MAIN>
-    <FOOTER>
-        <DIV>
-'''
-
-DIV_TEMPLATE = '''            <P>Текущее состояние: $problem</P>
-'''
-
-HTML_FOOTER = '''        </DIV>
-    </FOOTER>
+    <FOOTER></FOOTER>
     <SCRIPT SRC="script.js"></SCRIPT>
 </BODY>
 </HTML>'''
