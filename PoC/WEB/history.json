@@ -1,0 +1,458 @@
+[
+  {
+    "line_num": 1,
+    "place": "Серверная № 2",
+    "warn_t": 25.0,
+    "crit_t": 35.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 20.8
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 21.0
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 21.0
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.9
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.9
+      }
+    ]
+  },
+  {
+    "line_num": 2,
+    "place": "Серверная № 1",
+    "warn_t": 25.0,
+    "crit_t": 35.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 17.5
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 17.5
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 17.4
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 17.5
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 17.5
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 17.6
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 18.5
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 18.5
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 18.5
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 18.5
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 18.5
+      }
+    ]
+  },
+  {
+    "line_num": 3,
+    "place": "Аппаратная №1",
+    "warn_t": 25.0,
+    "crit_t": 30.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      }
+    ]
+  },
+  {
+    "line_num": 4,
+    "place": "ТЭ датчик № 1",
+    "warn_t": 40.0,
+    "crit_t": 60.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 23.5
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 23.5
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 23.5
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 23.6
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.3
+      }
+    ]
+  },
+  {
+    "line_num": 5,
+    "place": "СГЭ",
+    "warn_t": 38.0,
+    "crit_t": 48.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 19.2
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 19.2
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 19.5
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 19.7
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 19.8
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 19.9
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.0
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.0
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.0
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.0
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.0
+      }
+    ]
+  },
+  {
+    "line_num": 6,
+    "place": "ДГУ",
+    "warn_t": 45.0,
+    "crit_t": 60.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 22.6
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 22.6
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 22.5
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 22.6
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 22.6
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 22.5
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 21.6
+      }
+    ]
+  },
+  {
+    "line_num": 7,
+    "place": "Техн.помещ. ДП",
+    "warn_t": 25.0,
+    "crit_t": 35.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 19.0
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 18.9
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 18.9
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 20.4
+      }
+    ]
+  },
+  {
+    "line_num": 8,
+    "place": "ДП (Дисп.пункт)",
+    "warn_t": 28.0,
+    "crit_t": 35.0,
+    "status": {
+      "cell": "green-state",
+      "code": "no_error",
+      "desc": "Нормальное состояние"
+    },
+    "measures": [
+      {
+        "timestamp": 1634395420.0,
+        "value": 24.2
+      },
+      {
+        "timestamp": 1634395420.0,
+        "value": 24.2
+      },
+      {
+        "timestamp": 1634395294.0,
+        "value": 24.3
+      },
+      {
+        "timestamp": 1634395273.0,
+        "value": 24.3
+      },
+      {
+        "timestamp": 1634395252.0,
+        "value": 24.3
+      },
+      {
+        "timestamp": 1634395105.0,
+        "value": 24.3
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 23.2
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 23.2
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 23.2
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 23.2
+      },
+      {
+        "timestamp": 1634287489.0,
+        "value": 23.2
+      }
+    ]
+  }
+]

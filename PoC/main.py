@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import configowen as c_
+import json
 from time import ctime, mktime, strptime, time
 from string import Template as T_
 from smb.SMBConnection import SMBConnection
@@ -35,7 +36,7 @@ class SensorDataBlock:
         if 'status' in data_dict.keys():
             self.sensor_dict['status'].update(data_dict['status'])
         if 'measures' in data_dict.keys():
-            self.sensor_dict['measures'].insert(0, data_dict['measures'][0])
+            self.sensor_dict['measures'] = data_dict['measures'] + self.sensor_dict['measures']
 
     def read_data(self, keys_list: list = []):
         output_dict = {}
@@ -214,6 +215,32 @@ def write_html(output_file, header_str, footer_str, rows=''):
     with open(output_file, 'w', encoding='utf-8') as o_:
         o_.write(header_str + rows + footer_str)
 
+
+def read_json(json_file):
+    output_obj_list = []
+    try:
+        with open(json_file, 'r', encoding='utf-8') as f_:
+            history_list = json.load(f_)
+        for dict_ in history_list:
+            sensor_obj = SensorDataBlock()
+            sensor_obj.write_data(dict_)
+            output_obj_list.append(sensor_obj)
+    except:
+        #####!!!!! Заглушка. Нужен обработчик.
+        pass
+    return output_obj_list
+
+
+def write_json(json_file, history_limit, input_obj_list):
+    output_obj_list = []
+    for obj_ in input_obj_list:
+        for m_ in obj_.sensor_dict['measures'][-1::-1]:
+            if m_['timestamp'] < time() - history_limit:
+                obj_.sensor_dict['measures'].pop()
+        output_obj_list.append(obj_.sensor_dict)
+    with open(json_file, 'w', encoding='utf-8') as f_:
+        json.dump(output_obj_list, f_, ensure_ascii=False, indent=2, sort_keys=False)
+
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
@@ -221,10 +248,12 @@ if __name__ == '__main__':
                                    c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
                                    c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
                                    c_.DATA_PATH, c_.CFG_PATH)
-    current_obj_list = parse_lastcfg(c_.LAST_CFGFILE)
+    current_obj_list = read_json(c_.JSON_FILE)
+    current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
     current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT, current_obj_list)
     current_obj_list = set_status(current_obj_list)
     rows_ = generate_html(current_obj_list, c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE)
     write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=rows_)
+    write_json(c_.JSON_FILE, c_.HISTORY_LIMIT, current_obj_list)
 
 ###########################################################################
