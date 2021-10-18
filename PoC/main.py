@@ -25,24 +25,25 @@ class SensorDataBlock:
             }
 
     def write_data(self, data_dict: dict = {}):
-        if 'line_num' in data_dict.keys():
+        keys_ = data_dict.keys()
+        if 'line_num' in keys_:
             self.sensor_dict['line_num'] = data_dict['line_num']
-        if 'place' in data_dict.keys():
+        if 'place' in keys_:
             self.sensor_dict['place'] = data_dict['place']
-        if 'warn_t' in data_dict.keys():
+        if 'warn_t' in keys_:
             self.sensor_dict['warn_t'] = data_dict['warn_t']
-        if 'crit_t' in data_dict.keys():
+        if 'crit_t' in keys_:
             self.sensor_dict['crit_t'] = data_dict['crit_t']
-        if 'status' in data_dict.keys():
+        if 'status' in keys_:
             self.sensor_dict['status'].update(data_dict['status'])
-        if 'measures' in data_dict.keys():
+        if 'measures' in keys_:
             self.sensor_dict['measures'] = data_dict['measures'] + self.sensor_dict['measures']
 
     def read_data(self, keys_list: list = []):
         output_dict = {}
-        for k_ in keys_list:
-            if k_ in self.sensor_dict.keys():
-                output_dict[k_] = self.sensor_dict[k_]
+        for key_ in keys_list:
+            if key_ in self.sensor_dict.keys():
+                output_dict[key_] = self.sensor_dict[key_]
         return output_dict
 
     def read_one(self, key_str):

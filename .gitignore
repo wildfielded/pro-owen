@@ -2,4 +2,5 @@ __pycache__/
 *.ipynb
 .ipynb_checkpoints/
 /PoC/configowen.py
+main.py_BAK
 test.py

@@ -88,7 +88,7 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
         некоторой валидацией данных и дополняет текущий (или создаёт новый)
         список объектов класса SensorDataBlock
     '''
-    with open(last_file, 'r', encoding='cp1251') as f_:
+    with open(last_file, 'r', encoding='utf-8') as f_:
         data_list = f_.readlines()
     output_obj_list = input_obj_list.copy()
     n_ = 0
@@ -131,7 +131,7 @@ def parse_lastcfg(last_cfg, input_obj_list: list = []):
         датчику с некоторой валидацией данных и дополняет текущий (или создаёт
         новый) список объектов класса SensorDataBlock
     '''
-    with open(last_cfg, 'r', encoding='cp1251') as f_:
+    with open(last_cfg, 'r', encoding='utf-8') as f_:
         cfg_list = f_.readlines()
     output_obj_list = input_obj_list.copy()
     n_ = 0
