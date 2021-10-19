@@ -11,16 +11,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
-        "value": 18.7
+        "timestamp": 1634632872.0,
+        "value": 21.8
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 18.7
+        "timestamp": 1634632830.0,
+        "value": 21.9
       },
       {
-        "timestamp": 1634625968.0,
-        "value": 18.5
+        "timestamp": 1634632788.0,
+        "value": 21.8
       }
     ]
   },
@@ -36,16 +36,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
-        "value": 19.4
+        "timestamp": 1634632872.0,
+        "value": 18.0
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 17.9
+        "timestamp": 1634632830.0,
+        "value": 18.1
       },
       {
-        "timestamp": 1634625968.0,
-        "value": 18.3
+        "timestamp": 1634632788.0,
+        "value": 18.1
       }
     ]
   },
@@ -61,16 +61,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
-        "value": 21.0
+        "timestamp": 1634632872.0,
+        "value": 20.4
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 20.9
+        "timestamp": 1634632830.0,
+        "value": 20.5
       },
       {
-        "timestamp": 1634625968.0,
-        "value": 20.9
+        "timestamp": 1634632788.0,
+        "value": 20.5
       }
     ]
   },
@@ -86,16 +86,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
+        "timestamp": 1634632872.0,
         "value": 25.0
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 25.7
+        "timestamp": 1634632830.0,
+        "value": 25.0
       },
       {
-        "timestamp": 1634625968.0,
-        "value": 24.7
+        "timestamp": 1634632788.0,
+        "value": 24.9
       }
     ]
   },
@@ -111,15 +111,15 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
-        "value": 19.8
+        "timestamp": 1634632872.0,
+        "value": 20.6
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 20.0
+        "timestamp": 1634632830.0,
+        "value": 20.4
       },
       {
-        "timestamp": 1634625968.0,
+        "timestamp": 1634632788.0,
         "value": 20.2
       }
     ]
@@ -136,16 +136,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
-        "value": 24.1
+        "timestamp": 1634632872.0,
+        "value": 23.8
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 24.1
+        "timestamp": 1634632830.0,
+        "value": 23.8
       },
       {
-        "timestamp": 1634625968.0,
-        "value": 24.6
+        "timestamp": 1634632788.0,
+        "value": 23.8
       }
     ]
   },
@@ -161,16 +161,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
-        "value": 20.1
-      },
-      {
-        "timestamp": 1634627943.0,
-        "value": 20.5
-      },
-      {
-        "timestamp": 1634625968.0,
+        "timestamp": 1634632872.0,
         "value": 19.9
+      },
+      {
+        "timestamp": 1634632830.0,
+        "value": 19.5
+      },
+      {
+        "timestamp": 1634632788.0,
+        "value": 19.2
       }
     ]
   },
@@ -186,16 +186,16 @@
     },
     "measures": [
       {
-        "timestamp": 1634628132.0,
+        "timestamp": 1634632872.0,
         "value": 23.7
       },
       {
-        "timestamp": 1634627943.0,
-        "value": 23.6
+        "timestamp": 1634632830.0,
+        "value": 23.7
       },
       {
-        "timestamp": 1634625968.0,
-        "value": 23.6
+        "timestamp": 1634632788.0,
+        "value": 23.7
       }
     ]
   }
