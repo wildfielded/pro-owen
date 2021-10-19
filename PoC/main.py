@@ -12,22 +12,22 @@ class SensorDataBlock:
     '''
     def __init__(self):
         self.sensor_dict = {
-            'line_num': 0,
+            'sen_num': 0,
             'place': '',
-            'warn_t': 0.,
-            'crit_t': 0.,
+            'warn_t': 0.0,
+            'crit_t': 0.0,
             'status': {
                 'cell': 'green-state',
                 'code': 'no_error',
                 'desc': u'Нормальное состояние'
                 },
-            'measures': [{'timestamp': 0., 'value': 0.},]
+            'measures': [{'timestamp': 0.0, 'value': 0.0},]
             }
 
     def write_data(self, data_dict: dict = {}):
         keys_ = data_dict.keys()
-        if 'line_num' in keys_:
-            self.sensor_dict['line_num'] = data_dict['line_num']
+        if 'sen_num' in keys_:
+            self.sensor_dict['sen_num'] = data_dict['sen_num']
         if 'place' in keys_:
             self.sensor_dict['place'] = data_dict['place']
         if 'warn_t' in keys_:
@@ -57,8 +57,9 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
                       client, server, addr, port, share, data_path, cfg_path):
     ''' Забирает файл с последними измерениями и на всякий случай (если есть)
         текущий файл с пороговыми значениями с сервера OWEN и записывает себе
-        локально. Проверяет свежесть файла с измерениями (если старше минуты,
-        возвращает соответстующую строку).
+        локально. Проверяет наличие и свежесть файла с измерениями (чтобы не
+        старше двух минут), иначе возвращает соответственно строку "ERR_missing_data"
+        или "ERR_rancid_data".
     '''
     with SMBConnection(login, passwd, client, server, domain,
                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
@@ -66,14 +67,14 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
 
         check_list_ = s_.listPath(share, '/', pattern=data_path)
         if len(check_list_) == 1:
-            if check_list_[0].last_write_time > (time() - 60.):
+            if check_list_[0].last_write_time > (time() - 120.0):
                 result_ = 'fresh_data'
                 with open(output_datafile, 'wb') as f_:
                     s_.retrieveFile(share, data_path, f_)
             else:
-                result_ = 'rancid_data'
+                result_ = 'ERR_rancid_data'
         else:
-            result_ = 'missing_data'
+            result_ = 'ERR_missing_data'
 
         check_list_ = s_.listPath(share, '/', pattern=cfg_path)
         if len(check_list_) == 1:
@@ -82,49 +83,6 @@ def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
 
         s_.close()
     return result_
-
-
-def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
-    ''' Парсит данные из загруженного файла с измерениями по каждому датчику с
-        некоторой валидацией данных и дополняет текущий (или создаёт новый)
-        список объектов класса SensorDataBlock
-    '''
-    with open(last_file, 'r', encoding='utf-8') as f_:
-        data_list = f_.readlines()
-    output_obj_list = input_obj_list.copy()
-    n_ = 0
-    for line_ in data_list[1:]:
-        n_ += 1
-        list_ = line_.strip().split('\t')
-        dict_ = {
-            'line_num': n_,
-            'place': list_[2],
-            }
-        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
-        try:
-            v_ = float(list_[3].replace(',', '.'))
-        except:
-            v_ = -273.15
-            if list_[3].startswith('?'):
-                dict_['status'] = {
-                    'cell': 'black-state',
-                    'code': 'dead_min',
-                    'desc': u'Нет показаний датчика больше минуты'
-                    }
-            else:
-                dict_['status'] = {
-                    'cell': 'red-state',
-                    'code': 'unknown_err',
-                    'desc': u'Неизвестная ошибка'
-                    }
-        dict_['measures'] = [{'timestamp': t_, 'value': v_}]
-        if len(input_obj_list) == 0:
-            sensor_obj = SensorDataBlock()
-            sensor_obj.write_data(dict_)
-            output_obj_list.append(sensor_obj)
-        else:
-            output_obj_list[n_ - 1].write_data(dict_)
-    return output_obj_list
 
 
 def parse_lastcfg(last_cfg, input_obj_list: list = []):
@@ -140,7 +98,7 @@ def parse_lastcfg(last_cfg, input_obj_list: list = []):
         n_ += 1
         list_ = line_.strip().split('\t')
         dict_ = {
-            'line_num': n_,
+            'sen_num': n_,
             'place': list_[0],
             'warn_t': float(list_[1]),
             'crit_t': float(list_[2])
@@ -150,8 +108,56 @@ def parse_lastcfg(last_cfg, input_obj_list: list = []):
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
         else:
-            #####if output_obj_list[n_ - 1].read_one('place') == dict_['place'] and output_obj_list[n_ - 1].read_one('line_num') == dict_['line_num']:
+            #####if output_obj_list[n_ - 1].read_one('place') == dict_['place'] and output_obj_list[n_ - 1].read_one('sen_num') == dict_['sen_num']:
                 #####pass
+            output_obj_list[n_ - 1].write_data(dict_)
+    return output_obj_list
+
+
+def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
+    ''' Парсит данные из загруженного файла с измерениями по каждому датчику с
+        некоторой валидацией данных и дополняет текущий (или создаёт новый)
+        список объектов класса SensorDataBlock
+    '''
+    with open(last_file, 'r', encoding='utf-8') as f_:
+        data_list = f_.readlines()
+    output_obj_list = input_obj_list.copy()
+    n_ = 0
+    for line_ in data_list[1:]:
+        n_ += 1
+        list_ = line_.strip().split('\t')
+        dict_ = {
+            'sen_num': n_,
+            'place': list_[2],
+            }
+        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+        try:
+            v_ = float(list_[3].strip().replace(',', '.'))
+            dict_['status'] = {
+                'cell': 'green-state',
+                'code': 'no_error',
+                'desc': u'Нормальное состояние'
+                }
+        except:
+            v_ = -273.15
+            if list_[3].strip().startswith('?'):
+                dict_['status'] = {
+                    'cell': 'black-state',
+                    'code': 'ERR_dead_quest',
+                    'desc': u'Нет показаний датчика больше минуты'
+                    }
+            else:
+                dict_['status'] = {
+                    'cell': 'red-state',
+                    'code': 'ERR_unknown',
+                    'desc': u'Неизвестная ошибка'
+                    }
+        dict_['measures'] = [{'timestamp': t_, 'value': v_}]
+        if len(input_obj_list) == 0:
+            sensor_obj = SensorDataBlock()
+            sensor_obj.write_data(dict_)
+            output_obj_list.append(sensor_obj)
+        else:
             output_obj_list[n_ - 1].write_data(dict_)
     return output_obj_list
 
@@ -162,7 +168,11 @@ def set_status(input_obj_list):
     output_obj_list = input_obj_list.copy()
     for obj_ in output_obj_list:
         dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
-        if dict_['status']['code'] not in ('dead_min', 'unknown_err'):
+        if dict_['status']['code'] == 'ERR_dead_quest':
+            dict_['measures'][0]['value'] = '???'
+        elif dict_['status']['code'] == 'ERR_unknown':
+            dict_['measures'][0]['value'] = '!!!'
+        else:
             if dict_['measures'][0]['value'] > dict_['crit_t']:
                 dict_['status']['cell'] = 'red-state'
                 dict_['status']['code'] = 'max2_over'
@@ -178,7 +188,7 @@ def set_status(input_obj_list):
     return output_obj_list
 
 
-def generate_html(input_obj_list, rows_template, diag_template):
+def generate_html(rows_template, diag_template, input_obj_list: list = [], smb_result=''):
     ''' Принимает список объектов класса SensorDataBlock и заполняет
         соответствующими значениями по шаблонам табличные ячейки и итоговое
         состояние помещений, выводимое в одной или нескольких строках в конце
@@ -188,20 +198,29 @@ def generate_html(input_obj_list, rows_template, diag_template):
     output_diag = ''
     rows_ = T_(rows_template)
     diag_ = T_(diag_template)
-    for obj_ in input_obj_list:
-        dict_ = obj_.sensor_dict
-        p_ = dict_['place']
-        t_ = str(dict_['measures'][0]['value']).replace('.', ',')
-        y_ = int(dict_['warn_t'])
-        r_ = int(dict_['crit_t'])
-        s_ = dict_['status']['cell']
-        list_ = ctime(dict_['measures'][0]['timestamp']).split()
-        m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
-        output_rows += rows_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
-                                           status=s_, mtime=m_)
-        if dict_['status']['code'] != 'no_error':
-            d_ = dict_['status']['desc']
-            output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+    if smb_result == 'fresh_data':
+        for obj_ in input_obj_list:
+            dict_ = obj_.sensor_dict
+            p_ = dict_['place']
+            t_ = str(dict_['measures'][0]['value']).replace('.', ',')
+            y_ = int(dict_['warn_t'])
+            r_ = int(dict_['crit_t'])
+            s_ = dict_['status']['cell']
+            list_ = ctime(dict_['measures'][0]['timestamp']).split()
+            m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
+            output_rows += rows_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
+                                               status=s_, mtime=m_)
+            if dict_['status']['code'] != 'no_error':
+                d_ = dict_['status']['desc']
+                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+    elif smb_result == 'ERR_rancid_data':
+        output_diag = diag_.safe_substitute(status='red-state',
+                                          place=u'OWEN',
+                                          state=u'Данные не обновлялись больше двух минут.\nПрограммный сбой на сервере OWEN.')
+    elif smb_result == 'ERR_missing_data':
+        output_diag = diag_.safe_substitute(status='red-state',
+                                          place=u'OWEN',
+                                          state=u'Файл с данными отсутствует на сервере OWEN.')
     if len(output_diag) == 0:
         output_diag = diag_.safe_substitute(status='green-state',
                                           place=u'Все датчики',
@@ -218,6 +237,9 @@ def write_html(output_file, header_str, footer_str, rows=''):
 
 
 def read_json(json_file):
+    ''' Считывает файл с историческими данными в формате JSON и создаёт на их
+        основе список объектов класса SensorDataBlock
+    '''
     output_obj_list = []
     try:
         with open(json_file, 'r', encoding='utf-8') as f_:
@@ -233,6 +255,8 @@ def read_json(json_file):
 
 
 def write_json(json_file, history_limit, input_obj_list):
+    ''' Записывает в файл обновлённые исторические данные в формате JSON
+    '''
     output_obj_list = []
     for obj_ in input_obj_list:
         for m_ in obj_.sensor_dict['measures'][-1::-1]:
@@ -245,16 +269,19 @@ def write_json(json_file, history_limit, input_obj_list):
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    smb_result = get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN,
+    get_result = get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN,
                                    c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
                                    c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
                                    c_.DATA_PATH, c_.CFG_PATH)
-    current_obj_list = read_json(c_.JSON_FILE)
-    current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
-    current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT, current_obj_list)
-    current_obj_list = set_status(current_obj_list)
-    rows_ = generate_html(current_obj_list, c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE)
+    if get_result == 'fresh_data':
+        current_obj_list = read_json(c_.JSON_FILE)
+        current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
+        current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT, current_obj_list)
+        current_obj_list = set_status(current_obj_list)
+        rows_ = generate_html(c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE, current_obj_list, smb_result=get_result)
+        write_json(c_.JSON_FILE, c_.HISTORY_LIMIT, current_obj_list)
+    else:
+        rows_ = generate_html(c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE, smb_result=get_result)
     write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=rows_)
-    write_json(c_.JSON_FILE, c_.HISTORY_LIMIT, current_obj_list)
 
 ###########################################################################
