@@ -9,6 +9,7 @@
 '''
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
+##### Директория WEB-сервера для размещения HTML
 WWW_DIR = '../../../var/www/html/owen/'
 ##### Добавки путей к нужным файлам
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'

@@ -89,8 +89,12 @@ def parse_lastcfg(input_obj_list: list = []):
         датчику с некоторой валидацией данных и дополняет текущий (или создаёт
         новый) список объектов класса SensorDataBlock
     '''
-    with open(c_.LAST_CFGFILE, 'r', encoding='utf-8') as f_:
-        cfg_list = f_.readlines()
+    try:
+        with open(c_.LAST_CFGFILE, 'r', encoding='utf-8') as f_:
+            cfg_list = f_.readlines()
+    except UnicodeDecodeError:
+        with open(c_.LAST_CFGFILE, 'r', encoding='cp1251') as f_:
+            cfg_list = f_.readlines()
     output_obj_list = input_obj_list.copy()
     n_ = 0
     for line_ in cfg_list[1:]:
@@ -118,8 +122,12 @@ def parse_lastdata(input_obj_list: list = []):
         некоторой валидацией данных и дополняет текущий (или создаёт новый)
         список объектов класса SensorDataBlock
     '''
-    with open(c_.LAST_DATAFILE, 'r', encoding='utf-8') as f_:
-        data_list = f_.readlines()
+    try:
+        with open(c_.LAST_DATAFILE, 'r', encoding='utf-8') as f_:
+            data_list = f_.readlines()
+    except UnicodeDecodeError:
+        with open(c_.LAST_DATAFILE, 'r', encoding='cp1251') as f_:
+            data_list = f_.readlines()
     output_obj_list = input_obj_list.copy()
     n_ = 0
     for line_ in data_list[1:]:
