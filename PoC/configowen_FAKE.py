@@ -9,11 +9,12 @@
 '''
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
+WWW_DIR = '../../../var/www/html/owen/'
 ##### Добавки путей к нужным файлам
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
-HTML_OUTPUT = PROJECT_DIR + 'PoC/WEB/index.html'
-JSON_FILE = PROJECT_DIR + 'PoC/WEB/history.json'
+JSON_FILE = WWW_DIR + 'history.json'
+HTML_OUTPUT = WWW_DIR + 'index.html'
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
 PASSWD = 'password123'

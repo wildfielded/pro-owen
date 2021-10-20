@@ -3,7 +3,7 @@
 import configowen as c_
 import json
 from time import ctime, mktime, strptime, time
-from string import Template as T_
+from string import Template
 from smb.SMBConnection import SMBConnection
 
 class SensorDataBlock:
@@ -53,44 +53,43 @@ class SensorDataBlock:
 
 #####=====----- Функции -----=====#####
 
-def get_current_files(output_datafile, output_cfgfile, login, passwd, domain,
-                      client, server, addr, port, share, data_path, cfg_path):
+def get_current_files():
     ''' Забирает файл с последними измерениями и на всякий случай (если есть)
         текущий файл с пороговыми значениями с сервера OWEN и записывает себе
         локально. Проверяет наличие и свежесть файла с измерениями (чтобы не
         старше двух минут), иначе возвращает соответственно строку "ERR_missing_data"
         или "ERR_rancid_data".
     '''
-    with SMBConnection(login, passwd, client, server, domain,
+    with SMBConnection(c_.LOGIN, c_.PASSWD, c_.CLI_NAME, c_.SRV_NAME, c_.DOMAIN,
                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
-        s_.connect(addr, port)
+        s_.connect(c_.SRV_IP, c_.SRV_PORT)
 
-        check_list_ = s_.listPath(share, '/', pattern=data_path)
+        check_list_ = s_.listPath(c_.SHARE_NAME, '/', pattern=c_.DATA_PATH)
         if len(check_list_) == 1:
             if check_list_[0].last_write_time > (time() - 120.0):
                 result_ = 'fresh_data'
-                with open(output_datafile, 'wb') as f_:
-                    s_.retrieveFile(share, data_path, f_)
+                with open(c_.LAST_DATAFILE, 'wb') as f_:
+                    s_.retrieveFile(c_.SHARE_NAME, c_.DATA_PATH, f_)
             else:
                 result_ = 'ERR_rancid_data'
         else:
             result_ = 'ERR_missing_data'
 
-        check_list_ = s_.listPath(share, '/', pattern=cfg_path)
+        check_list_ = s_.listPath(c_.SHARE_NAME, '/', pattern=c_.CFG_PATH)
         if len(check_list_) == 1:
-            with open(output_cfgfile, 'wb') as g_:
-                s_.retrieveFile(share, cfg_path, g_)
+            with open(c_.LAST_CFGFILE, 'wb') as g_:
+                s_.retrieveFile(c_.SHARE_NAME, c_.CFG_PATH, g_)
 
         s_.close()
     return result_
 
 
-def parse_lastcfg(last_cfg, input_obj_list: list = []):
+def parse_lastcfg(input_obj_list: list = []):
     ''' Парсит данные из загруженного файла с пороговыми значениями по каждому
         датчику с некоторой валидацией данных и дополняет текущий (или создаёт
         новый) список объектов класса SensorDataBlock
     '''
-    with open(last_cfg, 'r', encoding='utf-8') as f_:
+    with open(c_.LAST_CFGFILE, 'r', encoding='utf-8') as f_:
         cfg_list = f_.readlines()
     output_obj_list = input_obj_list.copy()
     n_ = 0
@@ -114,12 +113,12 @@ def parse_lastcfg(last_cfg, input_obj_list: list = []):
     return output_obj_list
 
 
-def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
+def parse_lastdata(input_obj_list: list = []):
     ''' Парсит данные из загруженного файла с измерениями по каждому датчику с
         некоторой валидацией данных и дополняет текущий (или создаёт новый)
         список объектов класса SensorDataBlock
     '''
-    with open(last_file, 'r', encoding='utf-8') as f_:
+    with open(c_.LAST_DATAFILE, 'r', encoding='utf-8') as f_:
         data_list = f_.readlines()
     output_obj_list = input_obj_list.copy()
     n_ = 0
@@ -130,9 +129,9 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
             'sen_num': n_,
             'place': list_[2],
             }
-        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + tz_shift
+        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
         try:
-            v_ = float(list_[3].strip().replace(',', '.'))
+            v_ = float(list_[3].replace(',', '.'))
             dict_['status'] = {
                 'cell': 'green-state',
                 'code': 'no_error',
@@ -140,7 +139,7 @@ def parse_lastdata(last_file, tz_shift, input_obj_list: list = []):
                 }
         except:
             v_ = -273.15
-            if list_[3].strip().startswith('?'):
+            if '?' in list_[3]:
                 dict_['status'] = {
                     'cell': 'black-state',
                     'code': 'ERR_dead_quest',
@@ -188,7 +187,7 @@ def set_status(input_obj_list):
     return output_obj_list
 
 
-def generate_html(rows_template, diag_template, input_obj_list: list = [], smb_result=''):
+def generate_html(input_obj_list: list = [], smb_result=''):
     ''' Принимает список объектов класса SensorDataBlock и заполняет
         соответствующими значениями по шаблонам табличные ячейки и итоговое
         состояние помещений, выводимое в одной или нескольких строках в конце
@@ -196,8 +195,8 @@ def generate_html(rows_template, diag_template, input_obj_list: list = [], smb_r
     '''
     output_rows = ''
     output_diag = ''
-    rows_ = T_(rows_template)
-    diag_ = T_(diag_template)
+    rows_ = Template(c_.ROW_TEMPLATE)
+    diag_ = Template(c_.DIAG_TEMPLATE)
     if smb_result == 'fresh_data':
         for obj_ in input_obj_list:
             dict_ = obj_.sensor_dict
@@ -228,21 +227,21 @@ def generate_html(rows_template, diag_template, input_obj_list: list = [], smb_r
     return output_rows + output_diag
 
 
-def write_html(output_file, header_str, footer_str, rows=''):
+def write_html(rows=''):
     ''' Записывает файл HTML для отдачи по HTTP. Использует записанные в configowen
         шаблоны HTML-кода и Template для заполнения строк таблицы.
     '''
-    with open(output_file, 'w', encoding='utf-8') as o_:
-        o_.write(header_str + rows + footer_str)
+    with open(c_.HTML_OUTPUT, 'w', encoding='utf-8') as o_:
+        o_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
 
 
-def read_json(json_file):
+def read_json():
     ''' Считывает файл с историческими данными в формате JSON и создаёт на их
         основе список объектов класса SensorDataBlock
     '''
     output_obj_list = []
     try:
-        with open(json_file, 'r', encoding='utf-8') as f_:
+        with open(c_.JSON_FILE, 'r', encoding='utf-8') as f_:
             history_list = json.load(f_)
         for dict_ in history_list:
             sensor_obj = SensorDataBlock()
@@ -254,34 +253,31 @@ def read_json(json_file):
     return output_obj_list
 
 
-def write_json(json_file, history_limit, input_obj_list):
+def write_json(input_obj_list):
     ''' Записывает в файл обновлённые исторические данные в формате JSON
     '''
     output_obj_list = []
     for obj_ in input_obj_list:
         for m_ in obj_.sensor_dict['measures'][-1::-1]:
-            if m_['timestamp'] < time() - history_limit:
+            if m_['timestamp'] < time() - c_.HISTORY_LIMIT:
                 obj_.sensor_dict['measures'].pop()
         output_obj_list.append(obj_.sensor_dict)
-    with open(json_file, 'w', encoding='utf-8') as f_:
-        json.dump(output_obj_list, f_, ensure_ascii=False, indent=2, sort_keys=False)
+    with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
+        json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
 
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    get_result = get_current_files(c_.LAST_DATAFILE, c_.LAST_CFGFILE, c_.LOGIN,
-                                   c_.PASSWD, c_.DOMAIN, c_.CLI_NAME, c_.SRV_NAME,
-                                   c_.SRV_IP, c_.SRV_PORT, c_.SHARE_NAME,
-                                   c_.DATA_PATH, c_.CFG_PATH)
+    get_result = get_current_files()
     if get_result == 'fresh_data':
-        current_obj_list = read_json(c_.JSON_FILE)
-        current_obj_list = parse_lastcfg(c_.LAST_CFGFILE, current_obj_list)
-        current_obj_list = parse_lastdata(c_.LAST_DATAFILE, c_.TZ_SHIFT, current_obj_list)
+        current_obj_list = read_json()
+        current_obj_list = parse_lastcfg(current_obj_list)
+        current_obj_list = parse_lastdata(current_obj_list)
         current_obj_list = set_status(current_obj_list)
-        rows_ = generate_html(c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE, current_obj_list, smb_result=get_result)
-        write_json(c_.JSON_FILE, c_.HISTORY_LIMIT, current_obj_list)
+        rows_ = generate_html(current_obj_list, smb_result=get_result)
+        write_json(current_obj_list)
     else:
-        rows_ = generate_html(c_.ROW_TEMPLATE, c_.DIAG_TEMPLATE, smb_result=get_result)
-    write_html(c_.HTML_OUTPUT, c_.HTML_HEADER, c_.HTML_FOOTER, rows=rows_)
+        rows_ = generate_html(smb_result=get_result)
+    write_html(rows=rows_)
 
 ###########################################################################
