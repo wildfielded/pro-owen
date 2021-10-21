@@ -4,3 +4,4 @@ __pycache__/
 /PoC/configowen.py
 test.py
 main.py_BAK
+*.png

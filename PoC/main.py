@@ -2,6 +2,7 @@
 
 import configowen as c_
 import json
+import png
 from time import ctime, mktime, strptime, time
 from string import Template
 from smb.SMBConnection import SMBConnection
@@ -208,6 +209,7 @@ def generate_html(input_obj_list: list = [], smb_result=''):
     if smb_result == 'fresh_data':
         for obj_ in input_obj_list:
             dict_ = obj_.sensor_dict
+            n_ = str(dict_['sen_num'])
             p_ = dict_['place']
             t_ = str(dict_['measures'][0]['value']).replace('.', ',')
             y_ = int(dict_['warn_t'])
@@ -215,23 +217,23 @@ def generate_html(input_obj_list: list = [], smb_result=''):
             s_ = dict_['status']['cell']
             list_ = ctime(dict_['measures'][0]['timestamp']).split()
             m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
-            output_rows += rows_.safe_substitute(place=p_, temp=t_, max1=y_, max2=r_,
-                                               status=s_, mtime=m_)
+            output_rows += rows_.safe_substitute(number=n_, place=p_, temp=t_,
+                                                 max1=y_, max2=r_, status=s_, mtime=m_)
             if dict_['status']['code'] != 'no_error':
                 d_ = dict_['status']['desc']
                 output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
     elif smb_result == 'ERR_rancid_data':
         output_diag = diag_.safe_substitute(status='red-state',
-                                          place=u'OWEN',
-                                          state=u'Данные не обновлялись больше двух минут.\nПрограммный сбой на сервере OWEN.')
+                                            place=u'OWEN',
+                                            state=u'Данные не обновлялись больше двух минут.\nПрограммный сбой на сервере OWEN.')
     elif smb_result == 'ERR_missing_data':
         output_diag = diag_.safe_substitute(status='red-state',
-                                          place=u'OWEN',
-                                          state=u'Файл с данными отсутствует на сервере OWEN.')
+                                            place=u'OWEN',
+                                            state=u'Файл с данными отсутствует на сервере OWEN.')
     if len(output_diag) == 0:
         output_diag = diag_.safe_substitute(status='green-state',
-                                          place=u'Все датчики',
-                                          state=u'Температура в норме')
+                                            place=u'Все датчики',
+                                            state=u'Температура в норме')
     return output_rows + output_diag
 
 
@@ -273,6 +275,36 @@ def write_json(input_obj_list):
     with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
         json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
 
+
+def generate_bitmaps(input_obj_list):
+    matrix_ = []
+    for obj_ in input_obj_list:
+        measure_list_ = []
+        dict_ = obj_.read_data(['sen_num', 'measures'])
+        zero_measure_ = 0
+        for measure_ in dict_['measures']:
+            try:
+                measure_list_.insert(0, int(float(measure_['value'])))
+            except:
+                measure_list_.insert(0, 0)
+                zero_measure_ += 1
+        average_t_ = int(sum(measure_list_) / (len(measure_list_) - zero_measure_))
+        measure_array_ = []
+        for m_ in measure_list_:
+            new_m_ = m_ - average_t_ + 20
+            new_list_ = list(('1' * new_m_) + ('0' * (40 - new_m_)))
+            new_int_ = [int(x) for x in new_list_]
+            measure_array_.append(new_int_[::-1])
+        trans_ = [[measure_array_[row_][col_] for row_ in range(len(measure_array_))] for col_ in range(len(measure_array_[0]))]
+        matrix_.append(trans_)
+        palette = [(0, 0, 0), (0, 255, 0), (192, 192, 0), (255, 0, 0)]
+        MATRIX = trans_
+        file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
+        with open(file_, 'wb') as f_:
+            w = png.Writer(len(MATRIX[0]), len(MATRIX), palette=palette, bitdepth=2)
+            w.write(f_, MATRIX)
+
+
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
@@ -284,6 +316,7 @@ if __name__ == '__main__':
         current_obj_list = set_status(current_obj_list)
         rows_ = generate_html(current_obj_list, smb_result=get_result)
         write_json(current_obj_list)
+        generate_bitmaps(current_obj_list)
     else:
         rows_ = generate_html(smb_result=get_result)
     write_html(rows=rows_)

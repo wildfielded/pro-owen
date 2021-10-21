@@ -10,7 +10,7 @@
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
 ##### Директория WEB-сервера для размещения HTML
-WWW_DIR = '../../../var/www/html/owen/'
+WWW_DIR = '/var/www/html/owen/'
 ##### Добавки путей к нужным файлам
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
@@ -39,7 +39,7 @@ HTML_HEADER = '''<!DOCTYPE html>
 <HEAD>
     <META CHARSET="utf-8">
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-    <META HTTP-EQUIV="Refresh" CONTENT="30">
+    <META HTTP-EQUIV="Refresh" CONTENT="15">
     <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <LINK REL="stylesheet" TYPE="text/css" HREF="style.css">
     <TITLE></TITLE>
@@ -67,7 +67,7 @@ ROW_TEMPLATE = '''                <TR>
                     <TD>$max1</TD>
                     <TD>$max2</TD>
                     <TD>$mtime</TD>
-                    <TD></TD>
+                    <TD><IMG SRC="$number.png" ALT="Датчик &numero;$number"></TD>
                 </TR>
 '''
 
