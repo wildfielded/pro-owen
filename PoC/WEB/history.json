@@ -11,6 +11,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 21.7
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 21.6
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 21.7
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 21.7
       },
@@ -21,18 +69,6 @@
       {
         "timestamp": 1634805026.0,
         "value": 21.8
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 21.7
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 21.7
-      },
-      {
-        "timestamp": 1634803451.0,
-        "value": 21.6
       }
     ]
   },
@@ -48,6 +84,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 17.9
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 18.2
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 18.6
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 18.9
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 18.1
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 18.3
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 18.4
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 18.4
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 18.5
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 18.5
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 19.2
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 19.0
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 19.2
       },
@@ -58,18 +142,6 @@
       {
         "timestamp": 1634805026.0,
         "value": 19.4
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 19.5
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 19.4
-      },
-      {
-        "timestamp": 1634803451.0,
-        "value": 19.3
       }
     ]
   },
@@ -85,6 +157,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 20.5
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 20.4
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 20.4
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 20.4
       },
@@ -94,18 +214,6 @@
       },
       {
         "timestamp": 1634805026.0,
-        "value": 20.3
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 20.3
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 20.3
-      },
-      {
-        "timestamp": 1634803451.0,
         "value": 20.3
       }
     ]
@@ -122,6 +230,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 22.9
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 22.9
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 22.8
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 22.7
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 22.9
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 22.9
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 23.1
       },
@@ -132,18 +288,6 @@
       {
         "timestamp": 1634805026.0,
         "value": 23.0
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 23.1
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 23.2
-      },
-      {
-        "timestamp": 1634803451.0,
-        "value": 23.2
       }
     ]
   },
@@ -159,6 +303,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 19.9
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 19.9
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 20.0
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 20.0
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 20.1
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 20.6
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 20.7
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 20.3
       },
@@ -169,18 +361,6 @@
       {
         "timestamp": 1634805026.0,
         "value": 20.2
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 20.0
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 19.9
-      },
-      {
-        "timestamp": 1634803451.0,
-        "value": 20.1
       }
     ]
   },
@@ -196,6 +376,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 23.3
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 23.3
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 23.3
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 23.3
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 23.3
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 23.4
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 23.3
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 23.3
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 23.3
       },
@@ -205,18 +433,6 @@
       },
       {
         "timestamp": 1634805026.0,
-        "value": 23.3
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 23.3
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 23.3
-      },
-      {
-        "timestamp": 1634803451.0,
         "value": 23.3
       }
     ]
@@ -233,6 +449,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 18.8
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 20.3
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 19.7
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 19.4
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 19.7
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 19.9
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 19.9
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 20.2
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 18.9
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 19.0
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 19.6
       },
@@ -243,18 +507,6 @@
       {
         "timestamp": 1634805026.0,
         "value": 20.4
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 19.1
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 19.0
-      },
-      {
-        "timestamp": 1634803451.0,
-        "value": 19.0
       }
     ]
   },
@@ -270,6 +522,54 @@
     },
     "measures": [
       {
+        "timestamp": 1634807841.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634807715.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634807589.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634807526.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806916.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806874.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806853.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806832.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806538.0,
+        "value": 23.1
+      },
+      {
+        "timestamp": 1634806517.0,
+        "value": 23.1
+      },
+      {
         "timestamp": 1634805761.0,
         "value": 23.1
       },
@@ -279,18 +579,6 @@
       },
       {
         "timestamp": 1634805026.0,
-        "value": 23.0
-      },
-      {
-        "timestamp": 1634803493.0,
-        "value": 23.0
-      },
-      {
-        "timestamp": 1634803472.0,
-        "value": 22.9
-      },
-      {
-        "timestamp": 1634803451.0,
         "value": 23.0
       }
     ]

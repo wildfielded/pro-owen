@@ -277,7 +277,9 @@ def write_json(input_obj_list):
 
 
 def generate_bitmaps(input_obj_list):
-    matrix_ = []
+    ''' Создаёт двумерную матрицу для создания PNG-файла по каждому датчику
+    '''
+    #####matrix_ = []
     for obj_ in input_obj_list:
         measure_list_ = []
         dict_ = obj_.read_data(['sen_num', 'measures'])
@@ -295,14 +297,13 @@ def generate_bitmaps(input_obj_list):
             new_list_ = list(('1' * new_m_) + ('0' * (40 - new_m_)))
             new_int_ = [int(x) for x in new_list_]
             measure_array_.append(new_int_[::-1])
-        trans_ = [[measure_array_[row_][col_] for row_ in range(len(measure_array_))] for col_ in range(len(measure_array_[0]))]
-        matrix_.append(trans_)
+        transposed_matrix_ = [[measure_array_[row_][col_] for row_ in range(len(measure_array_))] for col_ in range(len(measure_array_[0]))]
+        #####matrix_.append(transposed_matrix_)
         palette = [(0, 0, 0), (0, 255, 0), (192, 192, 0), (255, 0, 0)]
-        MATRIX = trans_
         file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
         with open(file_, 'wb') as f_:
-            w = png.Writer(len(MATRIX[0]), len(MATRIX), palette=palette, bitdepth=2)
-            w.write(f_, MATRIX)
+            w = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_), palette=palette, bitdepth=2)
+            w.write(f_, transposed_matrix_)
 
 
 #####=====----- Собственно, сама программа -----=====#####
