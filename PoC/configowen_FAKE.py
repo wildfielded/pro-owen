@@ -32,7 +32,7 @@ CFG_PATH = 'owen.cfg'
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
 TZ_SHIFT = 3600.0 * 5
 ##### Период хранения истории измерений в секундах
-HISTORY_LIMIT = 30.0 * 100
+HISTORY_LIMIT = 30.0 * 120
 
 HTML_HEADER = '''<!DOCTYPE html>
 <HTML LANG="ru">

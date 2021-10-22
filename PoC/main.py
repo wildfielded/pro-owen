@@ -277,32 +277,40 @@ def write_json(input_obj_list):
 
 
 def generate_bitmaps(input_obj_list):
-    ''' Создаёт двумерную матрицу для создания PNG-файла по каждому датчику
+    ''' Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
+        Вертикальный размер картинки = 40px. Масштаб = 4px/градус. Шкалы нет,
+        на середине высоты (20px) - уровень среднего значения температуры за
+        исторический период (нулевые значения не берутся в расчёт).
+        При учитывании случаев резкого изменения показаний с возможным выходом
+        за допустимый диапазон пикселей много мудрить не стали, просто обрезаем
+        лист сверху до 40 элементов. Всё равно это качественная картинка,
+        предназначенная для плавного развития событий.
     '''
-    #####matrix_ = []
     for obj_ in input_obj_list:
-        measure_list_ = []
-        dict_ = obj_.read_data(['sen_num', 'measures'])
-        zero_measure_ = 0
-        for measure_ in dict_['measures']:
+        m_list_ = []
+        dict_ = obj_.read_data(['sen_num', 'status', 'measures'])
+        m_zero_ = 0
+        for m_ in dict_['measures']:
             try:
-                measure_list_.insert(0, int(float(measure_['value'])))
+                m_list_.insert(0, int(float(m_['value']) * 4))
             except:
-                measure_list_.insert(0, 0)
-                zero_measure_ += 1
-        average_t_ = int(sum(measure_list_) / (len(measure_list_) - zero_measure_))
-        measure_array_ = []
-        for m_ in measure_list_:
-            new_m_ = m_ - average_t_ + 20
-            new_list_ = list(('1' * new_m_) + ('0' * (40 - new_m_)))
+                m_list_.insert(0, 0)
+                m_zero_ += 1
+        average_t_ = int(sum(m_list_) / (len(m_list_) - m_zero_))
+
+        m_matrix_ = []
+        for m_ in m_list_:
+            reduced_m_ = m_ - average_t_ + 20
+            new_list_ = list(('1' * reduced_m_) + ('0' * (40 - reduced_m_)))
             new_int_ = [int(x) for x in new_list_]
-            measure_array_.append(new_int_[::-1])
-        transposed_matrix_ = [[measure_array_[row_][col_] for row_ in range(len(measure_array_))] for col_ in range(len(measure_array_[0]))]
-        #####matrix_.append(transposed_matrix_)
-        palette = [(0, 0, 0), (0, 255, 0), (192, 192, 0), (255, 0, 0)]
-        file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
-        with open(file_, 'wb') as f_:
-            w = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_), palette=palette, bitdepth=2)
+            m_matrix_.append(new_int_[:40:][::-1])
+        transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))] for col_ in range(len(m_matrix_[0]))]
+
+        four_colors = [(224, 224, 224), (0, 160, 0), (255, 192, 0), (255, 64, 0)]
+        png_file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
+        with open(png_file_, 'wb') as f_:
+            w = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_),
+                           palette=four_colors, bitdepth=2)
             w.write(f_, transposed_matrix_)
 
 
