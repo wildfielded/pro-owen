@@ -285,23 +285,33 @@ def generate_bitmaps(input_obj_list):
         за допустимый диапазон пикселей много мудрить не стали, просто обрезаем
         лист сверху до 40 элементов. Всё равно это качественная картинка,
         предназначенная для плавного развития событий.
+        TODO: требуется переделка. Устранить повтор кода по части сравнения с
+        пороговыми значениями.
     '''
     for obj_ in input_obj_list:
         m_list_ = []
-        dict_ = obj_.read_data(['sen_num', 'status', 'measures'])
+        dict_ = obj_.read_data(['sen_num', 'warn_t', 'crit_t', 'measures'])
         m_zero_ = 0
+        m_sum_ = 0
         for m_ in dict_['measures']:
             try:
-                m_list_.insert(0, int(float(m_['value']) * 4))
+                if m_['value'] > dict_['crit_t']:
+                    colorbit_ = '3'
+                elif m_['value'] > dict_['warn_t']:
+                    colorbit_ = '2'
+                else:
+                    colorbit_ = '1'
+                m_list_.insert(0, (int(float(m_['value']) * 4), colorbit_))
+                m_sum_ += int(float(m_['value']) * 4)
             except:
-                m_list_.insert(0, 0)
+                m_list_.insert(0, (0, 0))
                 m_zero_ += 1
-        average_t_ = int(sum(m_list_) / (len(m_list_) - m_zero_))
+        average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
 
         m_matrix_ = []
         for m_ in m_list_:
-            reduced_m_ = m_ - average_t_ + 20
-            new_list_ = list(('1' * reduced_m_) + ('0' * (40 - reduced_m_)))
+            reduced_m_ = m_[0] - average_t_ + 20
+            new_list_ = list((m_[1] * reduced_m_) + ('0' * (40 - reduced_m_)))
             new_int_ = [int(x) for x in new_list_]
             m_matrix_.append(new_int_[:40:][::-1])
         transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))] for col_ in range(len(m_matrix_[0]))]
@@ -317,7 +327,8 @@ def generate_bitmaps(input_obj_list):
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    get_result = get_current_files()
+    #####get_result = get_current_files()
+    get_result = 'fresh_data'
     if get_result == 'fresh_data':
         current_obj_list = read_json()
         current_obj_list = parse_lastcfg(current_obj_list)
