@@ -327,8 +327,7 @@ def generate_bitmaps(input_obj_list):
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    #####get_result = get_current_files()
-    get_result = 'fresh_data'
+    get_result = get_current_files()
     if get_result == 'fresh_data':
         current_obj_list = read_json()
         current_obj_list = parse_lastcfg(current_obj_list)
