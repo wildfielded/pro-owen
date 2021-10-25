@@ -34,6 +34,12 @@ td:nth-of-type(n+2) {
     font-weight: 700;
 }
 
+.gray-state {
+    background-color: #444444;
+    color: #ffffff;
+    font-weight: 700;
+}
+
 .black-state {
     background-color: #000000;
     color: #ffffff;

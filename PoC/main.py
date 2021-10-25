@@ -17,12 +17,7 @@ class SensorDataBlock:
             'place': '',
             'warn_t': 0.0,
             'crit_t': 0.0,
-            'status': {
-                'cell': 'green-state',
-                'code': 'no_error',
-                'desc': u'Нормальное состояние'
-                },
-            'measures': [{'timestamp': 0.0, 'value': 0.0},]
+            'measures': [{'timestamp': 0.0, 'value': 0.0, 'state': 'green-state'},]
             }
 
     def write_data(self, data_dict: dict = {}):
@@ -35,8 +30,8 @@ class SensorDataBlock:
             self.sensor_dict['warn_t'] = data_dict['warn_t']
         if 'crit_t' in keys_:
             self.sensor_dict['crit_t'] = data_dict['crit_t']
-        if 'status' in keys_:
-            self.sensor_dict['status'].update(data_dict['status'])
+        if 'state' in keys_:
+            self.sensor_dict['measures'][0]['state'] = data_dict['state']
         if 'measures' in keys_:
             self.sensor_dict['measures'] = data_dict['measures'] + self.sensor_dict['measures']
 
@@ -83,6 +78,37 @@ def get_current_files():
 
         s_.close()
     return result_
+
+
+def read_json():
+    ''' Считывает файл с историческими данными в формате JSON и создаёт на их
+        основе список объектов класса SensorDataBlock
+    '''
+    output_obj_list = []
+    try:
+        with open(c_.JSON_FILE, 'r', encoding='utf-8') as f_:
+            history_list = json.load(f_)
+        for dict_ in history_list:
+            sensor_obj = SensorDataBlock()
+            sensor_obj.write_data(dict_)
+            output_obj_list.append(sensor_obj)
+    except:
+        #####!!!!! Заглушка. Нужен обработчик.
+        pass
+    return output_obj_list
+
+
+def write_json(input_obj_list):
+    ''' Записывает в файл обновлённые исторические данные в формате JSON
+    '''
+    output_obj_list = []
+    for obj_ in input_obj_list:
+        for m_ in obj_.sensor_dict['measures'][-1::-1]:
+            if m_['timestamp'] < time() - c_.HISTORY_LIMIT:
+                obj_.sensor_dict['measures'].pop()
+        output_obj_list.append(obj_.sensor_dict)
+    with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
+        json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
 
 
 def parse_lastcfg(input_obj_list: list = []):
@@ -141,26 +167,14 @@ def parse_lastdata(input_obj_list: list = []):
         t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
         try:
             v_ = float(list_[3].replace(',', '.'))
-            dict_['status'] = {
-                'cell': 'green-state',
-                'code': 'no_error',
-                'desc': u'Нормальное состояние'
-                }
+            state_ = 'green-state'
         except:
             v_ = -273.15
             if '?' in list_[3]:
-                dict_['status'] = {
-                    'cell': 'black-state',
-                    'code': 'ERR_dead_quest',
-                    'desc': u'Нет показаний датчика больше минуты'
-                    }
+                state_ = 'black-state'
             else:
-                dict_['status'] = {
-                    'cell': 'red-state',
-                    'code': 'ERR_unknown',
-                    'desc': u'Неизвестная ошибка'
-                    }
-        dict_['measures'] = [{'timestamp': t_, 'value': v_}]
+                state_ = 'gray-state'
+        dict_['measures'] = [{'timestamp': t_, 'value': v_, 'state': state_}]
         if len(input_obj_list) == 0:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
@@ -176,23 +190,19 @@ def set_status(input_obj_list):
     output_obj_list = input_obj_list.copy()
     for obj_ in output_obj_list:
         dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
-        if dict_['status']['code'] == 'ERR_dead_quest':
+        if dict_['measures'][0]['state'] == 'black-state':
             dict_['measures'][0]['value'] = '???'
-        elif dict_['status']['code'] == 'ERR_unknown':
+        elif dict_['measures'][0]['state'] == 'gray-state':
             dict_['measures'][0]['value'] = '!!!'
         else:
             if dict_['measures'][0]['value'] > dict_['crit_t']:
-                dict_['status']['cell'] = 'red-state'
-                dict_['status']['code'] = 'max2_over'
-                dict_['status']['desc'] = u'Критическое повышение температуры'
+                dict_['measures'][0]['state'] = 'red-state'
             elif dict_['measures'][0]['value'] > dict_['warn_t']:
-                dict_['status']['cell'] = 'yellow-state'
-                dict_['status']['code'] = 'max1_over'
-                dict_['status']['desc'] = u'Подозрительное повышение температуры'
+                dict_['measures'][0]['state'] = 'yellow-state'
             else:
-                #####dict_['status']['cell'] = 'green_state'
+                #####dict_['measures'][0]['state'] = green-state
                 pass
-        obj_.write_data({'status': dict_['status']})
+        obj_.write_data({'state': dict_['measures'][0]['state']})
     return output_obj_list
 
 
@@ -214,13 +224,22 @@ def generate_html(input_obj_list: list = [], smb_result=''):
             t_ = str(dict_['measures'][0]['value']).replace('.', ',')
             y_ = int(dict_['warn_t'])
             r_ = int(dict_['crit_t'])
-            s_ = dict_['status']['cell']
+            s_ = dict_['measures'][0]['state']
             list_ = ctime(dict_['measures'][0]['timestamp']).split()
             m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
             output_rows += rows_.safe_substitute(number=n_, place=p_, temp=t_,
                                                  max1=y_, max2=r_, status=s_, mtime=m_)
-            if dict_['status']['code'] != 'no_error':
-                d_ = dict_['status']['desc']
+            if s_ == 'black-state':
+                d_ = u'Нет показаний датчика больше минуты'
+                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+            elif s_ == 'yellow-state':
+                d_ = u'Подозрительное повышение температуры'
+                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+            elif s_ == 'red-state':
+                d_ = u'Критическое повышение температуры'
+                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+            elif s_ == 'gray-state':
+                d_ = u'Неизвестная ошибка'
                 output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
     elif smb_result == 'ERR_rancid_data':
         output_diag = diag_.safe_substitute(status='red-state',
@@ -245,37 +264,6 @@ def write_html(rows=''):
         o_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
 
 
-def read_json():
-    ''' Считывает файл с историческими данными в формате JSON и создаёт на их
-        основе список объектов класса SensorDataBlock
-    '''
-    output_obj_list = []
-    try:
-        with open(c_.JSON_FILE, 'r', encoding='utf-8') as f_:
-            history_list = json.load(f_)
-        for dict_ in history_list:
-            sensor_obj = SensorDataBlock()
-            sensor_obj.write_data(dict_)
-            output_obj_list.append(sensor_obj)
-    except:
-        #####!!!!! Заглушка. Нужен обработчик.
-        pass
-    return output_obj_list
-
-
-def write_json(input_obj_list):
-    ''' Записывает в файл обновлённые исторические данные в формате JSON
-    '''
-    output_obj_list = []
-    for obj_ in input_obj_list:
-        for m_ in obj_.sensor_dict['measures'][-1::-1]:
-            if m_['timestamp'] < time() - c_.HISTORY_LIMIT:
-                obj_.sensor_dict['measures'].pop()
-        output_obj_list.append(obj_.sensor_dict)
-    with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
-        json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
-
-
 def generate_bitmaps(input_obj_list):
     ''' Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
         Вертикальный размер картинки = 40px. Масштаб = 4px/градус. Шкалы нет,
@@ -285,26 +273,24 @@ def generate_bitmaps(input_obj_list):
         за допустимый диапазон пикселей много мудрить не стали, просто обрезаем
         лист сверху до 40 элементов. Всё равно это качественная картинка,
         предназначенная для плавного развития событий.
-        TODO: требуется переделка. Устранить повтор кода по части сравнения с
-        пороговыми значениями.
     '''
     for obj_ in input_obj_list:
         m_list_ = []
-        dict_ = obj_.read_data(['sen_num', 'warn_t', 'crit_t', 'measures'])
+        dict_ = obj_.read_data(['sen_num', 'measures'])
         m_zero_ = 0
         m_sum_ = 0
         for m_ in dict_['measures']:
             try:
-                if m_['value'] > dict_['crit_t']:
+                if m_['state'] == 'red-state':
                     colorbit_ = '3'
-                elif m_['value'] > dict_['warn_t']:
+                elif m_['state'] == 'yellow-state':
                     colorbit_ = '2'
                 else:
                     colorbit_ = '1'
                 m_list_.insert(0, (int(float(m_['value']) * 4), colorbit_))
                 m_sum_ += int(float(m_['value']) * 4)
             except:
-                m_list_.insert(0, (0, 0))
+                m_list_.insert(0, (0, '0'))
                 m_zero_ += 1
         average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
 
