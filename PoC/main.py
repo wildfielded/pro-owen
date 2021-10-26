@@ -169,14 +169,15 @@ def parse_lastdata(input_obj_list: list=[]):
         t_ = mktime(strptime(' '.join((list_[0], list_[1])), '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
         try:
             v_ = float(list_[3].replace(',', '.'))
-            state_ = 'green-state'
+            s_ = 'green-state'
         except:
-            v_ = -273.15
             if list_[3].startswith('?'):
-                state_ = 'black-state'
+                v_ = '???'
+                s_ = 'black-state'
             else:
-                state_ = 'gray-state'
-        dict_['measures'] = [{'timestamp': t_, 'value': v_, 'state': state_}]
+                v_ = '!!!'
+                s_ = 'gray-state'
+        dict_['measures'] = [{'timestamp': t_, 'value': v_, 'state': s_}]
         if not input_obj_list:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
@@ -192,11 +193,7 @@ def set_status(input_obj_list):
     output_obj_list = input_obj_list.copy()
     for obj_ in output_obj_list:
         dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
-        if dict_['measures'][0]['state'] == 'black-state':
-            dict_['measures'][0]['value'] = '???'
-        elif dict_['measures'][0]['state'] == 'gray-state':
-            dict_['measures'][0]['value'] = '!!!'
-        else:
+        if dict_['measures'][0]['state'] not in ('black-state', 'gray-state'):
             if dict_['measures'][0]['value'] > dict_['crit_t']:
                 dict_['measures'][0]['state'] = 'red-state'
             elif dict_['measures'][0]['value'] > dict_['warn_t']:
@@ -319,7 +316,6 @@ def write_png(input_obj_list):
 
 if __name__ == '__main__':
     get_result = get_current_files()
-    #####get_result = 'fresh_data'
     if get_result == 'fresh_data':
         current_obj_list = read_json()
         current_obj_list = parse_lastcfg(current_obj_list)
