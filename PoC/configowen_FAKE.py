@@ -63,7 +63,7 @@ HTML_HEADER = '''<!DOCTYPE html>
 
 ROW_TEMPLATE = '''                <TR>
                     <TD>$place</TD>
-                    <TD class="$status">$temp</TD>
+                    <TD class="$state">$temp</TD>
                     <TD>$max1</TD>
                     <TD>$max2</TD>
                     <TD>$mtime</TD>
@@ -72,8 +72,8 @@ ROW_TEMPLATE = '''                <TR>
 '''
 
 DIAG_TEMPLATE = '''                <TR>
-                    <TD COLSPAN="6" class="$status">
-                        <SPAN>$place: $state</SPAN>
+                    <TD COLSPAN="6" class="$state">
+                        <SPAN>$place: $diag</SPAN>
                     </TD>
                 </TR>
 '''

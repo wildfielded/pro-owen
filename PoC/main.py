@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 
-import configowen as c_
-import json
-import png
 from time import ctime, mktime, strptime, time
 from string import Template
+import json
+
 from smb.SMBConnection import SMBConnection
+import png
+
+import configowen as c_
 
 class SensorDataBlock:
     ''' Создаёт объект данных одного датчика, задаёт стуктуру данных в виде
@@ -20,7 +22,7 @@ class SensorDataBlock:
             'measures': [{'timestamp': 0.0, 'value': 0.0, 'state': 'green-state'},]
             }
 
-    def write_data(self, data_dict: dict = {}):
+    def write_data(self, data_dict: dict={}):
         keys_ = data_dict.keys()
         if 'sen_num' in keys_:
             self.sensor_dict['sen_num'] = data_dict['sen_num']
@@ -35,7 +37,7 @@ class SensorDataBlock:
         if 'measures' in keys_:
             self.sensor_dict['measures'] = data_dict['measures'] + self.sensor_dict['measures']
 
-    def read_data(self, keys_list: list = []):
+    def read_data(self, keys_list: list=[]):
         output_dict = {}
         for key_ in keys_list:
             if key_ in self.sensor_dict.keys():
@@ -52,17 +54,17 @@ class SensorDataBlock:
 def get_current_files():
     ''' Забирает файл с последними измерениями и на всякий случай (если есть)
         текущий файл с пороговыми значениями с сервера OWEN и записывает себе
-        локально. Проверяет наличие и свежесть файла с измерениями (чтобы не
-        старше двух минут), иначе возвращает соответственно строку "ERR_missing_data"
-        или "ERR_rancid_data".
+        локально.  Проверяет наличие и свежесть файла с измерениями (чтобы не
+        старше двух минут), иначе возвращает соответственно строку
+        "ERR_missing_data" или "ERR_rancid_data".
     '''
     with SMBConnection(c_.LOGIN, c_.PASSWD, c_.CLI_NAME, c_.SRV_NAME, c_.DOMAIN,
                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
         s_.connect(c_.SRV_IP, c_.SRV_PORT)
 
-        check_list_ = s_.listPath(c_.SHARE_NAME, '/', pattern=c_.DATA_PATH)
-        if len(check_list_) == 1:
-            if check_list_[0].last_write_time > (time() - 120.0):
+        file_list_ = s_.listPath(c_.SHARE_NAME, '/', pattern=c_.DATA_PATH)
+        if file_list_:
+            if file_list_[0].last_write_time > (time() - 120.0):
                 result_ = 'fresh_data'
                 with open(c_.LAST_DATAFILE, 'wb') as f_:
                     s_.retrieveFile(c_.SHARE_NAME, c_.DATA_PATH, f_)
@@ -71,8 +73,7 @@ def get_current_files():
         else:
             result_ = 'ERR_missing_data'
 
-        check_list_ = s_.listPath(c_.SHARE_NAME, '/', pattern=c_.CFG_PATH)
-        if len(check_list_) == 1:
+        if s_.listPath(c_.SHARE_NAME, '/', pattern=c_.CFG_PATH):
             with open(c_.LAST_CFGFILE, 'wb') as g_:
                 s_.retrieveFile(c_.SHARE_NAME, c_.CFG_PATH, g_)
 
@@ -81,8 +82,8 @@ def get_current_files():
 
 
 def read_json():
-    ''' Считывает файл с историческими данными в формате JSON и создаёт на их
-        основе список объектов класса SensorDataBlock
+    ''' Считывает файл с историческими данными в формате JSON и создаёт на
+        их основе список объектов класса SensorDataBlock
     '''
     output_obj_list = []
     try:
@@ -99,7 +100,8 @@ def read_json():
 
 
 def write_json(input_obj_list):
-    ''' Записывает в файл обновлённые исторические данные в формате JSON
+    ''' Записывает в файл обновлённые исторические данные в формате JSON.
+        Предварительно убирает устаревшие измерения.
     '''
     output_obj_list = []
     for obj_ in input_obj_list:
@@ -111,7 +113,7 @@ def write_json(input_obj_list):
         json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
 
 
-def parse_lastcfg(input_obj_list: list = []):
+def parse_lastcfg(input_obj_list: list=[]):
     ''' Парсит данные из загруженного файла с пороговыми значениями по каждому
         датчику с некоторой валидацией данных и дополняет текущий (или создаёт
         новый) список объектов класса SensorDataBlock
@@ -133,7 +135,7 @@ def parse_lastcfg(input_obj_list: list = []):
             'warn_t': float(list_[1]),
             'crit_t': float(list_[2])
             }
-        if len(input_obj_list) == 0:
+        if not input_obj_list:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
@@ -144,9 +146,9 @@ def parse_lastcfg(input_obj_list: list = []):
     return output_obj_list
 
 
-def parse_lastdata(input_obj_list: list = []):
-    ''' Парсит данные из загруженного файла с измерениями по каждому датчику с
-        некоторой валидацией данных и дополняет текущий (или создаёт новый)
+def parse_lastdata(input_obj_list: list=[]):
+    ''' Парсит данные из загруженного файла с измерениями по каждому датчику
+        с некоторой валидацией данных и дополняет текущий (или создаёт новый)
         список объектов класса SensorDataBlock
     '''
     try:
@@ -164,18 +166,18 @@ def parse_lastdata(input_obj_list: list = []):
             'sen_num': n_,
             'place': list_[2],
             }
-        t_ = mktime(strptime(list_[0] + ' ' + list_[1], '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
+        t_ = mktime(strptime(' '.join((list_[0], list_[1])), '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
         try:
             v_ = float(list_[3].replace(',', '.'))
             state_ = 'green-state'
         except:
             v_ = -273.15
-            if '?' in list_[3]:
+            if list_[3].startswith('?'):
                 state_ = 'black-state'
             else:
                 state_ = 'gray-state'
         dict_['measures'] = [{'timestamp': t_, 'value': v_, 'state': state_}]
-        if len(input_obj_list) == 0:
+        if not input_obj_list:
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
@@ -206,7 +208,7 @@ def set_status(input_obj_list):
     return output_obj_list
 
 
-def generate_html(input_obj_list: list = [], smb_result=''):
+def generate_html(input_obj_list: list=[], smb_result=''):
     ''' Принимает список объектов класса SensorDataBlock и заполняет
         соответствующими значениями по шаблонам табличные ячейки и итоговое
         состояние помещений, выводимое в одной или нескольких строках в конце
@@ -228,50 +230,52 @@ def generate_html(input_obj_list: list = [], smb_result=''):
             list_ = ctime(dict_['measures'][0]['timestamp']).split()
             m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
             output_rows += rows_.safe_substitute(number=n_, place=p_, temp=t_,
-                                                 max1=y_, max2=r_, status=s_, mtime=m_)
-            if s_ == 'black-state':
-                d_ = u'Нет показаний датчика больше минуты'
-                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
-            elif s_ == 'yellow-state':
-                d_ = u'Подозрительное повышение температуры'
-                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
-            elif s_ == 'red-state':
-                d_ = u'Критическое повышение температуры'
-                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
-            elif s_ == 'gray-state':
-                d_ = u'Неизвестная ошибка'
-                output_diag += diag_.safe_substitute(status=s_, place=p_, state=d_)
+                                                 max1=y_, max2=r_,
+                                                 state=s_, mtime=m_)
+            if s_ != 'green-state':
+                if s_ == 'black-state':
+                    d_ = u'Нет показаний датчика больше минуты'
+                elif s_ == 'yellow-state':
+                    d_ = u'Подозрительное повышение температуры'
+                elif s_ == 'red-state':
+                    d_ = u'Критическое повышение температуры'
+                elif s_ == 'gray-state':
+                    d_ = u'Неизвестная ошибка'
+                else:
+                    d_ = u'Неопределённая ошибка'
+                output_diag += diag_.safe_substitute(state=s_, place=p_, diag=d_)
     elif smb_result == 'ERR_rancid_data':
-        output_diag = diag_.safe_substitute(status='red-state',
+        output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
-                                            state=u'Данные не обновлялись больше двух минут.\nПрограммный сбой на сервере OWEN.')
+                                            diag=u'Данные не обновлялись больше двух минут.\nПрограммный сбой на сервере OWEN.')
     elif smb_result == 'ERR_missing_data':
-        output_diag = diag_.safe_substitute(status='red-state',
+        output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
-                                            state=u'Файл с данными отсутствует на сервере OWEN.')
-    if len(output_diag) == 0:
-        output_diag = diag_.safe_substitute(status='green-state',
+                                            diag=u'Файл с данными отсутствует на сервере OWEN.')
+    if not output_diag:
+        output_diag = diag_.safe_substitute(state='green-state',
                                             place=u'Все датчики',
-                                            state=u'Температура в норме')
+                                            diag=u'Температура в норме')
     return output_rows + output_diag
 
 
 def write_html(rows=''):
-    ''' Записывает файл HTML для отдачи по HTTP. Использует записанные в configowen
-        шаблоны HTML-кода и Template для заполнения строк таблицы.
+    ''' Записывает файл HTML для отдачи по HTTP. Использует заданные в модуле
+        configowen шаблоны HTML-кода и Template для заполнения строк таблицы.
     '''
-    with open(c_.HTML_OUTPUT, 'w', encoding='utf-8') as o_:
-        o_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
+    with open(c_.HTML_OUTPUT, 'w', encoding='utf-8') as h_:
+        h_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
 
 
-def generate_bitmaps(input_obj_list):
+def write_png(input_obj_list):
     ''' Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
-        Вертикальный размер картинки = 40px. Масштаб = 4px/градус. Шкалы нет,
-        на середине высоты (20px) - уровень среднего значения температуры за
-        исторический период (нулевые значения не берутся в расчёт).
+        Вертикальный размер картинки = 40px.  Масштаб = 4px/градус.
+        Шкалы нет, на середине высоты (20px) - уровень среднего значения
+        температуры за исторический период (нулевые значения не берутся
+        в расчёт).
         При учитывании случаев резкого изменения показаний с возможным выходом
         за допустимый диапазон пикселей много мудрить не стали, просто обрезаем
-        лист сверху до 40 элементов. Всё равно это качественная картинка,
+        лист сверху до 40 элементов.  Всё равно это качественная картинка,
         предназначенная для плавного развития событий.
     '''
     for obj_ in input_obj_list:
@@ -297,23 +301,25 @@ def generate_bitmaps(input_obj_list):
         m_matrix_ = []
         for m_ in m_list_:
             reduced_m_ = m_[0] - average_t_ + 20
-            new_list_ = list((m_[1] * reduced_m_) + ('0' * (40 - reduced_m_)))
-            new_int_ = [int(x) for x in new_list_]
-            m_matrix_.append(new_int_[:40:][::-1])
-        transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))] for col_ in range(len(m_matrix_[0]))]
+            list_ = list((m_[1] * reduced_m_) + ('0' * (40 - reduced_m_)))
+            int_list_ = [int(x_) for x_ in list_]
+            m_matrix_.append(int_list_[:40:][::-1])
+        transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))]
+                                                  for col_ in range(len(m_matrix_[0]))]
 
         four_colors = [(224, 224, 224), (0, 160, 0), (255, 192, 0), (255, 64, 0)]
         png_file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
         with open(png_file_, 'wb') as f_:
-            w = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_),
+            p_ = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_),
                            palette=four_colors, bitdepth=2)
-            w.write(f_, transposed_matrix_)
+            p_.write(f_, transposed_matrix_)
 
 
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
     get_result = get_current_files()
+    #####get_result = 'fresh_data'
     if get_result == 'fresh_data':
         current_obj_list = read_json()
         current_obj_list = parse_lastcfg(current_obj_list)
@@ -321,7 +327,7 @@ if __name__ == '__main__':
         current_obj_list = set_status(current_obj_list)
         rows_ = generate_html(current_obj_list, smb_result=get_result)
         write_json(current_obj_list)
-        generate_bitmaps(current_obj_list)
+        write_png(current_obj_list)
     else:
         rows_ = generate_html(smb_result=get_result)
     write_html(rows=rows_)
