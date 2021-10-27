@@ -19,7 +19,7 @@ class SensorDataBlock:
             'place': '',
             'warn_t': 0.0,
             'crit_t': 0.0,
-            'measures': [{'timestamp': 0.0, 'value': 0.0, 'state': 'green-state'},]
+            'measures': [{'timestamp': 0.0, 'value': 0.0, 'state': 'green-state'}]
             }
 
     def write_data(self, data_dict: dict={}):
@@ -83,7 +83,7 @@ def get_current_files():
 
 def read_json():
     ''' Считывает файл с историческими данными в формате JSON и создаёт на
-        их основе список объектов класса SensorDataBlock
+        их основе список экземпляров (объектов) класса SensorDataBlock
     '''
     output_obj_list = []
     try:
@@ -116,7 +116,7 @@ def write_json(input_obj_list):
 def parse_lastcfg(input_obj_list: list=[]):
     ''' Парсит данные из загруженного файла с пороговыми значениями по каждому
         датчику с некоторой валидацией данных и дополняет текущий (или создаёт
-        новый) список объектов класса SensorDataBlock
+        новый) список экземпляров (объектов) класса SensorDataBlock
     '''
     try:
         with open(c_.LAST_CFGFILE, 'r', encoding='utf-8') as f_:
@@ -148,8 +148,9 @@ def parse_lastcfg(input_obj_list: list=[]):
 
 def parse_lastdata(input_obj_list: list=[]):
     ''' Парсит данные из загруженного файла с измерениями по каждому датчику
-        с некоторой валидацией данных и дополняет текущий (или создаёт новый)
-        список объектов класса SensorDataBlock
+        с некоторой валидацией данных, выставляет состояние в соответствии с
+        пороговыми значениями и дополняет текущий (или создаёт новый) список
+        экземпляров (объектов) класса SensorDataBlock
     '''
     try:
         with open(c_.LAST_DATAFILE, 'r', encoding='utf-8') as f_:
@@ -169,7 +170,6 @@ def parse_lastdata(input_obj_list: list=[]):
         t_ = mktime(strptime(' '.join((list_[0], list_[1])), '%d.%m.%Y %H:%M:%S')) + c_.TZ_SHIFT
         try:
             v_ = float(list_[3].replace(',', '.'))
-            s_ = 'green-state'
         except:
             if list_[3].startswith('?'):
                 v_ = '???'
@@ -177,6 +177,13 @@ def parse_lastdata(input_obj_list: list=[]):
             else:
                 v_ = '!!!'
                 s_ = 'gray-state'
+        else:
+            if v_ > output_obj_list[n_ -1].sensor_dict['crit_t']:
+                s_ = 'red-state'
+            elif v_ > output_obj_list[n_ - 1].sensor_dict['warn_t']:
+                s_ = 'yellow-state'
+            else:
+                s_ = 'green-state'
         dict_['measures'] = [{'timestamp': t_, 'value': v_, 'state': s_}]
         if not input_obj_list:
             sensor_obj = SensorDataBlock()
@@ -184,24 +191,6 @@ def parse_lastdata(input_obj_list: list=[]):
             output_obj_list.append(sensor_obj)
         else:
             output_obj_list[n_ - 1].write_data(dict_)
-    return output_obj_list
-
-
-def set_status(input_obj_list):
-    ''' Выставляет "status", который потом используется для индикации алертов
-    '''
-    output_obj_list = input_obj_list.copy()
-    for obj_ in output_obj_list:
-        dict_ = obj_.read_data(['status', 'warn_t', 'crit_t', 'measures'])
-        if dict_['measures'][0]['state'] not in ('black-state', 'gray-state'):
-            if dict_['measures'][0]['value'] > dict_['crit_t']:
-                dict_['measures'][0]['state'] = 'red-state'
-            elif dict_['measures'][0]['value'] > dict_['warn_t']:
-                dict_['measures'][0]['state'] = 'yellow-state'
-            else:
-                #####dict_['measures'][0]['state'] = green-state
-                pass
-        obj_.write_data({'state': dict_['measures'][0]['state']})
     return output_obj_list
 
 
@@ -317,10 +306,10 @@ def write_png(input_obj_list):
 if __name__ == '__main__':
     get_result = get_current_files()
     if get_result == 'fresh_data':
-        current_obj_list = read_json()
-        current_obj_list = parse_lastcfg(current_obj_list)
-        current_obj_list = parse_lastdata(current_obj_list)
-        current_obj_list = set_status(current_obj_list)
+        #####current_obj_list = read_json()
+        #####current_obj_list = parse_lastcfg(current_obj_list)
+        #####current_obj_list = parse_lastdata(current_obj_list)
+        current_obj_list = parse_lastdata(parse_lastcfg(read_json()))
         rows_ = generate_html(current_obj_list, smb_result=get_result)
         write_json(current_obj_list)
         write_png(current_obj_list)
