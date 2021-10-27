@@ -16,6 +16,10 @@ LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 JSON_FILE = WWW_DIR + 'history.json'
 HTML_OUTPUT = WWW_DIR + 'index.html'
+##### "True" - для сброса лога на сервер через SYSLOG
+USE_SYSLOG = False
+SYSLOG_ADDR = '127.0.0.1'
+SYSLOG_PORT = 514
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
 PASSWD = 'password123'

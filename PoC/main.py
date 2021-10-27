@@ -3,6 +3,8 @@
 from time import ctime, mktime, strptime, time
 from string import Template
 import json
+import logging
+import logging.handlers as LogHandlers_
 
 from smb.SMBConnection import SMBConnection
 import png
@@ -68,14 +70,18 @@ def get_current_files():
                 result_ = 'fresh_data'
                 with open(c_.LAST_DATAFILE, 'wb') as f_:
                     s_.retrieveFile(c_.SHARE_NAME, c_.DATA_PATH, f_)
+                logger.info('Fresh data file retrieved from OWEN server')
             else:
+                logger.critical('OWEN failure. Data file has not been updated for more than 2 min.')
                 result_ = 'ERR_rancid_data'
         else:
+            logger.critical('Data file is missing on OWEN server.')
             result_ = 'ERR_missing_data'
 
         if s_.listPath(c_.SHARE_NAME, '/', pattern=c_.CFG_PATH):
             with open(c_.LAST_CFGFILE, 'wb') as g_:
                 s_.retrieveFile(c_.SHARE_NAME, c_.CFG_PATH, g_)
+            logger.info('Config file retrieved from OWEN server.')
 
         s_.close()
     return result_
@@ -93,9 +99,9 @@ def read_json():
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
+        logger.info('Data parsed from JSON file.')
     except:
-        #####!!!!! Заглушка. Нужен обработчик.
-        pass
+        logger.error('JSON file is missing or not readable.')
     return output_obj_list
 
 
@@ -111,6 +117,7 @@ def write_json(input_obj_list):
         output_obj_list.append(obj_.sensor_dict)
     with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
         json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
+    logger.info('JSON file updated.')
 
 
 def parse_lastcfg(input_obj_list: list=[]):
@@ -233,7 +240,7 @@ def generate_html(input_obj_list: list=[], smb_result=''):
     elif smb_result == 'ERR_rancid_data':
         output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
-                                            diag=u'Данные не обновлялись больше двух минут.\nПрограммный сбой на сервере OWEN.')
+                                            diag=u'Данные не обновлялись больше двух минут.<BR>Программный сбой на сервере OWEN.')
     elif smb_result == 'ERR_missing_data':
         output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
@@ -304,6 +311,17 @@ def write_png(input_obj_list):
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
+    format_ = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
+    syslog_ = LogHandlers_.SysLogHandler(address=(c_.SYSLOG_ADDR, c_.SYSLOG_PORT))
+    syslog_.setLevel(logging.INFO)
+    syslog_.setFormatter(format_)
+    logger = logging.getLogger('owen')
+    logger.setLevel(logging.DEBUG)
+    if c_.USE_SYSLOG:
+        logger.addHandler(syslog_)
+    else:
+        logger.addHandler(logging.NullHandler())
+
     get_result = get_current_files()
     if get_result == 'fresh_data':
         #####current_obj_list = read_json()
