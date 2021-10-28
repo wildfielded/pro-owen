@@ -67,21 +67,21 @@ def get_current_files():
         file_list_ = s_.listPath(c_.SHARE_NAME, '/', pattern=c_.DATA_PATH)
         if file_list_:
             if file_list_[0].last_write_time > (time() - 120.0):
-                result_ = 'fresh_data'
                 with open(c_.LAST_DATAFILE, 'wb') as f_:
                     s_.retrieveFile(c_.SHARE_NAME, c_.DATA_PATH, f_)
-                logger.info('Fresh data file retrieved from OWEN server')
+                log_inf('Fresh data file retrieved from OWEN server')
+                result_ = 'fresh_data'
             else:
-                logger.critical('OWEN failure. Data file has not been updated for more than 2 min.')
+                log_crt('OWEN failure. Data file has not been updated for more than 2 min.')
                 result_ = 'ERR_rancid_data'
         else:
-            logger.critical('Data file is missing on OWEN server.')
+            log_crt('Data file is missing on OWEN server.')
             result_ = 'ERR_missing_data'
 
         if s_.listPath(c_.SHARE_NAME, '/', pattern=c_.CFG_PATH):
             with open(c_.LAST_CFGFILE, 'wb') as g_:
                 s_.retrieveFile(c_.SHARE_NAME, c_.CFG_PATH, g_)
-            logger.info('Config file retrieved from OWEN server.')
+            log_inf('Config file retrieved from OWEN server.')
 
         s_.close()
     return result_
@@ -99,9 +99,9 @@ def read_json():
             sensor_obj = SensorDataBlock()
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
-        logger.info('Data parsed from JSON file.')
+        log_inf('Data parsed from JSON file.')
     except:
-        logger.error('JSON file is missing or not readable.')
+        log_err('JSON file is missing or not readable.')
     return output_obj_list
 
 
@@ -117,7 +117,7 @@ def write_json(input_obj_list):
         output_obj_list.append(obj_.sensor_dict)
     with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
         json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
-    logger.info('JSON file updated.')
+    log_inf('JSON file updated.')
 
 
 def parse_lastcfg(input_obj_list: list=[]):
@@ -131,6 +131,7 @@ def parse_lastcfg(input_obj_list: list=[]):
     except UnicodeDecodeError:
         with open(c_.LAST_CFGFILE, 'r', encoding='cp1251') as f_:
             cfg_list = f_.readlines()
+        log_wrn('Config file cp1251-encoded again.')
     output_obj_list = input_obj_list.copy()
     n_ = 0
     for line_ in cfg_list[1:]:
@@ -147,9 +148,8 @@ def parse_lastcfg(input_obj_list: list=[]):
             sensor_obj.write_data(dict_)
             output_obj_list.append(sensor_obj)
         else:
-            #####if output_obj_list[n_ - 1].read_one('place') == dict_['place'] and output_obj_list[n_ - 1].read_one('sen_num') == dict_['sen_num']:
-                #####pass
             output_obj_list[n_ - 1].write_data(dict_)
+    log_inf('Config file with thresholds parsed.')
     return output_obj_list
 
 
@@ -165,6 +165,7 @@ def parse_lastdata(input_obj_list: list=[]):
     except UnicodeDecodeError:
         with open(c_.LAST_DATAFILE, 'r', encoding='cp1251') as f_:
             data_list = f_.readlines()
+        log_wrn('Data file cp1251-encoded again.')
     output_obj_list = input_obj_list.copy()
     n_ = 0
     for line_ in data_list[1:]:
@@ -185,12 +186,12 @@ def parse_lastdata(input_obj_list: list=[]):
                 v_ = '!!!'
                 s_ = 'gray-state'
         else:
-            if v_ > output_obj_list[n_ -1].sensor_dict['crit_t']:
-                s_ = 'red-state'
-            elif v_ > output_obj_list[n_ - 1].sensor_dict['warn_t']:
+            if v_ < output_obj_list[n_ - 1].sensor_dict['warn_t']:
+                s_ = 'green-state'
+            elif v_ < output_obj_list[n_ -1].sensor_dict['crit_t']:
                 s_ = 'yellow-state'
             else:
-                s_ = 'green-state'
+                s_ = 'red-state'
         dict_['measures'] = [{'timestamp': t_, 'value': v_, 'state': s_}]
         if not input_obj_list:
             sensor_obj = SensorDataBlock()
@@ -198,6 +199,7 @@ def parse_lastdata(input_obj_list: list=[]):
             output_obj_list.append(sensor_obj)
         else:
             output_obj_list[n_ - 1].write_data(dict_)
+    log_inf('Data file parsed.')
     return output_obj_list
 
 
@@ -237,6 +239,7 @@ def generate_html(input_obj_list: list=[], smb_result=''):
                 else:
                     d_ = u'Неопределённая ошибка'
                 output_diag += diag_.safe_substitute(state=s_, place=p_, diag=d_)
+                log_err(''.join([p_, ': ', d_]))
     elif smb_result == 'ERR_rancid_data':
         output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
@@ -258,6 +261,7 @@ def write_html(rows=''):
     '''
     with open(c_.HTML_OUTPUT, 'w', encoding='utf-8') as h_:
         h_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
+    log_inf('HTML file updated.')
 
 
 def write_png(input_obj_list):
@@ -306,6 +310,7 @@ def write_png(input_obj_list):
             p_ = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_),
                            palette=four_colors, bitdepth=2)
             p_.write(f_, transposed_matrix_)
+    log_inf('PNG files updated.')
 
 
 #####=====----- Собственно, сама программа -----=====#####
@@ -313,7 +318,7 @@ def write_png(input_obj_list):
 if __name__ == '__main__':
     format_ = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
     syslog_ = LogHandlers_.SysLogHandler(address=(c_.SYSLOG_ADDR, c_.SYSLOG_PORT))
-    syslog_.setLevel(logging.INFO)
+    syslog_.setLevel(logging.DEBUG)
     syslog_.setFormatter(format_)
     logger = logging.getLogger('owen')
     logger.setLevel(logging.DEBUG)
@@ -321,6 +326,11 @@ if __name__ == '__main__':
         logger.addHandler(syslog_)
     else:
         logger.addHandler(logging.NullHandler())
+    log_dbg = lambda md_ : logger.debug(md_)
+    log_inf = lambda mi_ : logger.info(mi_)
+    log_wrn = lambda mw_ : logger.warning(mw_)
+    log_err = lambda me_ : logger.error(me_)
+    log_crt = lambda mc_ : logger.critical(mc_)
 
     get_result = get_current_files()
     if get_result == 'fresh_data':
