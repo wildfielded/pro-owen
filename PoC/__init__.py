@@ -1,2 +1,2 @@
-''' Need for something
+''' Need for something ;)
 '''
