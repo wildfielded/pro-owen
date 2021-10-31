@@ -279,23 +279,23 @@ def write_png(input_obj_list):
         for m_ in dict_['measures']:
             try:
                 if m_['state'] == 'red-state':
-                    colorbit_ = '3'
+                    colorbit_ = 3
                 elif m_['state'] == 'yellow-state':
-                    colorbit_ = '2'
+                    colorbit_ = 2
                 else:
-                    colorbit_ = '1'
+                    colorbit_ = 1
                 m_list_.insert(0, (int(float(m_['value']) * 4), colorbit_))
                 m_sum_ += int(float(m_['value']) * 4)
             except:
-                m_list_.insert(0, (0, '0'))
+                m_list_.insert(0, (0, 0))
                 m_zero_ += 1
         average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
 
         m_matrix_ = []
         for m_ in m_list_:
             reduced_m_ = m_[0] - average_t_ + 20
-            list_ = list((m_[1] * reduced_m_) + ('0' * (40 - reduced_m_)))
-            int_list_ = [int(x_) for x_ in list_]
+            list_ = [m_[1] for y_ in range(reduced_m_)] + [0 for z_ in range(40 - reduced_m_)]
+            int_list_ = [x_ for x_ in list_]
             m_matrix_.append(int_list_[:40:][::-1])
         transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))]
                                                   for col_ in range(len(m_matrix_[0]))]
