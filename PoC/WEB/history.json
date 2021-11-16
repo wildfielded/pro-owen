@@ -6,6 +6,21 @@
     "crit_t": 35.0,
     "measures": [
       {
+        "timestamp": 1637052267.0,
+        "value": 18.4,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 18.3,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 18.4,
+        "state": "green-state"
+      },
+      {
         "timestamp": 1637050377.0,
         "value": 18.2,
         "state": "green-state"
@@ -48,6 +63,21 @@
     "warn_t": 25.0,
     "crit_t": 35.0,
     "measures": [
+      {
+        "timestamp": 1637052267.0,
+        "value": 18.4,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 18.7,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 17.8,
+        "state": "green-state"
+      },
       {
         "timestamp": 1637050377.0,
         "value": 18.0,
@@ -92,6 +122,21 @@
     "crit_t": 30.0,
     "measures": [
       {
+        "timestamp": 1637052267.0,
+        "value": 21.1,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 21.2,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 21.4,
+        "state": "green-state"
+      },
+      {
         "timestamp": 1637050377.0,
         "value": 20.9,
         "state": "green-state"
@@ -134,6 +179,21 @@
     "warn_t": 40.0,
     "crit_t": 60.0,
     "measures": [
+      {
+        "timestamp": 1637052267.0,
+        "value": 18.3,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 18.2,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 18.4,
+        "state": "green-state"
+      },
       {
         "timestamp": 1637050377.0,
         "value": 18.3,
@@ -178,6 +238,21 @@
     "crit_t": 48.0,
     "measures": [
       {
+        "timestamp": 1637052267.0,
+        "value": 20.2,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 20.3,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 19.9,
+        "state": "green-state"
+      },
+      {
         "timestamp": 1637050377.0,
         "value": 20.3,
         "state": "green-state"
@@ -220,6 +295,21 @@
     "warn_t": 45.0,
     "crit_t": 60.0,
     "measures": [
+      {
+        "timestamp": 1637052267.0,
+        "value": 22.7,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 22.7,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 22.6,
+        "state": "green-state"
+      },
       {
         "timestamp": 1637050377.0,
         "value": 23.4,
@@ -264,6 +354,21 @@
     "crit_t": 35.0,
     "measures": [
       {
+        "timestamp": 1637052267.0,
+        "value": 20.6,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 20.1,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 19.9,
+        "state": "green-state"
+      },
+      {
         "timestamp": 1637050377.0,
         "value": 19.7,
         "state": "green-state"
@@ -306,6 +411,21 @@
     "warn_t": 28.0,
     "crit_t": 35.0,
     "measures": [
+      {
+        "timestamp": 1637052267.0,
+        "value": 23.1,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637052162.0,
+        "value": 23.0,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1637051742.0,
+        "value": 23.0,
+        "state": "green-state"
+      },
       {
         "timestamp": 1637050377.0,
         "value": 22.9,

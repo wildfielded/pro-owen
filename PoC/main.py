@@ -11,6 +11,9 @@ import png
 
 import configowen as c_
 
+
+#####=====----- Классы -----=====#####
+
 class SensorDataBlock:
     ''' Создаёт объект данных одного датчика, задаёт стуктуру данных в виде
         словаря и методы их обработки
@@ -49,6 +52,22 @@ class SensorDataBlock:
     def read_one(self, key_str):
         if key_str in self.sensor_dict.keys():
             return self.sensor_dict[key_str]
+
+
+#####=====----- Настройка логирования -----=====#####
+
+format_ = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
+syslog_ = LogHandlers_.SysLogHandler(address=(c_.SYSLOG_ADDR, c_.SYSLOG_PORT))
+syslog_.setLevel(logging.INFO)
+syslog_.setFormatter(format_)
+logger = logging.getLogger('owen')
+logger.setLevel(logging.INFO)
+if c_.USE_SYSLOG:
+    logger.addHandler(syslog_)
+else:
+    logger.addHandler(logging.NullHandler())
+log_inf = lambda mi_ : logger.info(mi_)
+log_err = lambda me_ : logger.error(me_)
 
 
 #####=====----- Функции -----=====#####
@@ -336,19 +355,6 @@ def write_png(input_obj_list):
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    format_ = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
-    syslog_ = LogHandlers_.SysLogHandler(address=(c_.SYSLOG_ADDR, c_.SYSLOG_PORT))
-    syslog_.setLevel(logging.INFO)
-    syslog_.setFormatter(format_)
-    logger = logging.getLogger('owen')
-    logger.setLevel(logging.INFO)
-    if c_.USE_SYSLOG:
-        logger.addHandler(syslog_)
-    else:
-        logger.addHandler(logging.NullHandler())
-    log_inf = lambda mi_ : logger.info(mi_)
-    log_err = lambda me_ : logger.error(me_)
-
     get_result = get_current_files()
     if get_result == 'fresh_data':
         current_obj_list = parse_lastdata(parse_lastcfg(read_json()))
