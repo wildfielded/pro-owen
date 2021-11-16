@@ -43,7 +43,7 @@ HTML_HEADER = '''<!DOCTYPE html>
 <HEAD>
     <META CHARSET="utf-8">
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-    <META HTTP-EQUIV="Refresh" CONTENT="15">
+    <META HTTP-EQUIV="Refresh" CONTENT="30">
     <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <LINK REL="stylesheet" TYPE="text/css" HREF="style.css">
     <TITLE></TITLE>
@@ -77,7 +77,7 @@ ROW_TEMPLATE = '''                <TR>
 
 DIAG_TEMPLATE = '''                <TR>
                     <TD COLSPAN="6" class="$state">
-                        <SPAN>$place: $diag</SPAN>
+                        <SPAN>$place: $diag</SPAN>$alarmbutt
                     </TD>
                 </TR>
 '''

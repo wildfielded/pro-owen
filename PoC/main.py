@@ -217,37 +217,50 @@ def generate_html(input_obj_list: list=[], smb_result=''):
             t_ = str(dict_['measures'][0]['value']).replace('.', ',')
             y_ = int(dict_['warn_t'])
             r_ = int(dict_['crit_t'])
-            s_ = dict_['measures'][0]['state']
+            s0_ = dict_['measures'][0]['state']
+            try:
+                s1_ = dict_['measures'][1]['state']
+            except:
+                s1_ = 'green-state'
+            b_ = ''
             list_ = ctime(dict_['measures'][0]['timestamp']).split()
             m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
             output_rows += rows_.safe_substitute(number=n_, place=p_, temp=t_,
                                                  max1=y_, max2=r_,
-                                                 state=s_, mtime=m_)
-            if s_ != 'green-state':
-                if s_ == 'yellow-state':
+                                                 state=s0_, mtime=m_)
+            if s0_ != 'green-state':
+                if s0_ == 'yellow-state':
                     d_ = u'Подозрительное повышение температуры'
-                elif s_ == 'red-state':
+                elif s0_ == 'red-state':
                     d_ = u'Критическое повышение температуры'
-                elif s_ == 'black-state':
+                elif s0_ == 'black-state':
                     d_ = u'Нет показаний датчика больше минуты'
-                elif s_ == 'gray-state':
+                elif s0_ == 'gray-state':
                     d_ = u'Неизвестная ошибка'
                 else:
                     d_ = u'Неопределённая ошибка'
-                output_diag += diag_.safe_substitute(state=s_, place=p_, diag=d_)
+                if len(dict_['measures']) > 1 and s0_ != s1_:
+                    b_ = '\n                        <BUTTON ID="newalarm" STYLE="display: inline;">Выключить звук</BUTTON>'
+                else:
+                    b_ = ''
+                output_diag += diag_.safe_substitute(state=s0_, place=p_,
+                                                     diag=d_, alarmbutt=b_)
                 log_err(''.join([p_, ': ', d_]))
     elif smb_result == 'ERR_rancid_data':
         output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
-                                            diag=u'Данные не обновлялись больше двух минут.<BR>Программный сбой на сервере OWEN.')
+                                            diag=u'Данные не обновлялись больше двух минут.<BR>Программный сбой на сервере OWEN.',
+                                            alarmbutt='')
     elif smb_result == 'ERR_missing_data':
         output_diag = diag_.safe_substitute(state='red-state',
                                             place=u'OWEN',
-                                            diag=u'Файл с данными отсутствует на сервере OWEN.')
+                                            diag=u'Файл с данными отсутствует на сервере OWEN.',
+                                            alarmbutt='')
     if not output_diag:
         output_diag = diag_.safe_substitute(state='green-state',
                                             place=u'Все датчики',
-                                            diag=u'Температура в норме')
+                                            diag=u'Температура в норме',
+                                            alarmbutt='')
     return output_rows + output_diag
 
 
