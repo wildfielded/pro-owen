@@ -106,13 +106,18 @@ def read_json():
 
 def write_json(input_obj_list):
     ''' Записывает в файл обновлённые исторические данные в формате JSON.
-        Предварительно убирает устаревшие измерения.
+        Предварительно убирает устаревшие измерения, но так, чтобы их
+        осталось минимум 2 для корректной обработки включения звуковых
+        оповещений.
     '''
     output_obj_list = []
     for obj_ in input_obj_list:
-        for m_ in obj_.sensor_dict['measures'][-1::-1]:
+        m_list_ = obj_.sensor_dict['measures']
+        for m_ in m_list_[-1::-1]:
             if m_['timestamp'] < time() - c_.HISTORY_LIMIT:
-                obj_.sensor_dict['measures'].pop()
+                if len(m_list_) <= 2:
+                    break
+                m_list_.pop()
         output_obj_list.append(obj_.sensor_dict)
     with open(c_.JSON_FILE, 'w', encoding='utf-8') as f_:
         json.dump(output_obj_list, f_, ensure_ascii=False, indent=2)
@@ -240,7 +245,7 @@ def generate_html(input_obj_list: list=[], smb_result=''):
                 else:
                     d_ = u'Неопределённая ошибка'
                 if len(dict_['measures']) > 1 and s0_ != s1_:
-                    b_ = '\n                        <BUTTON ID="newalarm" STYLE="display: inline;">Выключить звук</BUTTON>'
+                    b_ = u'\n                        <BUTTON ID="newalarm" STYLE="display: inline;">Выключить звук</BUTTON>'
                 else:
                     b_ = ''
                 output_diag += diag_.safe_substitute(state=s0_, place=p_,
@@ -285,8 +290,11 @@ def write_png(input_obj_list):
         предназначенная для плавного развития событий.
     '''
     for obj_ in input_obj_list:
-        m_list_ = []
         dict_ = obj_.read_data(['sen_num', 'measures'])
+        if len(dict_['measures']) == 0:
+            log_err('write_png -> Sensor #' + str(dict_['sen_num']) + ': No fresh measures.')
+            continue
+        m_list_ = []
         m_zero_ = 0
         m_sum_ = 0
         for m_ in dict_['measures']:
@@ -302,7 +310,11 @@ def write_png(input_obj_list):
             except:
                 m_list_.insert(0, (0, 0))
                 m_zero_ += 1
-        average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
+        try:
+            average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
+        except ZeroDivisionError:
+            average_t_ = 20
+            log_err('write_png -> Division by zero due to all results are _???_')
 
         m_matrix_ = []
         for m_ in m_list_:
