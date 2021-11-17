@@ -6,53 +6,13 @@
     "crit_t": 35.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 18.4,
+        "timestamp": 1637128749.0,
+        "value": 21.5,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 18.3,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 18.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 18.2,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 18.5,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 18.5,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 18.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 18.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 18.6,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 18.5,
+        "timestamp": 1637125893.0,
+        "value": 21.7,
         "state": "green-state"
       }
     ]
@@ -64,53 +24,13 @@
     "crit_t": 35.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 18.4,
+        "timestamp": 1637128749.0,
+        "value": 18.3,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 18.7,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 17.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 18.0,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 18.0,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 19.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 19.5,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 19.5,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 19.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 19.3,
+        "timestamp": 1637125893.0,
+        "value": 18.3,
         "state": "green-state"
       }
     ]
@@ -122,53 +42,13 @@
     "crit_t": 30.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 21.1,
+        "timestamp": 1637128749.0,
+        "value": 20.1,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 21.2,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 21.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 20.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 20.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 20.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 20.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 20.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 20.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 20.8,
+        "timestamp": 1637125893.0,
+        "value": 20.3,
         "state": "green-state"
       }
     ]
@@ -180,53 +60,13 @@
     "crit_t": 60.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 18.3,
+        "timestamp": 1637128749.0,
+        "value": 19.9,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 18.2,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 18.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 18.3,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 18.1,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 17.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 18.1,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 18.1,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 18.1,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 18.1,
+        "timestamp": 1637125893.0,
+        "value": 19.9,
         "state": "green-state"
       }
     ]
@@ -238,53 +78,13 @@
     "crit_t": 48.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 20.2,
+        "timestamp": 1637128749.0,
+        "value": 19.1,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 20.3,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 19.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 20.3,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 19.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 20.2,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 20.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 20.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 20.5,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 20.6,
+        "timestamp": 1637125893.0,
+        "value": 19.6,
         "state": "green-state"
       }
     ]
@@ -296,53 +96,13 @@
     "crit_t": 60.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 22.7,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637052162.0,
-        "value": 22.7,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
+        "timestamp": 1637128749.0,
         "value": 22.6,
         "state": "green-state"
       },
       {
-        "timestamp": 1637050377.0,
-        "value": 23.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 23.4,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 23.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 23.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 23.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 23.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 23.9,
+        "timestamp": 1637125893.0,
+        "value": 22.6,
         "state": "green-state"
       }
     ]
@@ -354,53 +114,13 @@
     "crit_t": 35.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 20.6,
+        "timestamp": 1637128749.0,
+        "value": 20.4,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 20.1,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 19.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 19.7,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 20.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 20.1,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 21.0,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 21.0,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 21.2,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 21.2,
+        "timestamp": 1637125893.0,
+        "value": 19.2,
         "state": "green-state"
       }
     ]
@@ -412,53 +132,13 @@
     "crit_t": 35.0,
     "measures": [
       {
-        "timestamp": 1637052267.0,
-        "value": 23.1,
+        "timestamp": 1637128749.0,
+        "value": 23.8,
         "state": "green-state"
       },
       {
-        "timestamp": 1637052162.0,
-        "value": 23.0,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637051742.0,
-        "value": 23.0,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050377.0,
-        "value": 22.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637050251.0,
-        "value": 22.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049915.0,
-        "value": 22.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 22.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049831.0,
-        "value": 22.9,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049810.0,
-        "value": 22.8,
-        "state": "green-state"
-      },
-      {
-        "timestamp": 1637049789.0,
-        "value": 22.9,
+        "timestamp": 1637125893.0,
+        "value": 23.7,
         "state": "green-state"
       }
     ]
