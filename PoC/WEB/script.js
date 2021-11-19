@@ -28,9 +28,9 @@ const $ = (e) => new jQuery(e);
 
 //----- Всё остальное -----
 
-// loopPlaying = true - если нужна бесконечная сирена,
-// пока оператор не нахмёт кнопку
-const loopPlaying = false;
+// loopPlaying=false - звуковой файл проигрывается один раз при загрузке страницы
+// loopPlaying=true - если нужна бесконечная сирена, пока оператор не нажмёт кнопку
+const loopPlaying = true;
 let newTrouble = document.getElementById('newalarm');
 
 HTMLAudioElement.prototype.stop = function() {
