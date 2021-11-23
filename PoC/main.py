@@ -298,7 +298,8 @@ def write_html(rows=''):
 
 
 def write_png(input_obj_list):
-    ''' Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
+    ''' Самый простой вариант создания графиков.
+        Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
         Вертикальный размер картинки = 40px.  Масштаб = 4px/градус.
         Шкалы нет, на середине высоты (20px) - уровень среднего значения
         температуры за исторический период (нулевые значения не берутся
@@ -352,6 +353,71 @@ def write_png(input_obj_list):
             p_.write(f_, transposed_matrix_)
 
 
+def write_advpng(input_obj_list):
+    ''' Продвинутый вариант создания графиков.
+        Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
+        В отличие от предыдущего варианта - вертикальный размер картинки = 60px.
+        Масштаб = 2px/градус. Уровень среднего значения остался на высоте 20px.
+        Просто сверху добавляется ещё 20px для наглядности - там могут появляться
+        жёлтые и красные пороговые уровни температуры.
+    '''
+    for obj_ in input_obj_list:
+        dict_ = obj_.read_data(['sen_num', 'warn_t', 'crit_t', 'measures'])
+        if len(dict_['measures']) == 0:
+            log_err('write_png -> Sensor #' + str(dict_['sen_num']) + ': No fresh measures.')
+            continue
+        m_list_ = []
+        m_zero_ = 0
+        m_sum_ = 0
+        yelp_ = int(dict_['warn_t'] * 2)
+        redp_ = int(dict_['crit_t'] * 2)
+        for m_dict_ in dict_['measures']:
+            try:
+                if m_dict_['state'] == 'red-state':
+                    colorbit_ = 3
+                elif m_dict_['state'] == 'yellow-state':
+                    colorbit_ = 2
+                else:
+                    colorbit_ = 1
+                m_ = int(m_dict_['value'] * 2)
+                m_list_.insert(0, (m_, colorbit_))
+                m_sum_ += m_
+            except:
+                m_list_.insert(0, (0, 0))
+                m_zero_ += 1
+        try:
+            average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
+        except ZeroDivisionError:
+            average_t_ = 20
+            log_err('write_png -> Division by zero due to all results are _???_')
+
+        m_matrix_ = []
+        for m_tup_ in m_list_:
+            yel_delta_ = yelp_ - m_tup_[0]
+            red_delta_ = redp_ - m_tup_[0]
+            reduced_m_ = m_tup_[0] - average_t_ + 20
+            list_ = [m_tup_[1] for y_ in range(reduced_m_)] + [0 for z_ in range(60 - reduced_m_)]
+            list_len_ = len(list_)
+            if reduced_m_ + yel_delta_ < list_len_ - 1:
+                yel_pos_ = reduced_m_ + yel_delta_
+                list_[yel_pos_] = 2
+                list_[yel_pos_ + 1] = 2
+            if reduced_m_ + red_delta_ < len(list_) - 1:
+                red_pos_ = reduced_m_ + red_delta_
+                list_[red_pos_] = 3
+                list_[red_pos_ + 1] = 3
+            m_matrix_.append(list_[:60:][::-1])
+        transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))]
+                                                  for col_ in range(len(m_matrix_[0]))]
+
+        four_colors = [(224, 224, 224), (0, 160, 0), (255, 192, 0), (255, 64, 0)]
+        png_file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
+        with open(png_file_, 'wb') as f_:
+            p_ = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_),
+                           palette=four_colors, bitdepth=2)
+            p_.write(f_, transposed_matrix_)
+
+
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
@@ -360,7 +426,7 @@ if __name__ == '__main__':
         current_obj_list = parse_lastdata(parse_lastcfg(read_json()))
         rows_ = generate_html(current_obj_list, smb_result=get_result)
         write_json(current_obj_list)
-        write_png(current_obj_list)
+        write_advpng(current_obj_list)
     else:
         rows_ = generate_html(smb_result=get_result)
     write_html(rows=rows_)
