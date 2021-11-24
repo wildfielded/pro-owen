@@ -297,7 +297,7 @@ def write_html(rows=''):
     log_inf('HTML file updated.')
 
 
-def write_png(input_obj_list):
+def write_png_old(input_obj_list):
     ''' Самый простой вариант создания графиков.
         Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
         Вертикальный размер картинки = 40px.  Масштаб = 4px/градус.
@@ -353,7 +353,7 @@ def write_png(input_obj_list):
             p_.write(f_, transposed_matrix_)
 
 
-def write_advpng(input_obj_list):
+def write_png(input_obj_list):
     ''' Продвинутый вариант создания графиков.
         Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
         В отличие от предыдущего варианта - вертикальный размер картинки = 60px.
@@ -391,7 +391,7 @@ def write_advpng(input_obj_list):
             average_t_ = 20
             log_err('write_png -> Division by zero due to all results are _???_')
 
-        m_matrix_ = []
+        matrix_ = []
         for m_tup_ in m_list_:
             yel_delta_ = yelp_ - m_tup_[0]
             red_delta_ = redp_ - m_tup_[0]
@@ -402,13 +402,13 @@ def write_advpng(input_obj_list):
                 yel_pos_ = reduced_m_ + yel_delta_
                 list_[yel_pos_] = 2
                 list_[yel_pos_ + 1] = 2
-            if reduced_m_ + red_delta_ < len(list_) - 1:
+            if reduced_m_ + red_delta_ < list_len_ - 1:
                 red_pos_ = reduced_m_ + red_delta_
                 list_[red_pos_] = 3
                 list_[red_pos_ + 1] = 3
-            m_matrix_.append(list_[:60:][::-1])
-        transposed_matrix_ = [[m_matrix_[row_][col_] for row_ in range(len(m_matrix_))]
-                                                  for col_ in range(len(m_matrix_[0]))]
+            matrix_.append(list_[:60:][::-1])
+        transposed_matrix_ = [[matrix_[row_][col_] for row_ in range(len(matrix_))]
+                                                   for col_ in range(len(matrix_[0]))]
 
         four_colors = [(224, 224, 224), (0, 160, 0), (255, 192, 0), (255, 64, 0)]
         png_file_ = c_.WWW_DIR + str(dict_['sen_num']) + '.png'
@@ -426,7 +426,7 @@ if __name__ == '__main__':
         current_obj_list = parse_lastdata(parse_lastcfg(read_json()))
         rows_ = generate_html(current_obj_list, smb_result=get_result)
         write_json(current_obj_list)
-        write_advpng(current_obj_list)
+        write_png(current_obj_list)
     else:
         rows_ = generate_html(smb_result=get_result)
     write_html(rows=rows_)
