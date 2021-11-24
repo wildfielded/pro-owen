@@ -2,9 +2,13 @@
 
 import sys
 
+from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget
-from PyQt5.QtWidgets import QGroupBox, QHBoxLayout, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import (QApplication, QMainWindow, 
+                            QDesktopWidget, QWidget,
+                            QGroupBox, QPushButton,
+                            QHBoxLayout, QVBoxLayout)
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
 class OwenWindow(QWidget):
@@ -17,25 +21,29 @@ class OwenWindow(QWidget):
     def move_to_center(self):
         win_query_ = self.frameGeometry()
         center_point_ = QDesktopWidget().availableGeometry().center()
-        print(center_point_)
         win_query_.moveCenter(center_point_)
-        print(win_query_)
         self.move(win_query_.topLeft())
 
     def setup_main_win(self):
-        self.butt_widget = QGroupBox('Button Group')
-        self.butt_layout = QHBoxLayout()
-        self.butt_layout.addWidget(QPushButton('Start'))
-        self.butt_layout.addWidget(QPushButton('Exit'))
-        self.butt_layout.setObjectName('ButtonLayout')
         self.setWindowTitle('OWEN')
         self.setWindowIcon(QIcon('owenicon.svg'))
-        self.resize(600, 300)
+        self.resize(700, 500)
         self.move_to_center()
-        self.main_layout = QVBoxLayout()
-        self.main_layout.addWidget(QPushButton('Exit'))
-        self.main_layout.addWidget(self.butt_widget)
-        self.setLayout(self.main_layout)
+
+        ToolbarLayout = QHBoxLayout()
+        ToolbarLayout.addWidget(QPushButton('Enter'))
+        ToolbarLayout.addWidget(QPushButton('Exit'))
+
+        HtmlWidget = QWebEngineView()
+        HtmlWidget.load(QUrl('http://10.30.40.122/owen/'))
+        WebLayout = QVBoxLayout()
+        WebLayout.addWidget(HtmlWidget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(ToolbarLayout)
+        #####main_layout.addLayout(WebLayout)
+        main_layout.addWidget(HtmlWidget)
+        self.setLayout(main_layout)
 
 
 if __name__ == '__main__':

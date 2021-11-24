@@ -66,8 +66,8 @@ if c_.USE_SYSLOG:
     logger.addHandler(syslog_)
 else:
     logger.addHandler(logging.NullHandler())
-log_inf = lambda mi_ : logger.info(mi_)
-log_err = lambda me_ : logger.error(me_)
+log_inf = lambda inf_msg_ : logger.info(inf_msg_)
+log_err = lambda err_msg_ : logger.error(err_msg_)
 
 
 #####=====----- Функции -----=====#####
