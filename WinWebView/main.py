@@ -2,10 +2,10 @@
 
 import sys
 
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QCoreApplication, QUrl
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import (QDesktopWidget, QWidget, QPushButton, QGroupBox)
+from PyQt5.QtWidgets import (QDesktopWidget, QWidget, QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
@@ -30,15 +30,19 @@ class OwenWindow(QWidget):
         #####self.resize(self.sizeHint())
         self.move_to_center()
 
+        exit_butt_ = QPushButton(QIcon('icon-exit.svg'), u'Выход')
+        exit_butt_.clicked.connect(QCoreApplication.instance().quit)
+
         ToolbarLayout = QHBoxLayout()
         ToolbarLayout.addWidget(QPushButton(QIcon('icon-config.svg'), u'Настройки'))
         ToolbarLayout.addWidget(QPushButton(QIcon('icon-pc.svg'), u'АРМ'))
         ToolbarLayout.addWidget(QPushButton(QIcon('icon-downld.svg'), u'Сервер-1'))
         ToolbarLayout.addWidget(QPushButton(QIcon('icon-downld.svg'), u'Сервер-2'))
-        ToolbarLayout.addWidget(QPushButton(QIcon('icon-exit.svg'), u'Выход'))
+        #####ToolbarLayout.addWidget(QPushButton(QIcon('icon-exit.svg'), u'Выход'))
+        ToolbarLayout.addWidget(exit_butt_)
 
         HtmlWidget = QWebEngineView()
-        HtmlWidget.load(QUrl('http://10.30.40.122/owen/'))
+        HtmlWidget.load(QUrl('http://10.130.4.122/owen/'))
         WebLayout = QVBoxLayout()
         WebLayout.addWidget(HtmlWidget)
 

@@ -16,7 +16,7 @@
 Для установки **PyQt5** и зависимостей, используемых в текущем проекте, надо
 действовать по аналогии, то есть скачать и выложить в `D:\DIST` следующие файлы
 (или подобные):    
-**`PyQt5-x.x.x-cp36-abi3-win_amd64.whl`**
+**`PyQt5-x.x.x-cp36-abi3-win_amd64.whl`**    
 **`PyQt5_Qt5-x.x.x-py3-none-win_amd64.whl`**    
 **`PyQt5_sip-x.x.x-cp310-cp310-win_amd64.whl`**    
 **`PyQtWebEngine-x.x.x-cp36-win_amd64.whl`**    
