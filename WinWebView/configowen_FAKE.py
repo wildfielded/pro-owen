@@ -7,38 +7,8 @@
 '''
 ''' Набор конфиговин, нужных для настройки работы программ
 '''
-##### Корневая директория размещения проекта
-PROJECT_DIR = '/opt/pet/owen/'
-##### Директория WEB-сервера для размещения HTML
-WWW_DIR = '/var/www/html/owen/'
-##### Добавки путей к нужным файлам
-LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
-LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
-JSON_FILE = WWW_DIR + 'history.json'
-HTML_OUTPUT = WWW_DIR + 'index.html'
-##### "True" - для сброса лога на сервер через SYSLOG
-USE_SYSLOG = False
-SYSLOG_ADDR = '127.0.0.1'
-SYSLOG_PORT = 514
-##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
-LOGIN = 'WildDD'
-PASSWD = 'password123'
-DOMAIN = 'MYDOMAIN'
-##### Имя машины, на которой всё это крутится (можно назвать от балды)
-CLI_NAME = 'testpc'
-##### NetBIOS/AD-имя сервака OWEN и прочие его атрибуты
-SRV_NAME = 'CHECKPC'
-SRV_IP = '10.10.33.196'
-SRV_PORT = 445
-SHARE_NAME = 'Owen$'
-DATA_PATH = 'owen.txt'
-CFG_PATH = 'owen.cfg'
 URL_SRV1 = 'http://10.30.40.122/owen'
 URL_SRV2 = 'http://10.30.40.123/owen'
-##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
-TZ_SHIFT = 3600.0 * 5
-##### Период хранения истории измерений в секундах
-HISTORY_LIMIT = 30.0 * 120
 
 HTML_HEADER = '''<!DOCTYPE html>
 <HTML LANG="ru">
@@ -88,7 +58,6 @@ HTML_FOOTER = '''            </TBODY>
         </TABLE>
     </MAIN>
     <FOOTER></FOOTER>
-    <SCRIPT SRC="script.js"></SCRIPT>
 </BODY>
 </HTML>'''
 

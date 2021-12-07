@@ -3,6 +3,7 @@
 #####import os
 from os.path import abspath
 import sys
+import configparser
 
 from PyQt5.QtCore import QCoreApplication, QUrl
 from PyQt5.QtGui import QIcon
@@ -12,6 +13,9 @@ from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 import configowen as c_
+
+
+#####=====----- Классы -----=====#####
 
 class OwenWindow(QWidget):
     ''' Основное окно
@@ -32,7 +36,8 @@ class OwenWindow(QWidget):
             #####self.HtmlWidget.load(QUrl().fromLocalFile(os.getcwd() + '/index.html'))
             self.HtmlWidget.load(QUrl().fromLocalFile(abspath('index.html')))
         if server == 1:
-            self.HtmlWidget.load(QUrl(c_.URL_SRV1))
+            #####self.HtmlWidget.load(QUrl(c_.URL_SRV1))
+            self.HtmlWidget.load(QUrl(cfg_.get('Network', 'srv1_url')))
         if server == 2:
             self.HtmlWidget.load(QUrl(c_.URL_SRV2))
 
@@ -66,7 +71,7 @@ class OwenWindow(QWidget):
         ToolbarLayout.addWidget(button_exit_)
 
         self.HtmlWidget = QWebEngineView()
-        self.HtmlWidget.load(QUrl('http://10.130.4.122/owen/'))
+        self.HtmlWidget.load(QUrl('http://127.0.0.1/owen/'))
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(ToolbarLayout)
@@ -74,7 +79,20 @@ class OwenWindow(QWidget):
         self.setLayout(main_layout)
 
 
+#####=====----- Функции -----=====#####
+
+def cfg_setup():
+    global cfg_
+    cfg_ = configparser.ConfigParser()
+    with open('configowen.ini', 'r', encoding='utf-8') as f_:
+        cfg_.read_file(f_)
+    print(cfg_.get('Network', 'srv2_url'))
+
+
+#####=====----- Собственно, сама программа -----=====#####
+
 if __name__ == '__main__':
+    cfg_setup()
     app_ = QApplication([])
     main_window_ = OwenWindow()
     main_window_.show()

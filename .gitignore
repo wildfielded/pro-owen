@@ -1,9 +1,8 @@
 __pycache__/
 *.ipynb
 .ipynb_checkpoints/
-/PoC/configowen.py
-/WinWebView/configowen.py
-/WinTableView/configowen.py
+configowen.py
+configowen.ini
 test.py
 main.py_BAK
 *.png
