@@ -3,7 +3,7 @@
 #####import os
 from os.path import abspath
 import sys
-import configparser
+from configparser import ConfigParser
 
 from PyQt5.QtCore import QCoreApplication, QUrl
 from PyQt5.QtGui import QIcon
@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (QDesktopWidget, QWidget, QPushButton)
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-import configowen as c_
+import configranit as c_
 
 
 #####=====----- Классы -----=====#####
@@ -32,14 +32,11 @@ class OwenWindow(QWidget):
 
     def tune_to(self, server):
         if server == 0:
-            #####self.HtmlWidget.load(QUrl().fromLocalFile('/home/stalk/STALK/GIT/wildfielded/pet-owen/WinWebView/index.html'))
-            #####self.HtmlWidget.load(QUrl().fromLocalFile(os.getcwd() + '/index.html'))
             self.HtmlWidget.load(QUrl().fromLocalFile(abspath('index.html')))
         if server == 1:
-            #####self.HtmlWidget.load(QUrl(c_.URL_SRV1))
-            self.HtmlWidget.load(QUrl(cfg_.get('Network', 'srv1_url')))
+            self.HtmlWidget.load(QUrl(cfg_.get('NETWORK', 'srv1_url')))
         if server == 2:
-            self.HtmlWidget.load(QUrl(c_.URL_SRV2))
+            self.HtmlWidget.load(QUrl(cfg_.get('NETWORK', 'srv2_url')))
 
     def setup_main_win(self):
         self.setWindowTitle('OWEN')
@@ -64,7 +61,6 @@ class OwenWindow(QWidget):
 
         ToolbarLayout = QHBoxLayout()
         ToolbarLayout.addWidget(button_conf_)
-        #####ToolbarLayout.addWidget(QPushButton(QIcon('icon-pc.svg'), u'АРМ'))
         ToolbarLayout.addWidget(button_armd_)
         ToolbarLayout.addWidget(button_srv1_)
         ToolbarLayout.addWidget(button_srv2_)
@@ -81,18 +77,17 @@ class OwenWindow(QWidget):
 
 #####=====----- Функции -----=====#####
 
-def cfg_setup():
+def ini_setup():
     global cfg_
-    cfg_ = configparser.ConfigParser()
+    cfg_ = ConfigParser()
     with open('configowen.ini', 'r', encoding='utf-8') as f_:
         cfg_.read_file(f_)
-    print(cfg_.get('Network', 'srv2_url'))
 
 
 #####=====----- Собственно, сама программа -----=====#####
 
 if __name__ == '__main__':
-    cfg_setup()
+    ini_setup()
     app_ = QApplication([])
     main_window_ = OwenWindow()
     main_window_.show()

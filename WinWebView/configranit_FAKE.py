@@ -1,14 +1,17 @@
 #!/usr/bin/python3
 
-''' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    Этот файл "configowen_FAKE.py" надо переименовать в "configowen.py"
-    и переопределить переменные под конкретный сервер.
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-'''
 ''' Набор конфиговин, нужных для настройки работы программ
 '''
-URL_SRV1 = 'http://10.30.40.122/owen'
-URL_SRV2 = 'http://10.30.40.123/owen'
+DEFAULT_CONF = {
+    'FILES': {},
+    'NETWORK': {
+        'srv1_url': 'http://10.30.40.122/owen/',
+        'srv2_url': 'http://10.30.40.123/owen/',
+        },
+    'LOGGING': {},
+    'SAMBA': {},
+    'PARAMETERS': {},
+    }
 
 HTML_HEADER = '''<!DOCTYPE html>
 <HTML LANG="ru">
@@ -17,8 +20,48 @@ HTML_HEADER = '''<!DOCTYPE html>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <META HTTP-EQUIV="Refresh" CONTENT="30">
     <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <LINK REL="stylesheet" TYPE="text/css" HREF="style.css">
-    <TITLE></TITLE>
+    <STYLE>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table,
+        td,
+        th {
+            border-collapse: collapse;
+            border-style: solid;
+            border-width: 1px;
+            padding: 0 10px 0 10px;
+        }
+        th {
+            text-align: center;
+        }
+        td:nth-of-type(n+2) {
+            text-align: center;
+        }
+        .green-state {
+            background-color: #bbffbb;
+        }
+        .yellow-state {
+            background-color: #ffff88;
+            font-weight: 700;
+        }
+        .red-state {
+            background-color: #ff0000;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .gray-state {
+            background-color: #775533;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .black-state {
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: 700;
+        }
+    </STYLE>
+    <TITLE>OWEN Temperatures</TITLE>
 </HEAD>
 <BODY>
     <HEADER></HEADER>

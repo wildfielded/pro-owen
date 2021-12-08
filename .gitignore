@@ -3,6 +3,7 @@ __pycache__/
 .ipynb_checkpoints/
 configowen.py
 configowen.ini
+configranit.py
 test.py
 main.py_BAK
 *.png
