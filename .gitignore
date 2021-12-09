@@ -2,8 +2,9 @@ __pycache__/
 *.ipynb
 .ipynb_checkpoints/
 configowen.py
+ConfigOWEN.py
 configowen.ini
-configranit.py
+ConfiGranit.py
 test.py
 main.py_BAK
 *.png

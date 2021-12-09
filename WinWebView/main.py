@@ -2,9 +2,10 @@
 
 import sys
 from os.path import abspath
+from time import sleep
 from configparser import ConfigParser, ExtendedInterpolation
 
-from PyQt5.QtCore import QCoreApplication, QUrl
+from PyQt5.QtCore import QCoreApplication, QThread, QUrl
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDesktopWidget, QWidget, QPushButton
@@ -12,7 +13,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 import ConfiGranit as c_
-#####import htmlcreator as w_
+import HTMLCreator as h_
 
 
 #####=====----- Константы -----=====#####
@@ -23,20 +24,34 @@ CFG = ConfigParser(interpolation=ExtendedInterpolation())
 
 #####=====----- Классы -----=====#####
 
+class BgCreator(QThread):
+    ''' Фоновое периодическое обновление HTML-файла для показа в главном окне
+    '''
+    def __init__(self):
+        super().__init__()
+
+    def run(self):
+        while True:
+            h_.create(CFG)
+            sleep(25)
+
+
 class OwenWindow(QWidget):
     ''' Основное окно
     '''
     def __init__(self):
         super().__init__()
         self.setup_main_win()
+        self.html = BgCreator()
+        self.html.start()
 
     def move_to_center(self):
         ''' Центрирует окно программы на дисплее
         '''
-        window_ = self.frameGeometry()
+        win_geom_ = self.frameGeometry()
         win_center_ = QDesktopWidget().availableGeometry().center()
-        window_.moveCenter(win_center_)
-        self.move(window_.topLeft())
+        win_geom_.moveCenter(win_center_)
+        self.move(win_geom_.topLeft())
 
     def tune_to(self, server):
         ''' Для переключения по кнопкам URL в окне "браузера"

@@ -8,14 +8,32 @@
 ''' Набор конфиговин, нужных для настройки работы программ
 '''
 DEFAULT_CFG = {
-    'FILES': {},
+    'FILES': {
+        'last_datafile': 'lastdata.txt',
+        'last_cfgfile': 'lastcfg.txt',
+        'json_file': 'history.json',
+        },
     'NETWORK': {
-        'srv1_url': 'http://10.30.40.122/owen/',
-        'srv2_url': 'http://10.30.40.123/owen/',
+        'srv1_url': 'http://10.130.4.122/owen/',
+        'srv2_url': 'http://10.130.4.123/',
         },
     'LOGGING': {},
-    'SAMBA': {},
-    'PARAMETERS': {},
+    'SAMBA': {
+        'login': 'WildDD',
+        'passwd': 'password123',
+        'domain': 'MYDOMAIN',
+        'cli_name': 'testpc',
+        'srv_name': 'CHECKPC',
+        'srv_ip': '10.10.33.196',
+        'srv_port': '445',
+        'share_name': 'Owen$$',
+        'data_path': 'owen.txt',
+        'cfg_path': 'owen.cfg',
+        },
+    'PARAMETERS': {
+        'tz_shift': '18000',
+        'history_limit': '3600',
+        },
     }
 
 HTML_HEADER = '''<!DOCTYPE html>
@@ -109,4 +127,4 @@ HTML_FOOTER = '''            </TBODY>
 </BODY>
 </HTML>'''
 
-###########################################################################
+#####=====----- THE END -----=====########################################
