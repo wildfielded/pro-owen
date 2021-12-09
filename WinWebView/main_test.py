@@ -76,7 +76,7 @@ class OwenWindow(QWidget):
         ToolbarLayout.addWidget(button_exit_)
 
         self.HtmlWidget = QWebEngineView()
-        self.HtmlWidget.load(QUrl('http://10.130.4.122/owen/'))
+        self.HtmlWidget.load(QUrl('http://10.30.40.122/owen/'))
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(ToolbarLayout)

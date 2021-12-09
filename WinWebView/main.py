@@ -1,18 +1,24 @@
 #!/usr/bin/python3
 
-#####import os
-from os.path import abspath
 import sys
-from configparser import ConfigParser
+from os.path import abspath
+from configparser import ConfigParser, ExtendedInterpolation
 
 from PyQt5.QtCore import QCoreApplication, QUrl
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import (QDesktopWidget, QWidget, QPushButton)
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
+from PyQt5.QtWidgets import QDesktopWidget, QWidget, QPushButton
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-import configranit as c_
+import ConfiGranit as c_
+#####import htmlcreator as w_
+
+
+#####=====----- Константы -----=====#####
+
+INI_FILE = 'configowen.ini'
+CFG = ConfigParser(interpolation=ExtendedInterpolation())
 
 
 #####=====----- Классы -----=====#####
@@ -25,18 +31,22 @@ class OwenWindow(QWidget):
         self.setup_main_win()
 
     def move_to_center(self):
-        win_query_ = self.frameGeometry()
-        center_point_ = QDesktopWidget().availableGeometry().center()
-        win_query_.moveCenter(center_point_)
-        self.move(win_query_.topLeft())
+        ''' Центрирует окно программы на дисплее
+        '''
+        window_ = self.frameGeometry()
+        win_center_ = QDesktopWidget().availableGeometry().center()
+        window_.moveCenter(win_center_)
+        self.move(window_.topLeft())
 
     def tune_to(self, server):
+        ''' Для переключения по кнопкам URL в окне "браузера"
+        '''
         if server == 0:
             self.HtmlWidget.load(QUrl().fromLocalFile(abspath('index.html')))
         if server == 1:
-            self.HtmlWidget.load(QUrl(cfg_.get('NETWORK', 'srv1_url')))
+            self.HtmlWidget.load(QUrl(CFG.get('NETWORK', 'srv1_url')))
         if server == 2:
-            self.HtmlWidget.load(QUrl(cfg_.get('NETWORK', 'srv2_url')))
+            self.HtmlWidget.load(QUrl(CFG.get('NETWORK', 'srv2_url')))
 
     def setup_main_win(self):
         self.setWindowTitle('OWEN')
@@ -67,7 +77,7 @@ class OwenWindow(QWidget):
         ToolbarLayout.addWidget(button_exit_)
 
         self.HtmlWidget = QWebEngineView()
-        self.HtmlWidget.load(QUrl('http://127.0.0.1/owen/'))
+        self.HtmlWidget.load(QUrl().fromLocalFile(abspath('index.html')))
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(ToolbarLayout)
@@ -78,10 +88,17 @@ class OwenWindow(QWidget):
 #####=====----- Функции -----=====#####
 
 def ini_setup():
-    global cfg_
-    cfg_ = ConfigParser()
-    with open('configowen.ini', 'r', encoding='utf-8') as f_:
-        cfg_.read_file(f_)
+    ''' Считывает настройки из INI-файла и парсит в объект CFG. Если не удаётся
+        (неважно, по какой причине), то считывает дефолтные настройки из залитого
+        гранитом словаря в configranit, парсит в CFG и заодно создаёт INI-файл.
+    '''
+    try:
+        with open(INI_FILE, 'r', encoding='utf-8') as f_:
+            CFG.read_file(f_)
+    except:
+        CFG.read_dict(c_.DEFAULT_CFG)
+        with open(INI_FILE, 'w', encoding='utf-8') as f_:
+            CFG.write(f_)
 
 
 #####=====----- Собственно, сама программа -----=====#####
@@ -93,4 +110,4 @@ if __name__ == '__main__':
     main_window_.show()
     sys.exit(app_.exec_())
 
-##########################################################################
+#####=====----- THE END -----=====########################################
