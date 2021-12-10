@@ -22,13 +22,17 @@
 модуль `configparser` из стандартной бибиотеки.    
 - Для фоновой работы по генерации локального HTML-файла используется модуль
 `PyQt5.QtCore.QThread`. Эксперименты со стандартными `multiprocessing` и `subprocess`
-не работают после сборки под Windows.    
+не работают после сборки под Windows. Использованы готовые функции **`main.py`**
+из [**`PoC`**](https://github.com/wildfielded/pet-owen/tree/master/PoC) (он присутствует
+в виде модуля **`HTMLCreator.py`**, несколько модифицированный).    
 - Pyinstaller собирает исполняемый файл для Windows, чтобы работать без установки на
 рабочей станции Python и всех требуемых зависимостей.    
 
 #### Добавки ####
 [**`.ADDS`**](https://github.com/wildfielded/pet-owen/tree/master/WinWebView/.ADDS) - дополнительные
 вещи и телодвижения для деплоя.    
+Примерный вид из рабочего окна:    
+![screenshot-1](https://github.com/wildfielded/pet-owen/tree/master/WinWebView/.ADDS/shot1.png)    
 
 #### Doing (ближайшие планы) ####
 - Web-движок не даёт играть музыку. Придётся через PyQt5?    

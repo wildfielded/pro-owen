@@ -51,4 +51,4 @@
 --hidden-import ConfiGranit.py --hidden-import HTMLCreator.py`**    
 - Готовый файл `owen.exe` находится в D:\OWEN\WinWebView\dist    
 - Его скопировать в рабочую директорию, туда же положить все иконки, плюс
-`owen.ini` и можно запускать.    
+переименовать `owen_FAKE.ini`, поправить в нём параметры и можно запускать.    

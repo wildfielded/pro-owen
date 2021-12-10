@@ -11,3 +11,4 @@ WinWebView/index.html
 test.py
 main.py_BAK
 *.png
+!shot1.png

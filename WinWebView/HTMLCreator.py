@@ -4,8 +4,6 @@ from time import ctime, mktime, strptime, time
 from configparser import ConfigParser, ExtendedInterpolation
 import json
 from string import Template
-#####import logging
-#####import logging.handlers as LogHandlers_
 
 from smb.SMBConnection import SMBConnection
 import png
@@ -276,8 +274,8 @@ def generate_html(input_obj_list: list=[], smb_result=''):
 
 
 def write_html(html_output, rows=''):
-    ''' Записывает файл HTML для отдачи по HTTP. Использует заданные в модуле
-        configowen шаблоны HTML-кода и Template для заполнения строк таблицы.
+    ''' Записывает файл HTML. Использует заданные в модуле ConfiGranit шаблоны
+        HTML-кода и Template для заполнения строк таблицы.
     '''
     with open(html_output, 'w', encoding='utf-8') as h_:
         h_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
@@ -286,10 +284,10 @@ def write_html(html_output, rows=''):
 def write_png(input_obj_list):
     ''' Продвинутый вариант создания графиков.
         Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
-        В отличие от предыдущего варианта - вертикальный размер картинки = 60px.
-        Масштаб = 2px/градус. Уровень среднего значения остался на высоте 20px.
-        Просто сверху добавляется ещё 20px для наглядности - там могут появляться
-        жёлтые и красные пороговые уровни температуры.
+        Вертикальный размер картинки = 60px. Масштаб = 2px/градус. Уровень
+        среднего значения - на высоте 20px. Сверху добавляется ещё 20px для
+        наглядности - там могут появляться жёлтые и красные пороговые уровни
+        температуры.
     '''
     for obj_ in input_obj_list:
         dict_ = obj_.read_data(['sen_num', 'warn_t', 'crit_t', 'measures'])
@@ -344,7 +342,7 @@ def write_png(input_obj_list):
             p_.write(f_, transposed_matrix_)
 
 
-#####=====----- Собственно, сама программа -----=====#####
+#####=====----- Основной вызываемый код -----=====#####
 
 def create(cfg_from_main: object=ConfigParser(interpolation=ExtendedInterpolation)):
     last_datafile_ = cfg_from_main['FILES']['last_datafile']

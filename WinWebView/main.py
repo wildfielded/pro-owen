@@ -16,7 +16,7 @@ import ConfiGranit as c_
 import HTMLCreator as h_
 
 
-#####=====----- Константы -----=====#####
+#####=====----- Фундаментальные константы -----=====#####
 
 INI_FILE = 'owen.ini'
 CFG = ConfigParser(interpolation=ExtendedInterpolation())
@@ -105,7 +105,7 @@ class OwenWindow(QWidget):
 def ini_setup():
     ''' Считывает настройки из INI-файла и парсит в объект CFG. Если не удаётся
         (неважно, по какой причине), то считывает дефолтные настройки из залитого
-        гранитом словаря в configranit, парсит в CFG и заодно создаёт INI-файл.
+        гранитом словаря в ConfiGranit, парсит в CFG и заодно создаёт INI-файл.
     '''
     try:
         with open(INI_FILE, 'r', encoding='utf-8') as f_:
