@@ -44,7 +44,11 @@
 
 ### Сборка owen.exe для установки на рабочие места дежурного персонала ###
 
-Пока для тестов можно делать так:    
+На текущий момент можно делать так:    
 - Скачать с репозитория zip-архив и распаковать например в D:\OWEN.    
 - В command prompt перейти в D:\OWEN\WinWebView и скомандовать:    
-**`pyinstaller main.py --name owen --noconsole --onefile`**    
+**`pyinstaller main.py --name owen --onefile --icon icon-owen.ico --noconsole
+--hidden-import ConfiGranit.py --hidden-import HTMLCreator.py`**    
+- Готовый файл `owen.exe` находится в D:\OWEN\WinWebView\dist    
+- Его скопировать в рабочую директорию, туда же положить все иконки, плюс
+`owen.ini` и можно запускать.    

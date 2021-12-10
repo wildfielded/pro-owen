@@ -3,12 +3,12 @@
 from time import ctime, mktime, strptime, time
 from configparser import ConfigParser, ExtendedInterpolation
 import json
-#####from string import Template
+from string import Template
 #####import logging
 #####import logging.handlers as LogHandlers_
 
 from smb.SMBConnection import SMBConnection
-#####import png
+import png
 
 import ConfiGranit as c_
 
@@ -211,23 +211,157 @@ def parse_lastdata(last_datafile, tz_shift, input_obj_list: list=[]):
     return output_obj_list
 
 
+def generate_html(input_obj_list: list=[], smb_result=''):
+    ''' Принимает список объектов класса SensorDataBlock и заполняет
+        соответствующими значениями по шаблонам табличные ячейки и итоговое
+        состояние помещений, выводимое в одной или нескольких строках в конце
+        таблицы.
+    '''
+    output_rows = ''
+    output_diag = ''
+    rows_ = Template(c_.ROW_TEMPLATE)
+    diag_ = Template(c_.DIAG_TEMPLATE)
+    if smb_result == 'fresh_data':
+        for obj_ in input_obj_list:
+            dict_ = obj_.sensor_dict
+            n_ = str(dict_['sen_num'])
+            p_ = dict_['place']
+            t_ = str(dict_['measures'][0]['value']).replace('.', ',')
+            y_ = int(dict_['warn_t'])
+            r_ = int(dict_['crit_t'])
+            s0_ = dict_['measures'][0]['state']
+            try:
+                s1_ = dict_['measures'][1]['state']
+            except:
+                s1_ = 'green-state'
+            b_ = ''
+            list_ = ctime(dict_['measures'][0]['timestamp']).split()
+            m_ = '{} ({} {})'.format(list_[3], list_[2], list_[1])
+            output_rows += rows_.safe_substitute(number=n_, place=p_, temp=t_,
+                                                 max1=y_, max2=r_,
+                                                 state=s0_, mtime=m_)
+            if s0_ != 'green-state':
+                if s0_ == 'yellow-state':
+                    d_ = u'Подозрительное повышение температуры'
+                elif s0_ == 'red-state':
+                    d_ = u'Критическое повышение температуры'
+                elif s0_ == 'black-state':
+                    d_ = u'Нет показаний датчика больше минуты'
+                elif s0_ == 'gray-state':
+                    d_ = u'Неизвестная ошибка'
+                else:
+                    d_ = u'Неопределённая ошибка'
+                if len(dict_['measures']) > 1 and s0_ != s1_:
+                    b_ = u'\n                        <BUTTON ID="newalarm" STYLE="display: inline;">Выключить звук</BUTTON>'
+                else:
+                    b_ = ''
+                output_diag += diag_.safe_substitute(state=s0_, place=p_,
+                                                     diag=d_, alarmbutt=b_)
+    elif smb_result == 'ERR_rancid_data':
+        output_diag = diag_.safe_substitute(state='red-state',
+                                            place=u'OWEN',
+                                            diag=u'Данные не обновлялись больше двух минут.<BR>Программный сбой на сервере OWEN.',
+                                            alarmbutt='')
+    elif smb_result == 'ERR_missing_data':
+        output_diag = diag_.safe_substitute(state='red-state',
+                                            place=u'OWEN',
+                                            diag=u'Файл с данными отсутствует на сервере OWEN.',
+                                            alarmbutt='')
+    if not output_diag:
+        output_diag = diag_.safe_substitute(state='green-state',
+                                            place=u'Все датчики',
+                                            diag=u'Температура в норме',
+                                            alarmbutt='')
+    return output_rows + output_diag
+
+
+def write_html(html_output, rows=''):
+    ''' Записывает файл HTML для отдачи по HTTP. Использует заданные в модуле
+        configowen шаблоны HTML-кода и Template для заполнения строк таблицы.
+    '''
+    with open(html_output, 'w', encoding='utf-8') as h_:
+        h_.write(c_.HTML_HEADER + rows + c_.HTML_FOOTER)
+
+
+def write_png(input_obj_list):
+    ''' Продвинутый вариант создания графиков.
+        Создаёт двумерную матрицу для создания PNG-файла по каждому датчику.
+        В отличие от предыдущего варианта - вертикальный размер картинки = 60px.
+        Масштаб = 2px/градус. Уровень среднего значения остался на высоте 20px.
+        Просто сверху добавляется ещё 20px для наглядности - там могут появляться
+        жёлтые и красные пороговые уровни температуры.
+    '''
+    for obj_ in input_obj_list:
+        dict_ = obj_.read_data(['sen_num', 'warn_t', 'crit_t', 'measures'])
+        m_list_ = []
+        m_zero_ = 0
+        m_sum_ = 0
+        yelp_ = int(dict_['warn_t'] * 2)
+        redp_ = int(dict_['crit_t'] * 2)
+        for m_dict_ in dict_['measures']:
+            try:
+                if m_dict_['state'] == 'red-state':
+                    colorbit_ = 3
+                elif m_dict_['state'] == 'yellow-state':
+                    colorbit_ = 2
+                else:
+                    colorbit_ = 1
+                m_ = int(m_dict_['value'] * 2)
+                m_list_.insert(0, (m_, colorbit_))
+                m_sum_ += m_
+            except:
+                m_list_.insert(0, (0, 0))
+                m_zero_ += 1
+        try:
+            average_t_ = int(m_sum_ / (len(m_list_) - m_zero_))
+        except ZeroDivisionError:
+            average_t_ = 20
+
+        matrix_ = []
+        for m_tup_ in m_list_:
+            yel_delta_ = yelp_ - m_tup_[0]
+            red_delta_ = redp_ - m_tup_[0]
+            reduced_m_ = m_tup_[0] - average_t_ + 20
+            list_ = [m_tup_[1] for y_ in range(reduced_m_)] + [0 for z_ in range(60 - reduced_m_)]
+            list_len_ = len(list_)
+            if reduced_m_ + yel_delta_ < list_len_ - 1:
+                yel_pos_ = reduced_m_ + yel_delta_
+                list_[yel_pos_] = 2
+                list_[yel_pos_ + 1] = 2
+            if reduced_m_ + red_delta_ < list_len_ - 1:
+                red_pos_ = reduced_m_ + red_delta_
+                list_[red_pos_] = 3
+                list_[red_pos_ + 1] = 3
+            matrix_.append(list_[:60:][::-1])
+        transposed_matrix_ = [[matrix_[row_][col_] for row_ in range(len(matrix_))]
+                                                   for col_ in range(len(matrix_[0]))]
+
+        four_colors = [(224, 224, 224), (0, 160, 0), (255, 192, 0), (255, 64, 0)]
+        png_file_ = str(dict_['sen_num']) + '.png'
+        with open(png_file_, 'wb') as f_:
+            p_ = png.Writer(len(transposed_matrix_[0]), len(transposed_matrix_),
+                           palette=four_colors, bitdepth=2)
+            p_.write(f_, transposed_matrix_)
+
+
 #####=====----- Собственно, сама программа -----=====#####
 
 def create(cfg_from_main: object=ConfigParser(interpolation=ExtendedInterpolation)):
     last_datafile_ = cfg_from_main['FILES']['last_datafile']
     last_cfgfile_ = cfg_from_main['FILES']['last_cfgfile']
     json_file_ = cfg_from_main['FILES']['json_file']
+    html_output_ = cfg_from_main['FILES']['html_output']
     tz_shift_ = cfg_from_main.getfloat('PARAMETERS', 'tz_shift')
     history_limit_ = cfg_from_main.getfloat('PARAMETERS', 'history_limit')
 
     get_result = get_current_files(cfg_from_main)
     if get_result == 'fresh_data':
         current_obj_list = parse_lastdata(last_datafile_, tz_shift_, parse_lastcfg(last_cfgfile_, read_json(json_file_)))
-        #####rows_ = generate_html(current_obj_list, smb_result=get_result)
+        rows_ = generate_html(current_obj_list, smb_result=get_result)
         write_json(json_file_, history_limit_, current_obj_list)
-        #####write_png(current_obj_list)
-    #####else:
-        #####rows_ = generate_html(smb_result=get_result)
-    #####write_html(rows=rows_)
+        write_png(current_obj_list)
+    else:
+        rows_ = generate_html(smb_result=get_result)
+    write_html(html_output_, rows=rows_)
 
 #####=====----- THE END -----=====########################################

@@ -18,7 +18,7 @@ import HTMLCreator as h_
 
 #####=====----- Константы -----=====#####
 
-INI_FILE = 'configowen.ini'
+INI_FILE = 'owen.ini'
 CFG = ConfigParser(interpolation=ExtendedInterpolation())
 
 

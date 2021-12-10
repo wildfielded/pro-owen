@@ -4,7 +4,10 @@ __pycache__/
 configowen.py
 ConfigOWEN.py
 configowen.ini
+owen.ini
 ConfiGranit.py
+WinWebView/history.json
+WinWebView/index.html
 test.py
 main.py_BAK
 *.png

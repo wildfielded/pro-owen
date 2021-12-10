@@ -12,10 +12,11 @@ DEFAULT_CFG = {
         'last_datafile': 'lastdata.txt',
         'last_cfgfile': 'lastcfg.txt',
         'json_file': 'history.json',
+        'html_output': 'index.html',
         },
     'NETWORK': {
-        'srv1_url': 'http://10.130.4.122/owen/',
-        'srv2_url': 'http://10.130.4.123/',
+        'srv1_url': 'http://10.30.40.122/owen/',
+        'srv2_url': 'http://10.30.40.123/owen/',
         },
     'LOGGING': {},
     'SAMBA': {
