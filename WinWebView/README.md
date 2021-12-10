@@ -32,7 +32,7 @@
 [**`.ADDS`**](https://github.com/wildfielded/pet-owen/tree/master/WinWebView/.ADDS) - дополнительные
 вещи и телодвижения для деплоя.    
 Примерный вид из рабочего окна:    
-![screenshot-1](https://github.com/wildfielded/pet-owen/tree/master/WinWebView/.ADDS/shot1.png)    
+![screenshot-1](https://github.com/wildfielded/pet-owen/blob/master/WinWebView/.ADDS/shot1.png)    
 
 #### Doing (ближайшие планы) ####
 - Web-движок не даёт играть музыку. Придётся через PyQt5?    
