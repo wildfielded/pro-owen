@@ -18,7 +18,6 @@ DEFAULT_CFG = {
         'srv1_url': 'http://10.30.40.122/owen/',
         'srv2_url': 'http://10.30.40.123/owen/',
         },
-    'LOGGING': {},
     'SAMBA': {
         'login': 'WildDD',
         'passwd': 'password123',

@@ -57,7 +57,7 @@ class OwenWindow(QWidget):
         ''' Для переключения по кнопкам URL в окне "браузера"
         '''
         if server == 0:
-            self.HtmlWidget.load(QUrl().fromLocalFile(abspath('index.html')))
+            self.HtmlWidget.load(QUrl().fromLocalFile(abspath(CFG['FILES']['html_output'])))
         if server == 1:
             self.HtmlWidget.load(QUrl(CFG.get('NETWORK', 'srv1_url')))
         if server == 2:
@@ -66,7 +66,7 @@ class OwenWindow(QWidget):
     def setup_main_win(self):
         self.setWindowTitle('OWEN')
         self.setWindowIcon(QIcon('icon-owen.ico'))
-        self.resize(700, 800)
+        self.resize(800, 800)
         self.move_to_center()
 
         button_conf_ = QPushButton(QIcon('icon-config.svg'), u'Настройки')
@@ -92,7 +92,8 @@ class OwenWindow(QWidget):
         ToolbarLayout.addWidget(button_exit_)
 
         self.HtmlWidget = QWebEngineView()
-        self.HtmlWidget.load(QUrl().fromLocalFile(abspath('index.html')))
+        #####self.HtmlWidget.load(QUrl().fromLocalFile(abspath(CFG['FILES']['html_output'])))
+        self.tune_to(0)
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(ToolbarLayout)
