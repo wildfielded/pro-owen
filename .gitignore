@@ -8,6 +8,8 @@ owen.ini
 ConfiGranit.py
 WinWebView/history.json
 WinWebView/index.html
+WinGridView/icon*
+WinTableView/icon*
 test.py
 main.py_BAK
 *.png
