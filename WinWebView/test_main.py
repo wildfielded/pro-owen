@@ -71,8 +71,6 @@ class OwenWindow(QWidget):
         self.resize(800, 800)
         self.move_to_center()
 
-        button_conf_ = QPushButton(QIcon('icon-config.svg'), u'Настройки')
-        button_conf_.setToolTip(u'Настройки программы')
         button_armd_ = QPushButton(QIcon('icon-pc.svg'), u'АРМ')
         button_armd_.setToolTip(u'Работа без вэб-сервера')
         button_armd_.clicked.connect(lambda: self.tune_to(0))
@@ -87,14 +85,12 @@ class OwenWindow(QWidget):
         button_exit_.clicked.connect(QCoreApplication.instance().quit)
 
         ToolbarLayout = QHBoxLayout()
-        ToolbarLayout.addWidget(button_conf_)
         ToolbarLayout.addWidget(button_armd_)
         ToolbarLayout.addWidget(button_srv1_)
         ToolbarLayout.addWidget(button_srv2_)
         ToolbarLayout.addWidget(button_exit_)
 
         self.HtmlWidget = QWebEngineView()
-        #####self.HtmlWidget.load(QUrl().fromLocalFile(abspath(CFG['FILES']['html_output'])))
         self.tune_to(0)
 
         main_layout = QVBoxLayout()
