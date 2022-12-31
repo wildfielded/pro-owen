@@ -1,6 +1,6 @@
 <h3 align="center">:gb: Disclaimer</h3>
 
-This project is intended for use in a company with Russian-speaking specialists,
+:warning: This project is intended for use in a company with Russian-speaking specialists,
 so all texts, explanations, and comments are provided exclusively in Russian.
 
 ----
