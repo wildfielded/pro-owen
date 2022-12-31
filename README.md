@@ -1,4 +1,11 @@
-## Рефакторинг старого ПО (Visual Basic) на новый стек (Python) ##
+<h3 align="center">:gb: Disclaimer</h3>
+
+This project is intended for use in a company with Russian-speaking specialists,
+so all texts, explanations, and comments are provided exclusively in Russian.
+
+----
+
+## :ru: Рефакторинг старого ПО (Visual Basic) на новый стек (Python) ##
 
 ### Исходное задание ###
 - На сервере ПО OWEN собирает телеметрию с датчиков. Некоторые температурные
