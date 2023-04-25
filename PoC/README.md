@@ -74,23 +74,27 @@ HTTP-сервером браузеру на рабочей станции деж
 [**`.ADDS`**](https://github.com/wildfielded/pet-owen/tree/master/PoC/.ADDS)&nbsp;&mdash;
 дополнительные вещи и телодвижения для деплоя.
 
-1. PoC-версия проекта размещается на Linux-серваке например в **`/opt/pet/owen`**,
+PoC-версия проекта размещается на Linux-серваке например в **`/opt/pet/owen`**,
 а создаваемый HTML-файл будет скидываться в **`/var/www/html/owen/index.html`**,
 где Apache web-server (заранее установленный и соответственно настроенный) будет
 раздавать его всем желающим по URL `http://hostname/owen`.
-2. Туда же надо закинуть из
+
+Туда же надо закинуть из
 [**PoC/WEB**](https://github.com/wildfielded/pet-owen/tree/master/PoC/WEB)
 звуковой файл **`sirena.wav`**, а также **`style.css`**, **`script.js`**, в
 которых при желании и терпении можно навести любую требуемую красоту.
-3. На Ubuntu помимо установленного пакета **`apache2`** требуется установка
-**`pipenv`** (если нет) и потом установка **`PySMB`** и **`PyPNG`** командой:
+
+На Ubuntu помимо установленного пакета **`apache2`** требуется установить
+(через привычный **`apt install`** или вручную скачанные с
+[PyPI](https://pypi.org)) пакеты **`PySMB`** и **`PyPNG`**. Или же вместо этого
+можно установить (если нет) пакетный менеджер Python `sudo apt install pipenv`,
+и затем уже дать команду:
 
     ```bash
-    pip install -r requirements_poc.txt
+    sudo pip3 install -r requirements_poc.txt
     ```
 
-Эти пакеты опытный админ может поставить и через привычный **`apt install`**.
-4. Запуск по крону.
+Запуск по крону.
 
 ----
 
