@@ -74,10 +74,6 @@ HTTP-сервером браузеру на рабочей станции деж
 [**`.ADDS`**](https://github.com/wildfielded/pet-owen/tree/master/PoC/.ADDS)&nbsp;&mdash;
 дополнительные вещи и телодвижения для деплоя.
 
-```bash
-sudo pip3 install -r requirements_poc.txt
-```
-
 PoC-версия проекта размещается на Linux-серваке например в **`/opt/pet/owen`**,
 а создаваемый HTML-файл будет скидываться в **`/var/www/html/owen/index.html`**,
 где Apache web-server (заранее установленный и соответственно настроенный) будет
@@ -87,10 +83,6 @@ PoC-версия проекта размещается на Linux-серваке
 [**PoC/WEB**](https://github.com/wildfielded/pet-owen/tree/master/PoC/WEB)
 звуковой файл **`sirena.wav`**, а также **`style.css`**, **`script.js`**, в
 которых при желании и терпении можно навести любую требуемую красоту.
-
-```
-sudo pip3 install -r requirements_poc.txt
-```
 
 На Ubuntu помимо установленного пакета **`apache2`** требуется установить
 (через привычный **`apt install`** или вручную скачанные с
@@ -102,11 +94,7 @@ sudo pip3 install -r requirements_poc.txt
 sudo pip3 install -r requirements_poc.txt
 ```
 
-Запуск по крону.    
-
-```bash
-sudo pip3 install -r requirements_poc.txt
-```
+Запуск по крону.
 
 ----
 
