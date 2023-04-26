@@ -83,10 +83,6 @@ PoC-версия проекта размещается на Linux-серваке
 где Apache web-server (заранее установленный и соответственно настроенный) будет
 раздавать его всем желающим по URL `http://hostname/owen`.
 
-    ```bash
-    sudo pip3 install -r requirements_poc.txt
-    ```
-
 Туда же надо закинуть из
 [**PoC/WEB**](https://github.com/wildfielded/pet-owen/tree/master/PoC/WEB)
 звуковой файл **`sirena.wav`**, а также **`style.css`**, **`script.js`**, в
@@ -100,12 +96,14 @@ sudo pip3 install -r requirements_poc.txt
 (через привычный **`apt install`** или вручную скачанные с
 [PyPI](https://pypi.org)) пакеты **`PySMB`** и **`PyPNG`**. Или же вместо этого
 можно установить (если нет) пакетный менеджер Python `sudo apt install pipenv`,
-и затем уже дать команду:    
+и затем уже дать команду:
+
 ```bash
 sudo pip3 install -r requirements_poc.txt
 ```
 
-Запуск по крону.
+Запуск по крону.    
+
 ```bash
 sudo pip3 install -r requirements_poc.txt
 ```
