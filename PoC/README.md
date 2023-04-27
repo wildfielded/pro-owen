@@ -74,10 +74,13 @@ HTTP-сервером браузеру на рабочей станции деж
 [**`.ADDS`**](https://github.com/wildfielded/pet-owen/tree/master/PoC/.ADDS)&nbsp;&mdash;
 дополнительные вещи и телодвижения для деплоя.
 
-PoC-версия проекта размещается на Linux-серваке например в **`/opt/pet/owen`**,
-а создаваемый HTML-файл будет скидываться в **`/var/www/html/owen/index.html`**,
-где Apache web-server (заранее установленный и соответственно настроенный) будет
-раздавать его всем желающим по URL `http://hostname/owen`.
+PoC-версия проекта размещается на Linux-серваке например в **`/opt/pet/owen`**
+(файлы **`configowen.py`**, **`main.py`**&nbsp;&mdash; обязательные), а
+создаваемые HTML-файл **`index.html`** и JSON-файл **`history.json`** будут
+скидываться в **`/var/www/html/owen/index.html`** (там же помещаются и остальные
+файлы из директории [**`WEB`**](WEB)), где Apache web-server (заранее
+установленный и соответственно настроенный) будет раздавать его всем желающим по
+URL `http://hostname/owen`.
 
 Туда же надо закинуть из
 [**PoC/WEB**](https://github.com/wildfielded/pet-owen/tree/master/PoC/WEB)
@@ -94,16 +97,17 @@ PoC-версия проекта размещается на Linux-серваке
 sudo pip3 install -r requirements_poc.txt
 ```
 
-Скрипт [**`.ADDS/owen.sh`**]() для обновления данных запускается на сервере
-каждые полминуты по крону от пользователя **`www-data`** (не забыть в нужных
-местах выставить **`chmod/chown`** как надо). Через команду
-**`crontab -e -u www-data`** выставляется строка:
+Скрипт [**`.ADDS/owen.sh`**](.ADDS/owen.sh) можно разместить на сервере в
+**`/opt/pet/owen/`**. Для обновления данных запускается каждые полминуты по
+крону от пользователя **`www-data`** (не забыть в нужных местах выставить
+**`chmod/chown`** как надо). Через команду **`crontab -e -u www-data`**
+выставляется строка:
 
 ```bash
-**`* * * * * /opt/pet/owen/owen.sh 2>&1 1>/dev/null`**
+* * * * * /opt/pet/owen/owen.sh 2>&1 1>/dev/null
 ```
 
-(Результат должен появиться в **`/var/spool/cron/crontabs/www-data`**).
+Результат должен появиться в **`/var/spool/cron/crontabs/www-data`**.
 
 ----
 
