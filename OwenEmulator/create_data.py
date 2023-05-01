@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 
-from OwenCommon import common_func
+from OwenCommon import common_func as c_
 
 def drop_data():
     pass
