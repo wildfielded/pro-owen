@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+from time import time
+
+from smb.SMBConnection import SMBConnection
+
+##### import configowen as c_
+
 def get_current_files():
     ''' Забирает файл с последними измерениями и на всякий случай (если есть)
         текущий файл с пороговыми значениями с сервера OWEN и записывает себе
