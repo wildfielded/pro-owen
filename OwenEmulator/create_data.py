@@ -3,7 +3,9 @@
 import sys
 sys.path.append('..')
 
-from OwenCommon import common_func as CF_
+# from OwenCommon import common_func as CF_
+# from OwenCommon import configowen as CO_
+from OwenCommon.common_func import pull_current_files
 from OwenCommon import configowen as CO_
 
 def drop_data():
@@ -12,6 +14,6 @@ def drop_data():
 ''' =====----- MAIN -----=====##### '''
 
 if __name__ == '__main__':
-    CF_.get_current_files()
+    pull_current_files()
 
 #####=====----- THE END -----=====#########################################

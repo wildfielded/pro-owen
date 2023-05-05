@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+#####!!!!! TEMPORAL for VENV working in Windows !!!!!#####
+import sys
+sys.path.append('../VENVemul/Lib/site-packages')
+
 from time import time
 
 from smb.SMBConnection import SMBConnection
