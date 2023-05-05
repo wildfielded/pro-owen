@@ -4,15 +4,13 @@ venv*/
 *.ipynb
 .ipynb_checkpoints/
 configowen.py
-##### ConfigOWEN.py
 configowen.ini
 owen.ini
 ConfiGranit.py
+OwenCommon/*.txt
 WinWebView/history.json
 WinWebView/index.html
 WinGridView/icon*
 WinTableView/icon*
-##### test.py
-##### main.py_BAK
 *.png
 !shot1.png

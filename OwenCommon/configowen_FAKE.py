@@ -8,31 +8,36 @@
 ''' Набор конфиговин, нужных для настройки работы программ
 '''
 
+##### Корневая директория размещения проекта
+PROJECT_DIR = '/opt/pet/owen/'
+
+##### Добавки путей к нужным файлам
+LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
+LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
+
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
 PASSWD = 'password123'
 DOMAIN = 'MYDOMAIN'
+
 ##### Имя машины, на которой всё это крутится (можно назвать от балды)
 CLI_NAME = 'testpc'
+
 ##### NetBIOS/AD-имя сервака OWEN и прочие его атрибуты
 SRV_NAME = 'CHECKPC'
 SRV_IP = '10.10.33.196'
 SRV_PORT = 445
 SHARE_NAME = 'Owen$'
-DATA_PATH = 'owen.txt'
-CFG_PATH = 'owen.cfg'
+DATA_PATH = 'Last/owen.txt'
+CFG_PATH = 'Last/owen.cfg'
 
 
 
 ''' Старые неиспользуемые параметры
 '''
-##### Корневая директория размещения проекта
-PROJECT_DIR = '/opt/pet/owen/'
 ##### Директория WEB-сервера для размещения HTML
 WWW_DIR = '/var/www/html/owen/'
 ##### Добавки путей к нужным файлам
-LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
-LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 JSON_FILE = WWW_DIR + 'history.json'
 HTML_OUTPUT = WWW_DIR + 'index.html'
 ##### "True" - для сброса лога на сервер через SYSLOG
