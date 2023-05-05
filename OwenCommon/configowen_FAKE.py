@@ -8,6 +8,20 @@
 ''' Набор конфиговин, нужных для настройки работы программ
 '''
 
+##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
+LOGIN = 'WildDD'
+PASSWD = 'password123'
+DOMAIN = 'MYDOMAIN'
+##### Имя машины, на которой всё это крутится (можно назвать от балды)
+CLI_NAME = 'testpc'
+##### NetBIOS/AD-имя сервака OWEN и прочие его атрибуты
+SRV_NAME = 'CHECKPC'
+SRV_IP = '10.10.33.196'
+SRV_PORT = 445
+SHARE_NAME = 'Owen$'
+DATA_PATH = 'owen.txt'
+CFG_PATH = 'owen.cfg'
+
 
 
 ''' Старые неиспользуемые параметры
@@ -25,19 +39,6 @@ HTML_OUTPUT = WWW_DIR + 'index.html'
 USE_SYSLOG = False
 SYSLOG_ADDR = '127.0.0.1'
 SYSLOG_PORT = 514
-##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
-LOGIN = 'WildDD'
-PASSWD = 'password123'
-DOMAIN = 'MYDOMAIN'
-##### Имя машины, на которой всё это крутится (можно назвать от балды)
-CLI_NAME = 'testpc'
-##### NetBIOS/AD-имя сервака OWEN и прочие его атрибуты
-SRV_NAME = 'CHECKPC'
-SRV_IP = '10.10.33.196'
-SRV_PORT = 445
-SHARE_NAME = 'Owen$'
-DATA_PATH = 'owen.txt'
-CFG_PATH = 'owen.cfg'
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
 TZ_SHIFT = 3600.0 * 5
 ##### Период хранения истории измерений в секундах
