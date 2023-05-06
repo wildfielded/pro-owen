@@ -31,6 +31,13 @@ SHARE_NAME = 'Owen$'
 DATA_PATH = 'Last/owen.txt'
 CFG_PATH = 'Last/owen.cfg'
 
+##### "True" - для сброса лога на сервер через SYSLOG
+USE_SYSLOG = False
+SYSLOG_ADDR = '127.0.0.1'
+SYSLOG_PORT = 514
+##### "True" - для сброса лога в локальный файл (для отладки)
+USE_FILELOG = False
+
 
 
 ''' Старые неиспользуемые параметры
@@ -40,10 +47,6 @@ WWW_DIR = '/var/www/html/owen/'
 ##### Добавки путей к нужным файлам
 JSON_FILE = WWW_DIR + 'history.json'
 HTML_OUTPUT = WWW_DIR + 'index.html'
-##### "True" - для сброса лога на сервер через SYSLOG
-USE_SYSLOG = False
-SYSLOG_ADDR = '127.0.0.1'
-SYSLOG_PORT = 514
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
 TZ_SHIFT = 3600.0 * 5
 ##### Период хранения истории измерений в секундах

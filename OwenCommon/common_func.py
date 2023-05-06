@@ -1,19 +1,70 @@
 #!/usr/bin/python3
 
-#####!!!!! TEMPORAL for VENV working in Windows !!!!!#####
 import sys
-sys.path.append('../VENVemul/Lib/site-packages')
-#####!!!!!
-
+sys.path.append('..')
+#####!!!!! TEMPORAL for VENV working in Windows !!!!!#####
+sys.path.append('../VENVemul/Lib/site-packages')     #####
+#####!!!!! ------------------------------------ !!!!!#####
 # from time import time
+import logging
+import logging.handlers as LogHandlers_
 
 from smb.SMBConnection import SMBConnection
 
+from OwenCommon import configowen as conf_
 
-def setup_logger():
-    ''' Функция-декоратор для настройки функций лог-сообщений
+
+''' =====----- Переменные и константы -----===== '''
+
+OWEN_CONN_PARAMS = {
+    'login': conf_.LOGIN,
+    'passwd': conf_.PASSWD,
+    'domain': conf_.DOMAIN,
+    'cli_name': conf_.CLI_NAME,
+    'srv_name': conf_.SRV_NAME,
+    'srv_ip': conf_.SRV_IP,
+    'srv_port': conf_.SRV_PORT,
+    'share_name': conf_.SHARE_NAME,
+    'data_path': conf_.DATA_PATH,
+    'cfg_path': conf_.CFG_PATH,
+    'last_cfgfile': conf_.LAST_CFGFILE
+}
+LOGGING_PARAMS = {
+    'use_syslog': conf_.USE_SYSLOG,
+    'syslog_addr': conf_.SYSLOG_ADDR,
+    'syslog_port': conf_.SYSLOG_PORT,
+}
+
+
+def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,) -> object:
+    ''' Настройка функционала логирования событий
+    Arguments:
+        use_syslog [bool] -- Сброс логов на Syslog-сервер
+        syslog_addr [str] -- IP-адрес Syslog-сервера
+        syslog_port [int] -- Номер порта Syslog-сервера
+    Returns:
+        [obj] --
     '''
-    pass
+    format_ = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
+    syslog_ = LogHandlers_.SysLogHandler(address=(syslog_addr, syslog_port))
+    syslog_.setLevel(logging.INFO)
+    syslog_.setFormatter(format_)
+    logger_ = logging.getLogger('owen')
+    logger_.setLevel(logging.INFO)
+    if use_syslog:
+        logger_.addHandler(syslog_)
+    else:
+        logger_.addHandler(logging.NullHandler())
+    return logger_
+
+
+def log_inf(inf_msg_: str):
+    log_setup(**LOGGING_PARAMS).info(inf_msg_)
+def log_err(err_msg_: str):
+    log_setup(**LOGGING_PARAMS).error(err_msg_)
+# log_inf = lambda inf_msg_ : logger.info(inf_msg_)
+# log_err = lambda err_msg_ : logger.error(err_msg_)
+
 
 def pull_current_files(login: str, passwd: str, domain: str,
                        cli_name: str, srv_name: str,
@@ -52,6 +103,7 @@ def pull_current_files(login: str, passwd: str, domain: str,
         if s_.listPath(share_name, '/', pattern=cfg_path):
             with open(last_cfgfile, 'wb') as g_:
                 s_.retrieveFile(share_name, cfg_path, g_)
+            log_inf('Config file retrieved from OWEN server')
 
         s_.close()
 
