@@ -4,7 +4,7 @@ import logging
 import logging.handlers as LH_
 
 #####!!!!! TEMPORAL for VENV working in Windows !!!!!#####
-import sys
+import sys                                           #####
 sys.path.append('../VENVemul/Lib/site-packages')     #####
 #####!!!!! ------------------------------------ !!!!!#####
 from smb.SMBConnection import SMBConnection
@@ -36,6 +36,8 @@ LOGGING_PARAMS = {
 }
 
 
+''' =====----- Настройка логирования -----===== '''
+
 def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
               use_filelog: bool, filelog_path: str) -> object:
     ''' Настройка функционала логирования событий
@@ -66,12 +68,13 @@ def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
     return logger_
 
 
-##### Окончательная настройка логирования
 ##### Лямбда-функции используются в других функциях
 LOGGER = log_setup(**LOGGING_PARAMS)
 log_inf = lambda inf_msg: LOGGER.info(inf_msg)
 log_err = lambda err_msg: LOGGER.error(err_msg)
 
+
+''' =====----- Функции -----===== '''
 
 def pull_current_files(login: str, passwd: str, domain: str,
                        cli_name: str, srv_name: str,
@@ -101,18 +104,25 @@ def pull_current_files(login: str, passwd: str, domain: str,
         last_cfgfile [str] -- Путь к локальной копии конфигурационного
             файла
     Returns:
-        [str] -- "ERR_missing_data" или "ERR_rancid_data"
+        [str] -- "fresh_data" при удачном раскладе, "ERR_missing_data"
+            или "ERR_rancid_data" при ошибках.
     '''
-    with SMBConnection(login, passwd, cli_name, srv_name, domain,
-                       use_ntlm_v2=True, is_direct_tcp=True) as s_:
-        s_.connect(srv_ip, srv_port)
+    try:
+        with SMBConnection(login, passwd, cli_name, srv_name, domain,
+                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
+            s_.connect(srv_ip, srv_port)
 
-        if s_.listPath(share_name, '/', pattern=cfg_path):
-            with open(last_cfgfile, 'wb') as g_:
-                s_.retrieveFile(share_name, cfg_path, g_)
-            log_inf('Config file retrieved from OWEN server')
+            file_list_ = s_.listPath(share_name, '/', pattern=data_path)
 
-        s_.close()
+            if s_.listPath(share_name, '/', pattern=cfg_path):
+                with open(last_cfgfile, 'wb') as g_:
+                    s_.retrieveFile(share_name, cfg_path, g_)
+                log_inf('Config file retrieved from OWEN server')
+    except:
+        log_err('Unable to connect with OWEN server!')
+        result_ = 'ERR_missing_data'
+    finally:
+        return result_
 
 
 def push_current_files():
