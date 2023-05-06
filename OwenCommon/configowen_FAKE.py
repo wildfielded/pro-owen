@@ -37,6 +37,7 @@ SYSLOG_ADDR = '127.0.0.1'
 SYSLOG_PORT = 514
 ##### "True" - для сброса лога в локальный файл (для отладки)
 USE_FILELOG = False
+FILELOG_PATH = 'logfile.txt'
 
 
 

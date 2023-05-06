@@ -1,17 +1,15 @@
 #!/usr/bin/python3
 
-import sys
-sys.path.append('..')
+import logging
+import logging.handlers as LH_
+
 #####!!!!! TEMPORAL for VENV working in Windows !!!!!#####
+import sys
 sys.path.append('../VENVemul/Lib/site-packages')     #####
 #####!!!!! ------------------------------------ !!!!!#####
-# from time import time
-import logging
-import logging.handlers as LogHandlers_
-
 from smb.SMBConnection import SMBConnection
 
-from OwenCommon import configowen as conf_
+from . import configowen as conf_
 
 
 ''' =====----- Переменные и константы -----===== '''
@@ -33,37 +31,46 @@ LOGGING_PARAMS = {
     'use_syslog': conf_.USE_SYSLOG,
     'syslog_addr': conf_.SYSLOG_ADDR,
     'syslog_port': conf_.SYSLOG_PORT,
+    'use_filelog': conf_.USE_FILELOG,
+    'filelog_path': conf_.FILELOG_PATH
 }
 
 
-def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,) -> object:
+def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
+              use_filelog: bool, filelog_path: str) -> object:
     ''' Настройка функционала логирования событий
     Arguments:
         use_syslog [bool] -- Сброс логов на Syslog-сервер
         syslog_addr [str] -- IP-адрес Syslog-сервера
         syslog_port [int] -- Номер порта Syslog-сервера
+        use_filelog [bool] -- Сброс логов в локальный файл (для отладки)
+        filelog_path [str] -- Путь к лог-файлу
     Returns:
-        [obj] --
+        [obj] -- Настроенный логгер
     '''
-    format_ = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
-    syslog_ = LogHandlers_.SysLogHandler(address=(syslog_addr, syslog_port))
-    syslog_.setLevel(logging.INFO)
-    syslog_.setFormatter(format_)
+    log_format = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
     logger_ = logging.getLogger('owen')
     logger_.setLevel(logging.INFO)
+    syslog_handler = LH_.SysLogHandler(address=(syslog_addr, syslog_port))
+    syslog_handler.setLevel(logging.INFO)
+    syslog_handler.setFormatter(log_format)
+    file_handler = logging.FileHandler(filename=filelog_path, encoding='utf-8')
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(log_format)
     if use_syslog:
-        logger_.addHandler(syslog_)
+        logger_.addHandler(syslog_handler)
     else:
         logger_.addHandler(logging.NullHandler())
+    if use_filelog:
+        logger_.addHandler(file_handler)
     return logger_
 
 
-def log_inf(inf_msg_: str):
-    log_setup(**LOGGING_PARAMS).info(inf_msg_)
-def log_err(err_msg_: str):
-    log_setup(**LOGGING_PARAMS).error(err_msg_)
-# log_inf = lambda inf_msg_ : logger.info(inf_msg_)
-# log_err = lambda err_msg_ : logger.error(err_msg_)
+##### Окончательная настройка логирования
+##### Лямбда-функции используются в других функциях
+LOGGER = log_setup(**LOGGING_PARAMS)
+log_inf = lambda inf_msg: LOGGER.info(inf_msg)
+log_err = lambda err_msg: LOGGER.error(err_msg)
 
 
 def pull_current_files(login: str, passwd: str, domain: str,
