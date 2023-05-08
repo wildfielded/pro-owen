@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from time import time
 import logging
 import logging.handlers as LH_
 
@@ -76,11 +77,11 @@ log_err = lambda err_msg: LOGGER.error(err_msg)
 
 ''' =====----- Функции -----===== '''
 
-def pull_current_files(login: str, passwd: str, domain: str,
+def get_current_files(login: str, passwd: str, domain: str,
                        cli_name: str, srv_name: str,
                        srv_ip: str, srv_port: int,
                        share_name: str, data_path: str, cfg_path: str,
-                       last_cfgfile: str) -> str:
+                       last_datafile: str, last_cfgfile: str) -> str:
     ''' Забирает файл с последними измерениями и на всякий случай (если
     есть) текущий файл с пороговыми значениями с сервера OWEN и
     записывает себе локально. Проверяет наличие и свежесть файла с
@@ -101,6 +102,7 @@ def pull_current_files(login: str, passwd: str, domain: str,
             сетевого ресурса на сервере OWEN
         cfg_path [str] -- Путь к текущему конфигурационному файлу от
             корня сетевого ресурса на сервере OWEN
+        last_datafile [str] -- Путь к локальной копии файла данных
         last_cfgfile [str] -- Путь к локальной копии конфигурационного
             файла
     Returns:
@@ -113,6 +115,18 @@ def pull_current_files(login: str, passwd: str, domain: str,
             s_.connect(srv_ip, srv_port)
 
             file_list_ = s_.listPath(share_name, '/', pattern=data_path)
+            if file_list_:
+                if file_list_[0].last_write_time > (time() - 120.0):
+                    with open(last_datafile, 'wb') as f_:
+                        s_.retrieveFile(share_name, data_path, f_)
+                    log_inf('Fresh data file retrieved from OWEN server')
+                    result_ = 'fresh_data'
+                else:
+                    log_err('OWEN failure. No updates for more than 2 minutes.')
+                    result_ = 'ERR_rancid_data'
+            else:
+                log_err('Data file is missing on OWEN server')
+                result_ = 'ERR_missing_data'
 
             if s_.listPath(share_name, '/', pattern=cfg_path):
                 with open(last_cfgfile, 'wb') as g_:
