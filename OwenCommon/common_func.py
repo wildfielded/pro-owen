@@ -37,7 +37,26 @@ LOGGING_PARAMS = {
     'use_filelog': conf_.USE_FILELOG,
     'filelog_path': conf_.FILELOG_PATH
 }
-
+CONF_DICT = {
+    'last_datafile': conf_.LAST_DATAFILE,
+    'last_cfgfile': conf_.LAST_CFGFILE,
+    'json_file': conf_.JSON_FILE,
+    'login': conf_.LOGIN,
+    'passwd': conf_.PASSWD,
+    'domain': conf_.DOMAIN,
+    'cli_name': conf_.CLI_NAME,
+    'srv_name': conf_.SRV_NAME,
+    'srv_ip': conf_.SRV_IP,
+    'srv_port': conf_.SRV_PORT,
+    'share_name': conf_.SHARE_NAME,
+    'data_path': conf_.DATA_PATH,
+    'cfg_path': conf_.CFG_PATH,
+    'use_syslog': conf_.USE_SYSLOG,
+    'syslog_addr': conf_.SYSLOG_ADDR,
+    'syslog_port': conf_.SYSLOG_PORT,
+    'use_filelog': conf_.USE_FILELOG,
+    'filelog_path': conf_.FILELOG_PATH
+}
 
 ''' =====----- Классы -----===== '''
 
@@ -57,14 +76,27 @@ class SensorDataBlock:
                         }]
         }
 
-    def write_data(self):
-        pass
+    def write_data(self, data_dict: dict):
+        keys_ = data_dict.keys()
+        if 'sen_num' in keys_:
+            self.sensor_dict['sen_num'] = data_dict['sen_num']
+        if 'place' in keys_:
+            self.sensor_dict['place'] = data_dict['place']
+        if 'warn_t' in keys_:
+            self.sensor_dict['warn_t'] = data_dict['warn_t']
+        if 'crit_t' in keys_:
+            self.sensor_dict['crit_t'] = data_dict['crit_t']
+        if 'state' in keys_:
+            self.sensor_dict['measures'][0]['state'] = data_dict['state']
+        if 'measures' in keys_:
+            self.sensor_dict['measures'] = data_dict['measures'] \
+                                           + self.sensor_dict['measures']
 
 
 ''' =====----- Настройка логирования -----===== '''
 
 def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
-              use_filelog: bool, filelog_path: str) -> object:
+              use_filelog: bool, filelog_path: str, **kwargs) -> object:
     ''' Настройка функционала логирования событий
     Arguments:
         use_syslog [bool] -- Сброс логов на Syslog-сервер
@@ -94,7 +126,8 @@ def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
 
 
 ##### Лямбда-функции используются в других функциях
-LOGGER = log_setup(**LOGGING_PARAMS)
+# LOGGER = log_setup(**LOGGING_PARAMS)
+LOGGER = log_setup(**CONF_DICT)
 log_inf = lambda inf_msg: LOGGER.info(inf_msg)
 log_err = lambda err_msg: LOGGER.error(err_msg)
 
@@ -105,7 +138,7 @@ def get_current_files(login: str, passwd: str, domain: str,
                        cli_name: str, srv_name: str,
                        srv_ip: str, srv_port: int,
                        share_name: str, data_path: str, cfg_path: str,
-                       last_datafile: str, last_cfgfile: str) -> str:
+                       last_datafile: str, last_cfgfile: str, **kwargs) -> str:
     ''' Забирает файл с последними измерениями и на всякий случай (если
     есть) текущий файл с пороговыми значениями с сервера OWEN и
     записывает себе локально. Проверяет наличие и свежесть файла с
@@ -149,7 +182,7 @@ def get_current_files(login: str, passwd: str, domain: str,
                     log_err('OWEN failure. No updates for more than 2 minutes.')
                     result_ = 'ERR_rancid_data'
             else:
-                log_err('Data file is missing on OWEN server')
+                log_err('Data file is missing or not readable on OWEN server')
                 result_ = 'ERR_missing_data'
 
             if s_.listPath(share_name, '/', pattern=cfg_path):
@@ -163,7 +196,7 @@ def get_current_files(login: str, passwd: str, domain: str,
         return result_
 
 
-def read_json(json_file: str) -> object:
+def read_json(json_file: str, **kwargs) -> object:
     ''' Считывает файл с историческими данными в формате JSON и создаёт
     на их основе список экземпляров (объектов) класса SensorDataBlock
     Arguments:
@@ -172,13 +205,24 @@ def read_json(json_file: str) -> object:
         [obj] -- Список объектов класса SensorDataBlock
     '''
     output_obj_list_ = []
+    try:
+        with open(json_file, 'r', encoding='utf-8') as f_:
+            history_list_ = json.load(f_)
+        for dict_ in history_list_:
+            sensor_obj_ = SensorDataBlock()
+            sensor_obj_.write_data(dict_)
+            output_obj_list_.append(sensor_obj_)
+    except:
+        log_err('JSON file is missing or not readable.')
+    finally:
+        return output_obj_list_
 
 
-def write_json():
+def write_json(**kwargs):
     pass
 
 
-def parse_lastcfg():
+def parse_lastcfg(**kwargs):
     pass
 
 #####=====----- THE END -----=====#########################################

@@ -10,10 +10,13 @@
 
 ##### Корневая директория размещения проекта
 PROJECT_DIR = '/opt/pet/owen/'
+##### Директория WEB-сервера для размещения HTML
+WWW_DIR = '/var/www/html/owen/'
 
 ##### Добавки путей к нужным файлам
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
+JSON_FILE = WWW_DIR + 'history.json'
 
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
@@ -43,10 +46,7 @@ FILELOG_PATH = 'logfile.txt'
 
 ''' Старые неиспользуемые параметры
 '''
-##### Директория WEB-сервера для размещения HTML
-WWW_DIR = '/var/www/html/owen/'
 ##### Добавки путей к нужным файлам
-JSON_FILE = WWW_DIR + 'history.json'
 HTML_OUTPUT = WWW_DIR + 'index.html'
 ##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
 TZ_SHIFT = 3600.0 * 5
