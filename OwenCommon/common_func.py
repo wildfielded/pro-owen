@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from time import time
+import json
 import logging
 import logging.handlers as LH_
 
@@ -26,6 +27,7 @@ OWEN_CONN_PARAMS = {
     'share_name': conf_.SHARE_NAME,
     'data_path': conf_.DATA_PATH,
     'cfg_path': conf_.CFG_PATH,
+    'last_datafile': conf_.LAST_DATAFILE,
     'last_cfgfile': conf_.LAST_CFGFILE
 }
 LOGGING_PARAMS = {
@@ -35,6 +37,25 @@ LOGGING_PARAMS = {
     'use_filelog': conf_.USE_FILELOG,
     'filelog_path': conf_.FILELOG_PATH
 }
+
+
+''' =====----- Классы -----===== '''
+
+class SensorDataBlock:
+    ''' Создаёт объект данных одного датчика, задаёт структуру данных в
+    виде словаря и методы их обработки
+    '''
+    def __init__(self):
+        self.sensor_dict = {
+            'sen_num': 0,
+            'place': '',
+            'warn_t': 0.0,
+            'crit_t': 0.0,
+            'measures': [{'timestamp': 0.0,
+                          'value': 0.0,
+                          'state': 'green-state'
+                        }]
+        }
 
 
 ''' =====----- Настройка логирования -----===== '''
@@ -139,9 +160,7 @@ def get_current_files(login: str, passwd: str, domain: str,
         return result_
 
 
-def push_current_files():
-    '''
-    '''
+def read_json():
     pass
 
 #####=====----- THE END -----=====#########################################
