@@ -57,6 +57,9 @@ class SensorDataBlock:
                         }]
         }
 
+    def write_data(self):
+        pass
+
 
 ''' =====----- Настройка логирования -----===== '''
 
@@ -160,7 +163,22 @@ def get_current_files(login: str, passwd: str, domain: str,
         return result_
 
 
-def read_json():
+def read_json(json_file: str) -> object:
+    ''' Считывает файл с историческими данными в формате JSON и создаёт
+    на их основе список экземпляров (объектов) класса SensorDataBlock
+    Arguments:
+        json_file [str] -- Путь к JSON-файлу с историей данныx
+    Returns:
+        [obj] -- Список объектов класса SensorDataBlock
+    '''
+    output_obj_list_ = []
+
+
+def write_json():
+    pass
+
+
+def parse_lastcfg():
     pass
 
 #####=====----- THE END -----=====#########################################
