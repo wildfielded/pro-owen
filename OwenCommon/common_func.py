@@ -198,7 +198,7 @@ def get_current_files(login: str, passwd: str, domain: str,
 
 def read_json(json_file: str, **kwargs) -> object:
     ''' Считывает файл с историческими данными в формате JSON и создаёт
-    на их основе список экземпляров (объектов) класса SensorDataBlock
+    на их основе список экземпляров класса SensorDataBlock
     Arguments:
         json_file [str] -- Путь к JSON-файлу с историей данныx
     Returns:
@@ -222,7 +222,18 @@ def write_json(**kwargs):
     pass
 
 
-def parse_lastcfg(**kwargs):
-    pass
+def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
+    ''' Парсит данные из загруженного файла с пороговыми значениями по
+    каждому датчику с некоторой валидацией данных и дополняет текущий
+    (или создаёт новый) список экземпляров класса SensorDataBlock
+    Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+        last_cfgfile [str] -- Путь к локальной копии конфигурационного
+            файла
+    Returns:
+        [obj] -- Список объектов класса SensorDataBlock
+    '''
+    output_obj_list_ = input_obj_list
+    return output_obj_list_
 
 #####=====----- THE END -----=====#########################################
