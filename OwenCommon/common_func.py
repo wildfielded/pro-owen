@@ -233,7 +233,31 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
     Returns:
         [obj] -- Список объектов класса SensorDataBlock
     '''
-    output_obj_list_ = input_obj_list
+    try:
+        with open(last_cfgfile, 'r', encoding='utf-8') as f_:
+            cfg_list_ = f_.readlines()
+    except UnicodeDecodeError:
+        with open(last_cfgfile, 'r', encoding='cp1251') as f_:
+            cfg_list_ = f_.readlines()
+        log_err('Config file cp1251-encoded again.')
+
+    output_obj_list_ = input_obj_list.copy()
+    n_ = 0
+    for line_ in cfg_list_[1:]:
+        n_ += 1
+        list_ = line_.strip().split('\t')
+        dict_ = {
+            'sen_num': n_,
+            'place': list_[0],
+            'warn_t': float(list_[1]),
+            'crit_t': float(list_[2])
+        }
+        if not input_obj_list:
+            sensor_obj_ = SensorDataBlock()
+            sensor_obj_.write_data(dict_)
+            output_obj_list_.append(sensor_obj_)
+        else:
+            output_obj_list_[n_ - 1].write_data(dict_)
     return output_obj_list_
 
 #####=====----- THE END -----=====#########################################
