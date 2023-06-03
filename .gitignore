@@ -16,3 +16,4 @@ WinGridView/icon*
 WinTableView/icon*
 *.png
 !shot1.png
+test.py
