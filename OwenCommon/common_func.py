@@ -66,16 +66,15 @@ class SensorDataBlock:
     виде словаря и методы их обработки
     '''
     def __init__(self):
-        self.sensor_dict = {
-            'sen_num': 0,
-            'place': '',
-            'warn_t': 0.0,
-            'crit_t': 0.0,
-            'measures': [{'timestamp': 0.0,
-                          'value': 0.0,
-                          'state': 'green-state'
-                        }]
-        }
+        self.sensor_dict = {'sen_num': 0,
+                            'place': '',
+                            'warn_t': 0.0,
+                            'crit_t': 0.0,
+                            'measures': [{'timestamp': 0.0,
+                                          'value': 0.0,
+                                          'state': 'green-state'
+                                        }]
+                           }
 
     def write_data(self, data_dict: dict):
         keys_ = data_dict.keys()
@@ -245,21 +244,20 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
 
     output_obj_list_ = input_obj_list.copy()
     n_ = 0
-    for line_ in cfg_list_[1:]:
+    for cfg_line_ in cfg_list_[1:]:
         n_ += 1
-        list_ = line_.strip().split('\t')
-        dict_ = {
-            'sen_num': n_,
-            'place': list_[0],
-            'warn_t': float(list_[1]),
-            'crit_t': float(list_[2])
-        }
+        line_list_ = cfg_line_.strip().split('\t')
+        sensor_dict_ = {'sen_num': n_,
+                        'place': line_list_[0],
+                        'warn_t': float(line_list_[1]),
+                        'crit_t': float(line_list_[2])
+                       }
         if not input_obj_list:
             sensor_obj_ = SensorDataBlock()
-            sensor_obj_.write_data(dict_)
+            sensor_obj_.write_data(sensor_dict_)
             output_obj_list_.append(sensor_obj_)
         else:
-            output_obj_list_[n_ - 1].write_data(dict_)
+            output_obj_list_[n_ - 1].write_data(sensor_dict_)
     return output_obj_list_
 
 
@@ -289,17 +287,42 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
 
     output_obj_list_ = input_obj_list.copy()
     n_ = 0
-    for line_ in data_list_[1:]:
+    for data_line_ in data_list_[1:]:
         n_ += 1
-        list_ = line_.strip().split('\t')
-        dict_ = {
-            'sen_num': n_,
-            'place': list_[2]
-            }
-        time_ = mktime(strptime(' '.join((list_[0], list_[1])),
-                                '%d.%m.%Y %H:%M:%S'
-                               )
-                      ) + tz_shift
+        line_list_ = data_line_.strip().split('\t')
+        sensor_dict_ = {'sen_num': n_,
+                        'place': line_list_[2]
+                       }
+        timestamp_ = mktime(strptime(' '.join((line_list_[0], line_list_[1])),
+                                     '%d.%m.%Y %H:%M:%S'
+                                    )
+                           ) + tz_shift
+        try:
+            value_ = float(line_list_[3].replace(',', '.'))
+        except:
+            if line_list_[3].startswith('?'):
+                value_ = '???'
+                state_ = 'black-state'
+            else:
+                value_ = '!!!'
+                state_ = 'gray-state'
+        else:
+            if value_ < output_obj_list_[n_ - 1].sensor_dict['warn_t']:
+                state_ = 'green-state'
+            elif value_ < output_obj_list_[n_ - 1].sensor_dict['crit_t']:
+                state_ = 'yellow-state'
+            else:
+                state_ = 'red-state'
+        sensor_dict_['measures'] = [{'timestamp': timestamp_,
+                                     'value': value_,
+                                     'state': state_
+                                   }]
+        if not input_obj_list:
+            sensor_obj_ = SensorDataBlock()
+            sensor_obj_.write_data(sensor_dict_)
+            output_obj_list_.append(sensor_obj_)
+        else:
+            output_obj_list_[n_ - 1].write_data(sensor_dict_)
     return output_obj_list_
 
 #####=====----- THE END -----=====#########################################
