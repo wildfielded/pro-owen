@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from time import time
+from time import mktime, strptime, time
 import json
 import logging
 import logging.handlers as LH_
@@ -51,6 +51,7 @@ CONF_DICT = {
     'share_name': conf_.SHARE_NAME,
     'data_path': conf_.DATA_PATH,
     'cfg_path': conf_.CFG_PATH,
+    'tz_shift': conf_.TZ_SHIFT,
     'use_syslog': conf_.USE_SYSLOG,
     'syslog_addr': conf_.SYSLOG_ADDR,
     'syslog_port': conf_.SYSLOG_PORT,
@@ -262,7 +263,7 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
     return output_obj_list_
 
 
-def parse_lastdata(input_obj_list: list, last_datafile: str,
+def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
                    **kwargs) -> object:
     ''' Парсит данные из загруженного локально файла с измерениями по
     каждому датчику с некоторой валидацией данных, выставляет состояние
@@ -271,6 +272,10 @@ def parse_lastdata(input_obj_list: list, last_datafile: str,
     Arguments:
         input_obj_list [list] -- Список объектов класса SensorDataBlock
         last_datafile [str] -- Путь к локальной копии файла данных
+        tz_shift [float] -- Возможный сдвиг по времени на случай, если
+            таймзоны системного времени на сервере и на локальной машине
+            отличаются. Например, если на сервере OWEN время MSK, а на
+            локальной машине IRK, то tz_shift=3600.0*5 (5 часов).
     Returns:
         [obj] -- Список объектов класса SensorDataBlock
     '''
@@ -283,6 +288,18 @@ def parse_lastdata(input_obj_list: list, last_datafile: str,
         log_err('Data file cp1251-encoded again.')
 
     output_obj_list_ = input_obj_list.copy()
+    n_ = 0
+    for line_ in data_list_[1:]:
+        n_ += 1
+        list_ = line_.strip().split('\t')
+        dict_ = {
+            'sen_num': n_,
+            'place': list_[2]
+            }
+        time_ = mktime(strptime(' '.join((list_[0], list_[1])),
+                                '%d.%m.%Y %H:%M:%S'
+                               )
+                      ) + tz_shift
     return output_obj_list_
 
 #####=====----- THE END -----=====#########################################

@@ -34,6 +34,9 @@ SHARE_NAME = 'Owen$'
 DATA_PATH = 'Last/owen.txt'
 CFG_PATH = 'Last/owen.cfg'
 
+##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
+TZ_SHIFT = 3600.0 * 5
+
 ##### "True" - для сброса лога на сервер через SYSLOG
 USE_SYSLOG = False
 SYSLOG_ADDR = '127.0.0.1'
@@ -48,8 +51,6 @@ FILELOG_PATH = 'logfile.txt'
 '''
 ##### Добавки путей к нужным файлам
 HTML_OUTPUT = WWW_DIR + 'index.html'
-##### OWEN отдаёт время MSK, поэтому нужен сдвиг на 5 часов (в секундах)
-TZ_SHIFT = 3600.0 * 5
 ##### Период хранения истории измерений в секундах
 HISTORY_LIMIT = 30.0 * 120
 
