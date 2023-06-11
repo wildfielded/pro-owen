@@ -223,9 +223,10 @@ def write_json(**kwargs):
 
 
 def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
-    ''' Парсит данные из загруженного файла с пороговыми значениями по
-    каждому датчику с некоторой валидацией данных и дополняет текущий
-    (или создаёт новый) список экземпляров класса SensorDataBlock
+    ''' Парсит данные из загруженного локально файла с пороговыми
+    значениями по каждому датчику с некоторой валидацией данных и
+    дополняет текущий (или создаёт новый) список экземпляров (объектов)
+    класса SensorDataBlock
     Arguments:
         input_obj_list [list] -- Список объектов класса SensorDataBlock
         last_cfgfile [str] -- Путь к локальной копии конфигурационного
@@ -258,6 +259,30 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
             output_obj_list_.append(sensor_obj_)
         else:
             output_obj_list_[n_ - 1].write_data(dict_)
+    return output_obj_list_
+
+
+def parse_lastdata(input_obj_list: list, last_datafile: str,
+                   **kwargs) -> object:
+    ''' Парсит данные из загруженного локально файла с измерениями по
+    каждому датчику с некоторой валидацией данных, выставляет состояние
+    в соответствии с пороговыми значениями и дополняет текущий (или
+    создаёт новый) список экземпляров (объектов) класса SensorDataBlock.
+    Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+        last_datafile [str] -- Путь к локальной копии файла данных
+    Returns:
+        [obj] -- Список объектов класса SensorDataBlock
+    '''
+    try:
+        with open(last_datafile, 'r', encoding='utf-8') as f_:
+            data_list_ = f_.readlines()
+    except UnicodeDecodeError:
+        with open(last_datafile, 'r', encoding='cp1251') as f_:
+            data_list_ = f_.readlines()
+        log_err('Data file cp1251-encoded again.')
+
+    output_obj_list_ = input_obj_list.copy()
     return output_obj_list_
 
 #####=====----- THE END -----=====#########################################

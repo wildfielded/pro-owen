@@ -9,7 +9,7 @@ sys.path.append('../VENVemul/Lib/site-packages')     #####
 from smb.SMBConnection import SMBConnection
 
 from OwenCommon.common_func import (get_current_files, read_json, parse_lastcfg,
-                                    log_inf, log_err, CONF_DICT)
+                                    parse_lastdata, log_inf, log_err, CONF_DICT)
 
 
 ''' =====----- Функции -----===== '''
@@ -61,8 +61,13 @@ def put_current_files(login: str, passwd: str, domain: str,
 ''' =====----- MAIN -----=====##### '''
 if __name__ == '__main__':
     get_result = get_current_files(**CONF_DICT)
-    current_obj_list = parse_lastcfg(read_json(**CONF_DICT), **CONF_DICT)
-    print(current_obj_list)
+    if get_result == 'fresh_data':
+        current_obj_list = parse_lastdata(parse_lastcfg(read_json(**CONF_DICT),
+                                                        **CONF_DICT
+                                                       ),
+                                          **CONF_DICT
+                                         )
+        print(current_obj_list)
     
     # put_current_files(**CONF_DICT)
 
