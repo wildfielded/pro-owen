@@ -63,10 +63,8 @@ if __name__ == '__main__':
     get_result = get_current_files(**CONF_DICT)
     if get_result == 'fresh_data':
         current_obj_list = parse_lastdata(parse_lastcfg(read_json(**CONF_DICT),
-                                                        **CONF_DICT
-                                                       ),
-                                          **CONF_DICT
-                                         )
+                                                        **CONF_DICT),
+                                          **CONF_DICT)
         print(current_obj_list)
     
     # put_current_files(**CONF_DICT)
