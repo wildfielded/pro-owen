@@ -16,13 +16,6 @@ from . import configowen as conf_
 
 ''' =====----- Переменные и константы -----===== '''
 
-LOGGING_PARAMS = {
-    'use_syslog': conf_.USE_SYSLOG,
-    'syslog_addr': conf_.SYSLOG_ADDR,
-    'syslog_port': conf_.SYSLOG_PORT,
-    'use_filelog': conf_.USE_FILELOG,
-    'filelog_path': conf_.FILELOG_PATH
-}
 CONF_DICT = {
     'last_datafile': conf_.LAST_DATAFILE,
     'last_cfgfile': conf_.LAST_CFGFILE,

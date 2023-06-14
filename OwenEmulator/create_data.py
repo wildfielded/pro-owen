@@ -25,6 +25,7 @@ def generate_measures():
     pass
 
 
+@inject_config()
 def put_current_files(login: str, passwd: str, domain: str,
                       cli_name: str, srv_name: str,
                       srv_ip: str, srv_port: int,
@@ -32,6 +33,8 @@ def put_current_files(login: str, passwd: str, domain: str,
                       **kwargs):
     ''' Записывает файл с генерированными измерениями на сетевой ресурс
     Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
         login [str] -- Имя учётной записи, под которой идёт обращение на
             сетевой ресурс сервера OWEN
         passwd [str] -- Пароль учётной записи
@@ -54,14 +57,13 @@ def put_current_files(login: str, passwd: str, domain: str,
             s_.connect(srv_ip, srv_port)
             with open(last_datafile, 'rb') as f_:
                 s_.storeFile(share_name, data_path, f_)
-            log_inf('OK')
+            log_inf('Generated data file stored in OWEN server')
     except:
         log_err('Unable to connect with OWEN server!')
 
 
 ''' =====----- MAIN -----=====##### '''
 if __name__ == '__main__':
-    # get_result = get_current_files(**CONF_DICT)
     get_result = get_current_files()
     if get_result == 'fresh_data':
         current_obj_list = parse_lastdata(parse_lastcfg(read_json(**CONF_DICT),
@@ -69,6 +71,6 @@ if __name__ == '__main__':
                                           **CONF_DICT)
         print(current_obj_list)
 
-    # put_current_files(**CONF_DICT)
+    # put_current_files()
 
 #####=====----- THE END -----=====#########################################
