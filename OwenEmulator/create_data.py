@@ -66,7 +66,7 @@ def put_current_files(login: str, passwd: str, domain: str,
 if __name__ == '__main__':
     get_result = get_current_files()
     if get_result == 'fresh_data':
-        current_obj_list = parse_lastdata(parse_lastcfg(read_json(**CONF_DICT),
+        current_obj_list = parse_lastdata(parse_lastcfg(read_json(),
                                                         **CONF_DICT),
                                           **CONF_DICT)
         print(current_obj_list)

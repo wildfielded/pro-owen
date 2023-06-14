@@ -214,10 +214,13 @@ def get_current_files(login: str, passwd: str, domain: str,
         return result_
 
 
+@inject_config()
 def read_json(json_file: str, **kwargs) -> object:
     ''' Считывает файл с историческими данными в формате JSON и создаёт
     на их основе список экземпляров класса SensorDataBlock
     Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
         json_file [str] -- Путь к JSON-файлу с историей данныx
     Returns:
         [obj] -- Список объектов класса SensorDataBlock
