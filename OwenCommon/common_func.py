@@ -16,20 +16,6 @@ from . import configowen as conf_
 
 ''' =====----- Переменные и константы -----===== '''
 
-OWEN_CONN_PARAMS = {
-    'login': conf_.LOGIN,
-    'passwd': conf_.PASSWD,
-    'domain': conf_.DOMAIN,
-    'cli_name': conf_.CLI_NAME,
-    'srv_name': conf_.SRV_NAME,
-    'srv_ip': conf_.SRV_IP,
-    'srv_port': conf_.SRV_PORT,
-    'share_name': conf_.SHARE_NAME,
-    'data_path': conf_.DATA_PATH,
-    'cfg_path': conf_.CFG_PATH,
-    'last_datafile': conf_.LAST_DATAFILE,
-    'last_cfgfile': conf_.LAST_CFGFILE
-}
 LOGGING_PARAMS = {
     'use_syslog': conf_.USE_SYSLOG,
     'syslog_addr': conf_.SYSLOG_ADDR,
@@ -96,9 +82,12 @@ class SensorDataBlock:
 
 ''' =====----- Декораторы -----===== '''
 
-def configuration_decor(*args):
-    def func_decor(func_to_be_decor):
-        def func_wrap(*args):
+def inject_config(*args):
+    ''' Универсальный декоратор для передачи в декорируемую функцию всех
+    именованных аргументов, импортированных из configowen.
+    '''
+    def function_decor(function_to_be_decor):
+        def function_wrap(*args):
             CONF_DICT = {
                 'last_datafile': conf_.LAST_DATAFILE,
                 'last_cfgfile': conf_.LAST_CFGFILE,
@@ -120,18 +109,20 @@ def configuration_decor(*args):
                 'use_filelog': conf_.USE_FILELOG,
                 'filelog_path': conf_.FILELOG_PATH
             }
-            return func_to_be_decor(*args, **CONF_DICT)
-        return func_wrap
-    return func_decor
+            return function_to_be_decor(*args, **CONF_DICT)
+        return function_wrap
+    return function_decor
 
 
 ''' =====----- Настройка логирования -----===== '''
 
-@configuration_decor()
+@inject_config()
 def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
               use_filelog: bool, filelog_path: str, **kwargs) -> object:
     ''' Настройка функционала логирования событий
     Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
         use_syslog [bool] -- Сброс логов на Syslog-сервер
         syslog_addr [str] -- IP-адрес Syslog-сервера
         syslog_port [int] -- Номер порта Syslog-сервера
@@ -165,6 +156,7 @@ log_err = lambda err_msg: LOGGER.error(err_msg)
 
 ''' =====----- Функции -----===== '''
 
+@inject_config()
 def get_current_files(login: str, passwd: str, domain: str,
                        cli_name: str, srv_name: str,
                        srv_ip: str, srv_port: int,
@@ -176,6 +168,8 @@ def get_current_files(login: str, passwd: str, domain: str,
     измерениями (чтобы не старше двух минут), иначе возвращает
     соответственно строку "ERR_missing_data" или "ERR_rancid_data".
     Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
         login [str] -- Имя учётной записи, под которой идёт обращение на
             сетевой ресурс сервера OWEN
         passwd [str] -- Пароль учётной записи
