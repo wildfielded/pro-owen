@@ -66,7 +66,7 @@ if __name__ == '__main__':
                                                         **CONF_DICT),
                                           **CONF_DICT)
         print(current_obj_list)
-    
+
     # put_current_files(**CONF_DICT)
 
 #####=====----- THE END -----=====#########################################

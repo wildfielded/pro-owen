@@ -59,6 +59,7 @@ CONF_DICT = {
     'filelog_path': conf_.FILELOG_PATH
 }
 
+
 ''' =====----- Классы -----===== '''
 
 class SensorDataBlock:
@@ -93,8 +94,40 @@ class SensorDataBlock:
                                            + self.sensor_dict['measures']
 
 
+''' =====----- Декораторы -----===== '''
+
+def configuration_decor(*args):
+    def func_decor(func_to_be_decor):
+        def func_wrap(*args):
+            CONF_DICT = {
+                'last_datafile': conf_.LAST_DATAFILE,
+                'last_cfgfile': conf_.LAST_CFGFILE,
+                'json_file': conf_.JSON_FILE,
+                'login': conf_.LOGIN,
+                'passwd': conf_.PASSWD,
+                'domain': conf_.DOMAIN,
+                'cli_name': conf_.CLI_NAME,
+                'srv_name': conf_.SRV_NAME,
+                'srv_ip': conf_.SRV_IP,
+                'srv_port': conf_.SRV_PORT,
+                'share_name': conf_.SHARE_NAME,
+                'data_path': conf_.DATA_PATH,
+                'cfg_path': conf_.CFG_PATH,
+                'tz_shift': conf_.TZ_SHIFT,
+                'use_syslog': conf_.USE_SYSLOG,
+                'syslog_addr': conf_.SYSLOG_ADDR,
+                'syslog_port': conf_.SYSLOG_PORT,
+                'use_filelog': conf_.USE_FILELOG,
+                'filelog_path': conf_.FILELOG_PATH
+            }
+            return func_to_be_decor(*args, **CONF_DICT)
+        return func_wrap
+    return func_decor
+
+
 ''' =====----- Настройка логирования -----===== '''
 
+@configuration_decor()
 def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
               use_filelog: bool, filelog_path: str, **kwargs) -> object:
     ''' Настройка функционала логирования событий
@@ -124,10 +157,8 @@ def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
         logger_.addHandler(file_handler)
     return logger_
 
-
+LOGGER = log_setup()
 ##### Лямбда-функции используются в других функциях
-# LOGGER = log_setup(**LOGGING_PARAMS)
-LOGGER = log_setup(**CONF_DICT)
 log_inf = lambda inf_msg: LOGGER.info(inf_msg)
 log_err = lambda err_msg: LOGGER.error(err_msg)
 
