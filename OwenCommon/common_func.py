@@ -247,12 +247,15 @@ def write_json(**kwargs):
     pass
 
 
+@inject_config()
 def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
     ''' Парсит данные из загруженного локально файла с пороговыми
     значениями по каждому датчику с некоторой валидацией данных и
     дополняет текущий (или создаёт новый) список экземпляров (объектов)
     класса SensorDataBlock
     Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
         input_obj_list [list] -- Список объектов класса SensorDataBlock
         last_cfgfile [str] -- Путь к локальной копии конфигурационного
             файла
