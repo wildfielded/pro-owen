@@ -289,6 +289,7 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
     return output_obj_list_
 
 
+@inject_config()
 def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
                    **kwargs) -> object:
     ''' Парсит данные из загруженного локально файла с измерениями по
@@ -296,6 +297,8 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
     в соответствии с пороговыми значениями и дополняет текущий (или
     создаёт новый) список экземпляров (объектов) класса SensorDataBlock.
     Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
         input_obj_list [list] -- Список объектов класса SensorDataBlock
         last_datafile [str] -- Путь к локальной копии файла данных
         tz_shift [float] -- Возможный сдвиг по времени на случай, если
