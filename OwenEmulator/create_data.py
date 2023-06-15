@@ -9,8 +9,8 @@ sys.path.append('../VENVemul/Lib/site-packages')     #####
 from smb.SMBConnection import SMBConnection
 
 from OwenCommon.common_func import (inject_config, log_inf, log_err,
-                                    get_current_files, read_json,
-                                    parse_lastcfg, parse_lastdata, CONF_DICT)
+                                    get_current_files, read_json, write_json,
+                                    parse_lastcfg, parse_lastdata)
 
 
 ''' =====----- Функции -----===== '''
@@ -49,7 +49,7 @@ def put_current_files(login: str, passwd: str, domain: str,
             сетевого ресурса на сервере OWEN
         last_datafile [str] -- Путь к локальной копии файла данных
     Returns:
-        none
+        None
     '''
     try:
         with SMBConnection(login, passwd, cli_name, srv_name, domain,
@@ -67,6 +67,7 @@ if __name__ == '__main__':
     get_result = get_current_files()
     if get_result == 'fresh_data':
         current_obj_list = parse_lastdata(parse_lastcfg(read_json()))
+        # write_json(current_obj_list)
         print(current_obj_list)
 
     # put_current_files()

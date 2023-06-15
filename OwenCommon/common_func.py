@@ -77,10 +77,10 @@ class SensorDataBlock:
 
 def inject_config(*args):
     ''' Универсальный декоратор для передачи в декорируемую функцию всех
-    именованных аргументов, импортированных из configowen. Сами декорируемые
-    функции способны принимать любой набор именованных аргументов, из которых
-    используют только нужные. Поэтому при их вызове не надо дополнительно им
-    передавать позиционные аргументы.
+    именованных аргументов, импортированных из configowen. Сами
+    декорируемые функции способны принимать любой набор именованных
+    аргументов, из которых используют только нужные. Поэтому при их
+    вызове не надо дополнительно им передавать позиционные аргументы.
     '''
     def function_decor(function_to_be_decor):
         def function_wrap(*args):
@@ -99,6 +99,7 @@ def inject_config(*args):
                 'data_path': conf_.DATA_PATH,
                 'cfg_path': conf_.CFG_PATH,
                 'tz_shift': conf_.TZ_SHIFT,
+                'history_limit': conf_.HISTORY_LIMIT,
                 'use_syslog': conf_.USE_SYSLOG,
                 'syslog_addr': conf_.SYSLOG_ADDR,
                 'syslog_port': conf_.SYSLOG_PORT,
@@ -218,7 +219,7 @@ def get_current_files(login: str, passwd: str, domain: str,
 
 
 @inject_config()
-def read_json(json_file: str, **kwargs) -> object:
+def read_json(json_file: str, **kwargs) -> list:
     ''' Считывает файл с историческими данными в формате JSON и создаёт
     на их основе список экземпляров класса SensorDataBlock
     Arguments:
@@ -226,7 +227,7 @@ def read_json(json_file: str, **kwargs) -> object:
         Из них использует:
         json_file [str] -- Путь к JSON-файлу с историей данныx
     Returns:
-        [obj] -- Список объектов класса SensorDataBlock
+        [list] -- Список объектов класса SensorDataBlock
     '''
     output_obj_list_ = []
     try:
@@ -238,13 +239,37 @@ def read_json(json_file: str, **kwargs) -> object:
             output_obj_list_.append(sensor_obj_)
     except:
         log_err('JSON file is missing or not readable.')
-    finally:
-        return output_obj_list_
+    return output_obj_list_
 
 
 @inject_config()
-def write_json(**kwargs):
-    pass
+def write_json(input_obj_list: list, json_file: str, history_limit: float,
+               **kwargs):
+    ''' Записывает в файл обновлённые исторические данные в формате
+    JSON. Предварительно убирает устаревшие измерения, но так, чтобы их
+    осталось минимум 2 для корректной обработки включения звуковых
+    оповещений.
+    Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+        json_file [str] -- Путь к JSON-файлу с историей данныx
+        history_limit [float] -- Период хранения истории измерений
+            в секундах
+    Returns:
+        None
+    '''
+    output_obj_list_ = []
+    for obj_ in input_obj_list:
+        measure_list_ = obj_.sensor_dict['measures']
+        for measure_dict_ in measure_list_[-1::-1]:
+            if measure_dict_['timestamp'] < time() - history_limit:
+                if len(measure_list_) <= 2:
+                    break
+                measure_list_.pop()
+        output_obj_list_.append(obj_.sensor_dict)
+    with open(json_file, 'w', encoding='utf-8') as f_:
+        json.dump(output_obj_list_, f_, ensure_ascii=False, indent=2)
 
 
 @inject_config()
