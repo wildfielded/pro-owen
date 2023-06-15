@@ -77,7 +77,10 @@ class SensorDataBlock:
 
 def inject_config(*args):
     ''' Универсальный декоратор для передачи в декорируемую функцию всех
-    именованных аргументов, импортированных из configowen.
+    именованных аргументов, импортированных из configowen. Сами декорируемые
+    функции способны принимать любой набор именованных аргументов, из которых
+    используют только нужные. Поэтому при их вызове не надо дополнительно им
+    передавать позиционные аргументы.
     '''
     def function_decor(function_to_be_decor):
         def function_wrap(*args):
@@ -143,8 +146,8 @@ def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
 
 LOGGER = log_setup()
 ##### Лямбда-функции используются в других функциях
-log_inf = lambda inf_msg: LOGGER.info(inf_msg)
-log_err = lambda err_msg: LOGGER.error(err_msg)
+log_inf = lambda inf_msg_str: LOGGER.info(inf_msg_str)
+log_err = lambda err_msg_str: LOGGER.error(err_msg_str)
 
 
 ''' =====----- Функции -----===== '''
@@ -229,9 +232,9 @@ def read_json(json_file: str, **kwargs) -> object:
     try:
         with open(json_file, 'r', encoding='utf-8') as f_:
             history_list_ = json.load(f_)
-        for dict_ in history_list_:
+        for history_dict_ in history_list_:
             sensor_obj_ = SensorDataBlock()
-            sensor_obj_.write_data(dict_)
+            sensor_obj_.write_data(history_dict_)
             output_obj_list_.append(sensor_obj_)
     except:
         log_err('JSON file is missing or not readable.')
@@ -239,6 +242,7 @@ def read_json(json_file: str, **kwargs) -> object:
         return output_obj_list_
 
 
+@inject_config()
 def write_json(**kwargs):
     pass
 

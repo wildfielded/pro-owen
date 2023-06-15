@@ -8,9 +8,9 @@ sys.path.append('../VENVemul/Lib/site-packages')     #####
 #####!!!!! ------------------------------------ !!!!!#####
 from smb.SMBConnection import SMBConnection
 
-from OwenCommon.common_func import (get_current_files, read_json, parse_lastcfg,
-                                    parse_lastdata, log_inf, log_err,
-                                    inject_config, CONF_DICT)
+from OwenCommon.common_func import (inject_config, log_inf, log_err,
+                                    get_current_files, read_json,
+                                    parse_lastcfg, parse_lastdata, CONF_DICT)
 
 
 ''' =====----- Функции -----===== '''
