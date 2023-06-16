@@ -2,6 +2,8 @@
 
 from time import strftime
 from random import uniform
+from tempfile import SpooledTemporaryFile
+import csv
 
 import sys
 sys.path.append('..')
@@ -15,10 +17,6 @@ from OwenCommon.common_func import (inject_config, log_inf, log_err,
                                     get_current_files, read_json, write_json,
                                     parse_lastcfg, parse_lastdata)
 
-
-''' =====----- Переменные и константы -----===== '''
-
-CFG_CSV = 'cfg.csv'
 
 ''' =====----- Функции -----===== '''
 
@@ -37,7 +35,8 @@ def generate_measure(low_edge: float, high_edge: float) -> float:
 
 @inject_config()
 def write_measures(login: str, passwd: str, domain: str, cli_name: str,
-                   srv_name: str, srv_ip: str, srv_port: int, **kwargs):
+                   srv_name: str, srv_ip: str, srv_port: int, share_name: str,
+                   data_path: str, cfg_path: str, **kwargs):
     ''' Записывает файл с новыми измерениями на сетевой ресурс
     Arguments:
         Может принимать весь словарь именованных аргументов.
@@ -51,16 +50,43 @@ def write_measures(login: str, passwd: str, domain: str, cli_name: str,
         srv_name [str] -- NetBIOS/AD-имя сервера OWEN
         srv_ip [str] -- IP-адрес сервера OWEN
         srv_port [int] -- Номер TCP-порта для подключения к серверу OWEN
+        share_name [str] -- Имя сетевого ресурса на сервере OWEN
+        data_path [str] -- Путь к текущему файлу данных от корня
+            сетевого ресурса на сервере OWEN
+        cfg_path [str] -- Путь к текущему конфигурационному файлу от
+            корня сетевого ресурса на сервере OWEN
     Returns:
         None
     '''
-    try:
-        with SMBConnection(login, passwd, cli_name, srv_name, domain,
-                        use_ntlm_v2=True, is_direct_tcp=True) as s_:
-            s_.connect(srv_ip, srv_port)
-            log_inf('Connecting to OWEN server.')
-    except:
-        log_err('Unable to write new data on OWEN server!')
+    # try:
+    with SMBConnection(login, passwd, cli_name, srv_name, domain,
+                       use_ntlm_v2=True, is_direct_tcp=True) as s_:
+        s_.connect(srv_ip, srv_port)
+        # try:
+        with (SpooledTemporaryFile(mode='wb', newline='',
+                                   encoding='utf-8') as df_,
+              SpooledTemporaryFile(mode='wb', newline='',
+                                   encoding='utf-8') as cf_
+             ):
+            s_.retrieveFile(share_name, data_path, df_)
+            s_.retrieveFile(share_name, cfg_path, cf_)
+
+            date_list_ = strftime('%d.%m.%Y %H:%M:%S').split()
+            date_ = date_list_[0]
+            time_ = date_list_[1]
+            data_cols_ = ['EventDate', 'EventTime', 'Description', 'Value']
+
+            data_dict_ = csv.DictWriter(df_, data_cols_, delimiter='\t')
+            data_dict_.writeheader()
+            conf_dict_ = csv.DictReader(cf_, delimiter='\t')
+
+            print(conf_dict_.fieldnames)
+
+            log_inf('Data file updated on OWEN server.')
+        # except:
+            # log_err('Unable to update data file on OWEN server!')
+    # except:
+        # log_err('Unable to connect with OWEN server!')
 
 
 @inject_config()
