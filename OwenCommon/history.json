@@ -1,0 +1,146 @@
+[
+  {
+    "sen_num": 1,
+    "place": "Серверная № 2",
+    "warn_t": 25.0,
+    "crit_t": 35.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 20.7,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 20.7,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 2,
+    "place": "Серверная № 1",
+    "warn_t": 25.0,
+    "crit_t": 35.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 18.1,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 18.1,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 3,
+    "place": "Аппаратная №1",
+    "warn_t": 25.0,
+    "crit_t": 30.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 19.6,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 19.6,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 4,
+    "place": "ТЭ датчик № 1",
+    "warn_t": 40.0,
+    "crit_t": 60.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": -0.9,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": -0.9,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 5,
+    "place": "СГЭ",
+    "warn_t": 38.0,
+    "crit_t": 48.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 20.6,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 20.6,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 6,
+    "place": "ДГУ",
+    "warn_t": 45.0,
+    "crit_t": 60.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 20.8,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 20.8,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 7,
+    "place": "Техн.помещ. ДП",
+    "warn_t": 25.0,
+    "crit_t": 35.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 17.9,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 17.9,
+        "state": "green-state"
+      }
+    ]
+  },
+  {
+    "sen_num": 8,
+    "place": "ДП (Дисп.пункт)",
+    "warn_t": 28.0,
+    "crit_t": 35.0,
+    "measures": [
+      {
+        "timestamp": 1640296521.0,
+        "value": 21.7,
+        "state": "green-state"
+      },
+      {
+        "timestamp": 1640296521.0,
+        "value": 21.7,
+        "state": "green-state"
+      }
+    ]
+  }
+]
