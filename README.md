@@ -52,15 +52,18 @@ texts are provided exclusively in Russian.
 Все варианты собраны в одном репозитории, чтобы было проще использовать
 специалистам без глубоких знаний умностей типа Docker и CI/CD.
 
-[**PoC (Proof of Concept)**](https://github.com/wildfielded/pet-owen/tree/master/PoC)
+[**PoC (Proof of Concept)**](https://github.com/wildfielded/pro-owen/tree/master/PoC)
 создан на стеке Python/Apache/Ubuntu. Отдельный `README.md` с инструкциями по
 развёртыванию прилагается.
 
-[**Desktop WebView**](https://github.com/wildfielded/pet-owen/tree/master/WinWebView)
+[**WebServer**](https://github.com/wildfielded/pro-owen/tree/master/WebServer)&nbsp;&mdash;
+переработанный из **PoC** серверный вариант.
+
+[**Desktop WebView**](https://github.com/wildfielded/pro-owen/tree/master/WinWebView)
 создан как desktop-приложение на основе наработок из **PoC**. Отдельный
 `README.md` с инструкциями по развёртыванию прилагается.
 
-[**OwenEmulator**](https://github.com/wildfielded/pet-owen/tree/master/OwenEmulator)
+[**OwenEmulator**](https://github.com/wildfielded/pro-owen/tree/master/OwenEmulator)
 создан для имитации работы сервера OWEN исключительно для разработки при
 отсутствии доступа к серверу. Создаёт на сетевом ресурсе точно такой же по
 формату файл с данными телеизмерений, генерируемых некоторым случайным образом.
