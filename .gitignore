@@ -8,12 +8,15 @@ configowen.ini
 owen.ini
 ConfiGranit.py
 OwenCommon/*.txt
-# OwenCommon/*.json
+OwenCommon/*.json
 OwenEmulator/*.txt
-WinWebView/history.json
-WinWebView/index.html
+WebServer/*.txt
+# WebServer/*.json
+# WebServer/*.html
 WinGridView/icon*
 WinTableView/icon*
+WinWebView/history.json
+WinWebView/index.html
 *.png
 !shot1.png
 test.py

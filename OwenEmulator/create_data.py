@@ -7,7 +7,6 @@ import csv
 import sys
 sys.path.append('..')
 #####!!!!! TEMPORAL for VENV working in Windows !!!!!#####
-import sys                                           #####
 sys.path.append('../VENVemul/Lib/site-packages')     #####
 #####!!!!! ------------------------------------ !!!!!#####
 from smb.SMBConnection import SMBConnection
@@ -110,7 +109,7 @@ def put_current_files(login: str, passwd: str, domain: str,
         log_err('Unable to connect with OWEN server!')
 
 
-''' =====----- MAIN -----=====##### '''
+''' =====----- MAIN -----===== '''
 if __name__ == '__main__':
     create_measures()
     put_current_files()

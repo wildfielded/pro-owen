@@ -17,6 +17,7 @@ WWW_DIR = '/var/www/html/owen/'
 LAST_DATAFILE = PROJECT_DIR + 'PoC/lastdata.txt'
 LAST_CFGFILE = PROJECT_DIR + 'PoC/lastcfg.txt'
 JSON_FILE = WWW_DIR + 'history.json'
+HTML_OUTPUT = WWW_DIR + 'index.html'
 
 ##### Атрибуты УЗ, под которой идёт обращение на сетевой ресурс сервера OWEN
 LOGIN = 'WildDD'
@@ -51,9 +52,6 @@ FILELOG_PATH = 'logfile.txt'
 
 ''' Старые неиспользуемые параметры
 '''
-##### Добавки путей к нужным файлам
-HTML_OUTPUT = WWW_DIR + 'index.html'
-
 HTML_HEADER = '''<!DOCTYPE html>
 <HTML LANG="ru">
 <HEAD>
