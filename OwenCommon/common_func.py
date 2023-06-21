@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from time import mktime, strptime, time
+from string import Template
 import json
 import logging
 import logging.handlers as LH_
@@ -20,6 +21,7 @@ CONF_DICT = {
     'last_datafile': conf_.LAST_DATAFILE,
     'last_cfgfile': conf_.LAST_CFGFILE,
     'json_file': conf_.JSON_FILE,
+    'html_output': conf_.HTML_OUTPUT,
     'login': conf_.LOGIN,
     'passwd': conf_.PASSWD,
     'domain': conf_.DOMAIN,
@@ -117,7 +119,7 @@ def inject_config(*args):
 def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
               use_filelog: bool, filelog_path: str, **kwargs) -> object:
     ''' Настройка функционала логирования событий
-    Arguments:
+    Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
         use_syslog [bool] -- Сброс логов на Syslog-сервер
@@ -131,18 +133,18 @@ def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
     log_format = logging.Formatter('%(name)s %(levelname)s: "%(message)s"')
     logger_ = logging.getLogger('owen')
     logger_.setLevel(logging.INFO)
-    syslog_handler = LH_.SysLogHandler(address=(syslog_addr, syslog_port))
-    syslog_handler.setLevel(logging.INFO)
-    syslog_handler.setFormatter(log_format)
-    file_handler = logging.FileHandler(filename=filelog_path, encoding='utf-8')
-    file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(log_format)
     if use_syslog:
+        syslog_handler = LH_.SysLogHandler(address=(syslog_addr, syslog_port))
+        syslog_handler.setLevel(logging.INFO)
+        syslog_handler.setFormatter(log_format)
         logger_.addHandler(syslog_handler)
+    if use_filelog:
+        file_handler = logging.FileHandler(filename=filelog_path, encoding='utf-8')
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(log_format)
+        logger_.addHandler(file_handler)
     else:
         logger_.addHandler(logging.NullHandler())
-    if use_filelog:
-        logger_.addHandler(file_handler)
     return logger_
 
 LOGGER = log_setup()
@@ -164,7 +166,7 @@ def get_current_files(login: str, passwd: str, domain: str,
     записывает себе локально. Проверяет наличие и свежесть файла с
     измерениями (чтобы не старше двух минут), иначе возвращает
     соответственно строку "ERR_missing_data" или "ERR_rancid_data".
-    Arguments:
+    Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
         login [str] -- Имя учётной записи, под которой идёт обращение на
@@ -222,7 +224,7 @@ def get_current_files(login: str, passwd: str, domain: str,
 def read_json(json_file: str, **kwargs) -> list:
     ''' Считывает файл с историческими данными в формате JSON и создаёт
     на их основе список экземпляров класса SensorDataBlock
-    Arguments:
+    Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
         json_file [str] -- Путь к JSON-файлу с историей данныx
@@ -250,9 +252,10 @@ def write_json(input_obj_list: list, json_file: str, history_limit: float,
     осталось минимум 2 для корректной обработки включения звуковых
     оповещений.
     Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+    Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
-        input_obj_list [list] -- Список объектов класса SensorDataBlock
         json_file [str] -- Путь к JSON-файлу с историей данныx
         history_limit [float] -- Период хранения истории измерений
             в секундах
@@ -279,9 +282,10 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
     дополняет текущий (или создаёт новый) список экземпляров (объектов)
     класса SensorDataBlock
     Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+    Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
-        input_obj_list [list] -- Список объектов класса SensorDataBlock
         last_cfgfile [str] -- Путь к локальной копии конфигурационного
             файла
     Returns:
@@ -322,9 +326,10 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
     в соответствии с пороговыми значениями и дополняет текущий (или
     создаёт новый) список экземпляров (объектов) класса SensorDataBlock.
     Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+    Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
-        input_obj_list [list] -- Список объектов класса SensorDataBlock
         last_datafile [str] -- Путь к локальной копии файла данных
         tz_shift [float] -- Возможный сдвиг по времени на случай, если
             таймзоны системного времени на сервере и на локальной машине
@@ -380,5 +385,26 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
         else:
             output_obj_list_[n_ - 1].write_data(sensor_dict_)
     return output_obj_list_
+
+
+@inject_config()
+def generate_html(input_obj_list: list, smb_result: str, **kwargs) -> str:
+    ''' Заполняет соответствующими значениями по шаблонам ячейки таблиц
+    и итоговый статус помещений, выводимый в одной или нескольких
+    строках в конце таблицы.
+    Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+        smb_result [str] -- Результат выполнения get_current_files()
+    Keyword Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
+    Returns:
+        [str] -- Готовый HTML-код (многострочник) для записи в файл
+    '''
+    output_rows = ''
+    output_diag = ''
+    if smb_result == 'fresh_data':
+        pass
+    return output_rows + output_diag
 
 #####=====----- THE END -----=====#########################################
