@@ -48,10 +48,6 @@ SYSLOG_PORT = 514
 USE_FILELOG = False
 FILELOG_PATH = 'logfile.txt'
 
-
-
-''' Старые неиспользуемые параметры
-'''
 HTML_HEADER = '''<!DOCTYPE html>
 <HTML LANG="ru">
 <HEAD>

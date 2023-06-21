@@ -15,32 +15,6 @@ from smb.SMBConnection import SMBConnection
 from . import configowen as conf_
 
 
-''' =====----- Переменные и константы -----===== '''
-
-CONF_DICT = {
-    'last_datafile': conf_.LAST_DATAFILE,
-    'last_cfgfile': conf_.LAST_CFGFILE,
-    'json_file': conf_.JSON_FILE,
-    'html_output': conf_.HTML_OUTPUT,
-    'login': conf_.LOGIN,
-    'passwd': conf_.PASSWD,
-    'domain': conf_.DOMAIN,
-    'cli_name': conf_.CLI_NAME,
-    'srv_name': conf_.SRV_NAME,
-    'srv_ip': conf_.SRV_IP,
-    'srv_port': conf_.SRV_PORT,
-    'share_name': conf_.SHARE_NAME,
-    'data_path': conf_.DATA_PATH,
-    'cfg_path': conf_.CFG_PATH,
-    'tz_shift': conf_.TZ_SHIFT,
-    'use_syslog': conf_.USE_SYSLOG,
-    'syslog_addr': conf_.SYSLOG_ADDR,
-    'syslog_port': conf_.SYSLOG_PORT,
-    'use_filelog': conf_.USE_FILELOG,
-    'filelog_path': conf_.FILELOG_PATH
-}
-
-
 ''' =====----- Классы -----===== '''
 
 class SensorDataBlock:
@@ -81,8 +55,9 @@ def inject_config(*args):
     ''' Универсальный декоратор для передачи в декорируемую функцию всех
     именованных аргументов, импортированных из configowen. Сами
     декорируемые функции способны принимать любой набор именованных
-    аргументов, из которых используют только нужные. Поэтому при их
-    вызове не надо дополнительно им передавать позиционные аргументы.
+    параметров, из которых используют только нужные. Поэтому если при их
+    вызове им нужно передавать дополнительные параметры, они передаются
+    как позиционные аргументы.
     '''
     def function_decor(function_to_be_decor):
         def function_wrap(*args):
@@ -90,6 +65,7 @@ def inject_config(*args):
                 'last_datafile': conf_.LAST_DATAFILE,
                 'last_cfgfile': conf_.LAST_CFGFILE,
                 'json_file': conf_.JSON_FILE,
+                'html_output': conf_.HTML_OUTPUT,
                 'login': conf_.LOGIN,
                 'passwd': conf_.PASSWD,
                 'domain': conf_.DOMAIN,
@@ -106,7 +82,11 @@ def inject_config(*args):
                 'syslog_addr': conf_.SYSLOG_ADDR,
                 'syslog_port': conf_.SYSLOG_PORT,
                 'use_filelog': conf_.USE_FILELOG,
-                'filelog_path': conf_.FILELOG_PATH
+                'filelog_path': conf_.FILELOG_PATH,
+                'html_header': conf_.HTML_HEADER,
+                'row_template': conf_.ROW_TEMPLATE,
+                'diag_template': conf_.DIAG_TEMPLATE,
+                'html_footer': conf_.HTML_FOOTER
             }
             return function_to_be_decor(*args, **CONF_DICT)
         return function_wrap
@@ -388,7 +368,8 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
 
 
 @inject_config()
-def generate_html(input_obj_list: list, smb_result: str, **kwargs) -> str:
+def generate_html(input_obj_list: list, smb_result: str,
+                  row_template: str, diag_template: str, **kwargs) -> str:
     ''' Заполняет соответствующими значениями по шаблонам ячейки таблиц
     и итоговый статус помещений, выводимый в одной или нескольких
     строках в конце таблицы.
@@ -398,13 +379,30 @@ def generate_html(input_obj_list: list, smb_result: str, **kwargs) -> str:
     Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
+        row_template [str] -- Шаблон для заполнения строки таблицы с
+            данными отдельного сенсора
+        diag_template [str] -- Шаблон для заполнения строки статуса
+            помещения
     Returns:
-        [str] -- Готовый HTML-код (многострочник) для записи в файл
+        [str] -- HTML-код (многострочник) для записи в HTML-файл строк
+            таблицы с текущими данными и статусом помещений
     '''
-    output_rows = ''
-    output_diag = ''
+    output_rows_ = ''
+    output_diag_ = ''
+    rows_ = Template(row_template)
+    diag_ = Template(diag_template)
     if smb_result == 'fresh_data':
         pass
-    return output_rows + output_diag
+    elif smb_result == 'ERR_rancid_data':
+        pass
+    elif smb_result == 'ERR_missing_data':
+        pass
+    if not output_diag_:
+        output_diag_ = diag_.safe_substitute(state='green-state',
+                                             place=u'Все датчики',
+                                             diag=u'Температура в норме',
+                                             alarmbutt=''
+                                            )
+    return output_rows_ + output_diag_
 
 #####=====----- THE END -----=====#########################################
