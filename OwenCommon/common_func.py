@@ -405,4 +405,26 @@ def generate_html(input_obj_list: list, smb_result: str,
                                             )
     return output_rows_ + output_diag_
 
+
+@inject_config()
+def write_html(rows: str, html_output: str, html_header: str, html_footer: str,
+               **kwargs):
+    ''' Записывает HTML-файл для отдачи по HTTP. Использует заданные в
+    модуле configowen шаблоны HTML-кода.
+    Arguments:
+        rows -- HTML-код (многострочник) для записи в HTML-файл строк
+            таблицы с текущими данными и статусом помещений
+    Keyword Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
+        html_output [str] --
+        html_header [str] --
+        html_footer [str] --
+    Returns:
+        None
+    '''
+    with open(html_output, 'w', encoding='utf-8') as h_:
+        h_.write(html_header + rows + html_footer)
+    log_inf('HTML file updated.')
+
 #####=====----- THE END -----=====#########################################
