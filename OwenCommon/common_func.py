@@ -48,6 +48,13 @@ class SensorDataBlock:
             self.sensor_dict['measures'] = data_dict['measures'] \
                                            + self.sensor_dict['measures']
 
+    def get_data(self, keys_list: list) -> dict:
+        output_dict_ = {}
+        for key_ in keys_list:
+            if key_ in self.sensor_dict.keys():
+                output_dict_[key_] = self.sensor_dict[key_]
+        return output_dict_
+
 
 ''' =====----- Декораторы -----===== '''
 
@@ -505,6 +512,8 @@ def write_png(input_obj_list: list, www_dir: str, **kwargs):
         www_dir -- Путь к директории на вэб-сервере для размещения
             PNG-файлов (там же, где и HTML-файл)
     '''
-    pass
+    for obj_ in input_obj_list:
+        sensor_dict_ = obj_.get_data(['sen_num', 'warn_t',
+                                      'crit_t', 'measures'])
 
 #####=====----- THE END -----=====#########################################
