@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from time import mktime, strptime, time
+from time import ctime, mktime, strptime, time
 from string import Template
 import json
 import logging
@@ -392,11 +392,62 @@ def generate_html(input_obj_list: list, smb_result: str,
     rows_ = Template(row_template)
     diag_ = Template(diag_template)
     if smb_result == 'fresh_data':
-        pass
+        for obj_ in input_obj_list:
+            sensor_dict_ = obj_.sensor_dict
+            num_ = str(sensor_dict_['sen_num'])
+            place_ = sensor_dict_['place']
+            t_ = str(sensor_dict_['measures'][0]['value']).replace('.', ',')
+            yellow_t_ = int(sensor_dict_['warn_t'])
+            red_t_ = int(sensor_dict_['crit_t'])
+            last_state_ = sensor_dict_['measures'][0]['state']
+            try:
+                prev_state_ = sensor_dict_['measures'][1]['state']
+            except:
+                prev_state_ = 'green-state'
+            button_ = ''
+            date_list_ = ctime(sensor_dict_['measures'][0]['timestamp']).split()
+            measure_time_ = f'{date_list_[3]} ({date_list_[2]} {date_list_[1]})'
+            output_rows_ += rows_.safe_substitute(number=num_,
+                                                  place=place_,
+                                                  temp=t_,
+                                                  max1=yellow_t_,
+                                                  max2=red_t_,
+                                                  state=last_state_,
+                                                  mtime=measure_time_
+                                                 )
+            if last_state_ != 'green-state':
+                if last_state_ == 'yellow-state':
+                    diag_msg_ = u'Подозрительное повышение температуры'
+                elif last_state_ == 'red-state':
+                    diag_msg_ = u'Критическое повышение температуры'
+                elif last_state_ == 'black-state':
+                    diag_msg_ = u'Нет показаний датчика больше минуты'
+                elif last_state_ == 'gray-state':
+                    diag_msg_ = u'Неизвестная ошибка'
+                else:
+                    diag_msg_ = u'Неопределённая ошибка'
+
+                if len(sensor_dict_['measures']) > 1 and last_state_ != prev_state_:
+                    button_ = u'\n                        <BUTTON ID="newalarm" STYLE="display: inline;">Выключить звук</BUTTON>'
+                else:
+                    button_ = ''
+                output_diag_ += diag_.safe_substitute(state=last_state_,
+                                                      place=place_,
+                                                      diag=diag_msg_,
+                                                      alarmbutt=button_
+                                                     )
+                log_err(f'{place_}: {diag_msg_}')
     elif smb_result == 'ERR_rancid_data':
-        pass
+        output_diag_ = diag_.safe_substitute(state='red-state',
+                                             place='OWEN',
+                                             diag=u'Данные давно не обновлялись.<BR>Программный сбой на сервере OWEN.',
+                                             alarmbutt='')
     elif smb_result == 'ERR_missing_data':
-        pass
+        output_diag_ = diag_.safe_substitute(state='red-state',
+                                             place=u'OWEN',
+                                             diag=u'Файл с данными отсутствует на сервере OWEN.',
+                                             alarmbutt=''
+                                            )
     if not output_diag_:
         output_diag_ = diag_.safe_substitute(state='green-state',
                                              place=u'Все датчики',
@@ -417,9 +468,11 @@ def write_html(rows: str, html_output: str, html_header: str, html_footer: str,
     Keyword Arguments:
         Может принимать весь словарь именованных аргументов.
         Из них использует:
-        html_output [str] --
-        html_header [str] --
-        html_footer [str] --
+        html_output [str] -- Путь к HTML-файлу для отдачи по HTTP
+        html_header [str] -- Верхняя часть HTML-кода до табличных строк
+            с данными измерений
+        html_footer [str] -- Нижняя часть HTML-кода после табличных
+            строк с данными измерений
     Returns:
         None
     '''

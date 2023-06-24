@@ -62,8 +62,8 @@ def create_measures(last_datafile: str, last_cfgfile: str, **kwargs):
                     'EventDate': date_,
                     'EventTime': time_,
                     'Description': row_['Description'],
-                    'Value': generate_measure(float(row_['Max1']) - 15.0,
-                                              float(row_['Max2']) + 20.0)
+                    'Value': generate_measure(float(row_['Max1']) - 25.0,
+                                              float(row_['Max2']) + 10.0)
                 }
                 data_dict_.writerow(writer_dict_)
             log_inf('Local data file updated.')
@@ -113,11 +113,5 @@ def put_current_files(login: str, passwd: str, domain: str,
 if __name__ == '__main__':
     create_measures()
     put_current_files()
-
-    # get_result = get_current_files()
-    # if get_result == 'fresh_data':
-        # current_obj_list = parse_lastdata(parse_lastcfg(read_json()))
-        # write_json(current_obj_list)
-        # print(current_obj_list)
 
 #####=====----- THE END -----=====#########################################
