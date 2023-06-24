@@ -62,6 +62,7 @@ def inject_config(*args):
     def function_decor(function_to_be_decor):
         def function_wrap(*args):
             CONF_DICT = {
+                'www_dir': conf_.WWW_DIR,
                 'last_datafile': conf_.LAST_DATAFILE,
                 'last_cfgfile': conf_.LAST_CFGFILE,
                 'json_file': conf_.JSON_FILE,
@@ -370,9 +371,10 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
 @inject_config()
 def generate_html(input_obj_list: list, smb_result: str,
                   row_template: str, diag_template: str, **kwargs) -> str:
-    ''' Заполняет соответствующими значениями по шаблонам ячейки таблиц
-    и итоговый статус помещений, выводимый в одной или нескольких
-    строках в конце таблицы.
+    ''' Формирует HTML-код строк таблицы с данными датчиков. Заполняет
+    соответствующими значениями по шаблонам ячейки таблиц и итоговый
+    статус помещений, выводимый в одной или нескольких строках в конце
+    таблицы.
     Arguments:
         input_obj_list [list] -- Список объектов класса SensorDataBlock
         smb_result [str] -- Результат выполнения get_current_files()
@@ -479,5 +481,30 @@ def write_html(rows: str, html_output: str, html_header: str, html_footer: str,
     with open(html_output, 'w', encoding='utf-8') as h_:
         h_.write(html_header + rows + html_footer)
     log_inf('HTML file updated.')
+
+
+@inject_config()
+def write_png(input_obj_list: list, www_dir: str, **kwargs):
+    ''' Создаёт и записывает PNG-файлы с графической историей измерений
+    по каждому датчику. Каждый PNG генерится на основе предварительно
+    созданной двумерной матрицы. Вертикальный размер картинки -- 60px.
+    Вертикальный масштаб -- 2px/градус. На высоте 20px -- уровень
+    среднего значения температуры за исторический период (отсутствующие
+    значения в расчёт не берутся). При учитывании случаев резкого
+    изменения показаний с возможным выходом за допустимый диапазон
+    пикселей много мудрить не стали, просто обрезаем пик сверху до 60px.
+    Всё равно это качественная картинка, предназначенная для плавного
+    развития событий. Поэтому на соответствующем уровне могут появляются
+    и исчезать жёлтые и красные линии -- соответствующие пороговые
+    уровни температуры.
+    Arguments:
+        input_obj_list [list] -- Список объектов класса SensorDataBlock
+    Keyword Arguments:
+        Может принимать весь словарь именованных аргументов.
+        Из них использует:
+        www_dir -- Путь к директории на вэб-сервере для размещения
+            PNG-файлов (там же, где и HTML-файл)
+    '''
+    pass
 
 #####=====----- THE END -----=====#########################################
