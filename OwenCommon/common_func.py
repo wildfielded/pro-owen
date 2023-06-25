@@ -11,6 +11,7 @@ import sys                                           #####
 sys.path.append('../VENVemul/Lib/site-packages')     #####
 #####!!!!! ------------------------------------ !!!!!#####
 from smb.SMBConnection import SMBConnection
+import png
 
 from . import configowen as conf_
 
@@ -550,5 +551,43 @@ def write_png(input_obj_list: list, www_dir: str, **kwargs):
         except ZeroDivisionError:
             average_t_ = 20
             log_err(f'write_png() -> Деление на 0: Все измерения равны "???"')
+        # Создание списка списков, или двумерного массива (матрицы)
+        # с цветами пикселей в столбце. Тут столбец будущего графика
+        # пока пишется списком в строку массива.
+        matrix_ = []
+        for value_tup_ in measure_list_:
+            yel_delta_ = yel_level_ - value_tup_[0]
+            red_delta_ = red_level_ - value_tup_[0]
+            reduced_t_ = value_tup_[0] - average_t_ + 20
+            column_list_ = [value_tup_[1] for x in range(reduced_t_)] \
+                           + [0 for y in range(60 - reduced_t_)]
+            column_list_len_ = len(column_list_)
+            # Два жёлтых пикселя в столбике
+            if reduced_t_ + yel_delta_ < column_list_len_ - 1:
+                yel_position_ = reduced_t_ + yel_delta_
+                column_list_[yel_position_] = 2
+                column_list_[yel_position_ + 1] = 2
+            # Два красных пикселя в столбике
+            if reduced_t_ + red_delta_ < column_list_len_ - 1:
+                red_position_ = reduced_t_ + red_delta_
+                column_list_[red_position_] = 3
+                column_list_[red_position_ + 1] = 3
+            matrix_.append(column_list_[:60:][::-1])
+        # Поворот матрицы на 90 градусов
+        rotated_matrix_ = [
+                [matrix_[row_][col_] for row_ in range(len(matrix_))]
+                                     for col_ in range(len(matrix_[0]))
+            ]
+        # Создание и запись PNG-файла
+        four_colors_palette_ = [(224, 224, 224),
+                                (0, 160, 0),
+                                (255, 192, 0),
+                                (255, 64, 0)
+                               ]
+        png_file_ = www_dir + str(sensor_dict_['sen_num']) + '.png'
+        with open(png_file_, 'wb') as f_:
+            png_ = png.Writer(len(rotated_matrix_[0]), len(rotated_matrix_),
+                              palette=four_colors_palette_, bitdepth=2)
+            png_.write(f_, rotated_matrix_)
 
 #####=====----- THE END -----=====#########################################
