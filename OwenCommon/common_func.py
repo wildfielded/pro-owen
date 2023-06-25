@@ -122,12 +122,14 @@ def log_setup(use_syslog: bool, syslog_addr: str, syslog_port: int,
     logger_ = logging.getLogger('owen')
     logger_.setLevel(logging.INFO)
     if use_syslog:
-        syslog_handler = LH_.SysLogHandler(address=(syslog_addr, syslog_port))
+        syslog_handler = LH_.SysLogHandler(address=(syslog_addr,
+                                                    syslog_port))
         syslog_handler.setLevel(logging.INFO)
         syslog_handler.setFormatter(log_format)
         logger_.addHandler(syslog_handler)
     if use_filelog:
-        file_handler = logging.FileHandler(filename=filelog_path, encoding='utf-8')
+        file_handler = logging.FileHandler(filename=filelog_path,
+                                           encoding='utf-8')
         file_handler.setLevel(logging.INFO)
         file_handler.setFormatter(log_format)
         logger_.addHandler(file_handler)
@@ -447,22 +449,26 @@ def generate_html(input_obj_list: list, smb_result: str,
                                                      )
                 log_err(f'{place_}: {diag_msg_}')
     elif smb_result == 'ERR_rancid_data':
-        output_diag_ = diag_.safe_substitute(state='red-state',
-                                             place='OWEN',
-                                             diag=u'Данные давно не обновлялись.<BR>Программный сбой на сервере OWEN.',
-                                             alarmbutt='')
+        output_diag_ = diag_.safe_substitute(
+            state='red-state',
+            place='OWEN',
+            diag=u'Данные давно не обновлялись.<BR>Программный сбой на сервере OWEN.',
+            alarmbutt=''
+            )
     elif smb_result == 'ERR_missing_data':
-        output_diag_ = diag_.safe_substitute(state='red-state',
-                                             place=u'OWEN',
-                                             diag=u'Файл с данными отсутствует на сервере OWEN.',
-                                             alarmbutt=''
-                                            )
+        output_diag_ = diag_.safe_substitute(
+            state='red-state',
+            place=u'OWEN',
+            diag=u'Файл с данными отсутствует на сервере OWEN.',
+            alarmbutt=''
+            )
     if not output_diag_:
-        output_diag_ = diag_.safe_substitute(state='green-state',
-                                             place=u'Все датчики',
-                                             diag=u'Температура в норме',
-                                             alarmbutt=''
-                                            )
+        output_diag_ = diag_.safe_substitute(
+            state='green-state',
+            place=u'Все датчики',
+            diag=u'Температура в норме',
+            alarmbutt=''
+            )
     return output_rows_ + output_diag_
 
 
@@ -515,5 +521,34 @@ def write_png(input_obj_list: list, www_dir: str, **kwargs):
     for obj_ in input_obj_list:
         sensor_dict_ = obj_.get_data(['sen_num', 'warn_t',
                                       'crit_t', 'measures'])
+        if len(sensor_dict_['measures']) == 0:
+            log_err(f"write_png() -> Датчик {str(sensor_dict_['sen_num'])}: Нет последних измерений")
+            continue
+        measure_list_ = []
+        zero_cnt_ = 0
+        val_sum_ = 0
+        yel_level_ = int(sensor_dict_['warn_t'] * 2)
+        red_level_ = int(sensor_dict_['crit_t'] * 2)
+        # Создание списка значениями и цветом для столбиков пикселей
+        for measure_dict_ in sensor_dict_['measures']:
+            try:
+                if measure_dict_['state'] == 'red-state':
+                    colorbit_ = 3
+                elif measure_dict_['state'] == 'yellow-state':
+                    colorbit_ = 2
+                else:
+                    colorbit_ = 1
+                val_ = int(measure_dict_['value'] * 2)
+                measure_list_.insert(0, (val_, colorbit_))
+                val_sum_ += val_
+            except:
+                measure_list_.insert(0, (0, 0))
+                zero_cnt_ += 1
+        # Задание средней температуры для всей истории
+        try:
+            average_t_ = int(val_sum_ / (len(measure_list_) - zero_cnt_))
+        except ZeroDivisionError:
+            average_t_ = 20
+            log_err(f'write_png() -> Деление на 0: Все измерения равны "???"')
 
 #####=====----- THE END -----=====#########################################
