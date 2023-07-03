@@ -59,6 +59,10 @@ texts are provided exclusively in Russian.
 [**WebServer**](https://github.com/wildfielded/pro-owen/tree/master/WebServer)&nbsp;&mdash;
 переработанный из **PoC** серверный вариант.
 
+[**OwenCommon**](https://github.com/wildfielded/pro-owen/tree/master/OwenCommon)&nbsp;&mdash;
+в модуле `commin_func.py` собран функционал, общий для серверного и десктопного
+вариантов.
+
 [**Desktop WebView**](https://github.com/wildfielded/pro-owen/tree/master/WinWebView)
 создан как desktop-приложение на основе наработок из **PoC**. Отдельный
 `README.md` с инструкциями по развёртыванию прилагается.
@@ -70,7 +74,6 @@ texts are provided exclusively in Russian.
 
 ### TODO (ближайшие планы) ###
 
-- Рефакторинг структуры кода с выделением общего кода в модуль **`OwenCommon`**.
 - Упрощение и автоматизация деплоя.
 - Улучшайзинг кода и фиченаворотинг. Попытаться сделать код более оптимальным и
 читабельным по мере прокачки экспы.
