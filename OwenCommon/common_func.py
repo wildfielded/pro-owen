@@ -311,7 +311,7 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
 
 @inject_config()
 def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
-                   **kwargs) -> object:
+                   **kwargs) -> list:
     ''' Парсит данные из загруженного локально файла с измерениями по
     каждому датчику с некоторой валидацией данных, выставляет состояние
     в соответствии с пороговыми значениями и дополняет текущий (или
@@ -327,7 +327,7 @@ def parse_lastdata(input_obj_list: list, last_datafile: str, tz_shift: float,
             отличаются. Например, если на сервере OWEN время MSK, а на
             локальной машине IRK, то tz_shift=3600.0*5 (5 часов).
     Returns:
-        [obj] -- Список объектов класса SensorDataBlock
+        [list] -- Список объектов класса SensorDataBlock
     '''
     try:
         with open(last_datafile, 'r', encoding='utf-8') as f_:
