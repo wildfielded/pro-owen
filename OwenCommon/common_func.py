@@ -267,7 +267,7 @@ def write_json(input_obj_list: list, json_file: str, history_limit: float,
 
 
 @inject_config()
-def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
+def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> list:
     ''' Парсит данные из загруженного локально файла с пороговыми
     значениями по каждому датчику с некоторой валидацией данных и
     дополняет текущий (или создаёт новый) список экземпляров (объектов)
@@ -280,7 +280,7 @@ def parse_lastcfg(input_obj_list: list, last_cfgfile: str, **kwargs) -> object:
         last_cfgfile [str] -- Путь к локальной копии конфигурационного
             файла
     Returns:
-        [obj] -- Список объектов класса SensorDataBlock
+        [list] -- Список объектов класса SensorDataBlock
     '''
     try:
         with open(last_cfgfile, 'r', encoding='utf-8') as f_:
