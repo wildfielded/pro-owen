@@ -60,7 +60,7 @@ texts are provided exclusively in Russian.
 переработанный из **PoC** серверный вариант.
 
 [**OwenCommon**](https://github.com/wildfielded/pro-owen/tree/master/OwenCommon)&nbsp;&mdash;
-в модуле `commin_func.py` собран функционал, общий для серверного и десктопного
+в модуле `common_func.py` собран функционал, общий для серверного и десктопного
 вариантов.
 
 [**Desktop WebView**](https://github.com/wildfielded/pro-owen/tree/master/WinWebView)
